@@ -1,3 +1,4 @@
-#' @param times (`numeric()`)\cr
-#' An optional numeric vector of time points.
-#' Time points don't have to be sorted or unique, just non-negative numbers.
+#' @param times (`numeric`)\cr
+#' Numeric vector of non-negative time points at which to evaluate.
+#' Values do not need to be sorted or unique.
+#' If `NULL` (default), the object's stored time points are used.

@@ -14,13 +14,14 @@ Description: Provides efficient containers for storing and managing prediction o
     An easy-to-use interface for managing predictions and applying post-processing methods.
 License: GPL (>= 3)
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE, r6 = TRUE)
 RoxygenNote: 7.3.2
 LinkingTo: 
     Rcpp
 Imports: 
     checkmate,
-    Rcpp
+    Rcpp,
+    R6
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
