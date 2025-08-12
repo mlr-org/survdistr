@@ -5,8 +5,8 @@ rcpp_assert_surv_matrix <- function(mat) {
     .Call(`_survdistr_rcpp_assert_surv_matrix`, mat)
 }
 
-rcpp_mat_interp <- function(x, times, new_times, surv = TRUE, constant = TRUE) {
-    .Call(`_survdistr_rcpp_mat_interp`, x, times, new_times, surv, constant)
+rcpp_mat_interp <- function(x, times, new_times, constant = TRUE) {
+    .Call(`_survdistr_rcpp_mat_interp`, x, times, new_times, constant)
 }
 
 rcpp_wcumsum_mat <- function(x, times) {

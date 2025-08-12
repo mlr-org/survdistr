@@ -6,20 +6,17 @@ using namespace Rcpp;
 // * `times` must be non-negative, unique, increasing numbers
 // * `new_times` can be unordered and duplicated numeric values
 // TODO: new_times ordered will speed up things, can do column ordering in R
-// TODO: handle here if new_times = NULL (simply return x)
 // * `surv` denotes the type of `x` (survival matrix by default)
 // * `inter_type` denotes the interpolation type (default: constant, otherwise linear)
 // [[Rcpp::export]]
 NumericMatrix rcpp_mat_interp(const NumericMatrix& x,
                               const NumericVector& times,
                               const NumericVector& new_times,
-                              bool surv = true,
                               bool constant = true) {
-  // Constants for default values
+  // Default values for S(t = 0)
   constexpr double SURV_DEFAULT = 1.0;
-  constexpr double CDF_DEFAULT = 0.0;
 
-  // x => [obs x times], S(t) or CDF(t)
+  // x => [obs x times], S(t)
   int n_rows = x.nrow(); // Number of observations
   int n_times = x.ncol(); // Number of original time points
   int n_times_new = new_times.length(); // Number of new time points
@@ -27,6 +24,10 @@ NumericMatrix rcpp_mat_interp(const NumericMatrix& x,
   // NOTE: `times` is the colnames of `x` matrix
   if (n_times != times.length()) {
     stop("Number of columns in the input matrix must match the length of 'times'.");
+  }
+
+  if (n_times_new == 0) {
+    return x; // No interpolation needed
   }
 
   NumericMatrix mat(n_rows, n_times_new); // Resulting matrix: [n_rows x n_times_new]
@@ -39,10 +40,10 @@ NumericMatrix rcpp_mat_interp(const NumericMatrix& x,
       if (t_new < times[0]) {
         if (constant) {
           // Constant interpolation: use default value
-          mat(i, k) = surv ? SURV_DEFAULT : CDF_DEFAULT;
+          mat(i, k) = SURV_DEFAULT;
         } else {
           // Linear extrapolation considering that S(t = 0) = 1
-          double x1 = surv ? SURV_DEFAULT : CDF_DEFAULT;
+          double x1 = SURV_DEFAULT;
           double x2 = x(i, 0);
 
           mat(i, k) = x1 + t_new * (x2 - x1) / times[0];
@@ -60,11 +61,8 @@ NumericMatrix rcpp_mat_interp(const NumericMatrix& x,
           double x1 = x(i, n_times - 2), x2 = x(i, n_times - 1);
           double extrapolated_value = x2 + (t_new - t2) * (x2 - x1) / (t2 - t1);
 
-          if (surv) { // Adjust bounds for survival function
-            mat(i, k) = std::max(0.0, extrapolated_value);
-          } else { // Adjust bounds for CDF
-            mat(i, k) = std::min(1.0, extrapolated_value);
-          }
+          // Adjust bounds for survival function
+          mat(i, k) = std::max(0.0, extrapolated_value);
         }
         continue;
       }
