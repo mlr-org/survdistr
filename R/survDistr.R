@@ -2,7 +2,7 @@
 #' @name survDistr
 #'
 #' @description
-#' [survDistr] is an [R6] specialized container designed for storing
+#' [survDistr] is an [R6][R6::R6Class] specialized container designed for storing
 #' and managing prediction outputs from survival models in single-event settings.
 #' This includes models such as Cox proportional hazards, random survival forests,
 #' and other classical or machine learning-based survival estimators.
@@ -43,21 +43,12 @@
 #' x$survival(times = c(10, 30, 42, 45))
 #' # same but with linear interpolation
 #' x$interp_meth = "linear_surv"
-#' survival(x, times = c(10, 30, 42, 45))
+#' x$survival(times = c(10, 30, 42, 45))
 #' # time points can be unordered and duplicated
-#' survival(x, times = c(10,30,10,50))
+#' x$survival(times = c(10,30,10,50))
 #'
 #' # Cumulative hazard
 #' x$cumhazard()
-#'
-#' # hazard
-#' x$hazard()
-#'
-#' # cumulative distribution function
-#' x$cdf()
-#'
-#' # probability density function
-#' x$pdf()
 #'
 #' @export
 survDistr = R6Class(

@@ -17,7 +17,7 @@ invisibly.
 }
 \description{
 Asserts if the given input is a (discrete) survival
-probabilities matrix using \link{Rcpp} code.
+probabilities matrix using \pkg{Rcpp} code.
 The following checks are performed:
 \enumerate{
 \item All values are probabilities, i.e. \eqn{S(t) \in [0,1]}

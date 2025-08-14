@@ -1,7 +1,7 @@
 #' @title Assert survival matrix
 #'
 #' @description Asserts if the given input is a (discrete) survival
-#' probabilities matrix using [Rcpp] code.
+#' probabilities matrix using \pkg{Rcpp} code.
 #' The following checks are performed:
 #'
 #' 1. All values are probabilities, i.e. \eqn{S(t) \in [0,1]}

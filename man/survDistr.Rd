@@ -4,7 +4,7 @@
 \alias{survDistr}
 \title{Survival Distribution Container}
 \description{
-\link{survDistr} is an \link{R6} specialized container designed for storing
+\link{survDistr} is an \link[R6:R6Class]{R6} specialized container designed for storing
 and managing prediction outputs from survival models in single-event settings.
 This includes models such as Cox proportional hazards, random survival forests,
 and other classical or machine learning-based survival estimators.
@@ -15,7 +15,7 @@ The main prediction data type can be a survival or a hazard matrix, where
 \details{
 The input matrix (survival probabilities \eqn{S(t)} or hazard \eqn{h(t)})
 is stored in the \verb{$data} slot, while the interpolation type needed for the
-public methods is stored in the \verb{$inter_type} slot.
+public methods is stored in the \verb{$interp_meth} slot.
 
 During construction, the functions \code{\link[=assert_surv_matrix]{assert_surv_matrix()}} or \code{\link[=assert_hazard_matrix]{assert_hazard_matrix()}}
 are used to validate the input data matrix according to the given \code{data_type}.
@@ -32,7 +32,7 @@ x
 x$data
 
 # type of interpolation to use in methods
-x$inter_type
+x$interp_meth
 
 # time points
 x$times
@@ -40,22 +40,13 @@ x$times
 # S(t) at given time points (constant interpolation)
 x$survival(times = c(10, 30, 42, 45))
 # same but with linear interpolation
-x$inter_type = "linear_surv"
-survival(x, times = c(10, 30, 42, 45))
+x$interp_meth = "linear_surv"
+x$survival(times = c(10, 30, 42, 45))
 # time points can be unordered and duplicated
-survival(x, times = c(10,30,10,50))
+x$survival(times = c(10,30,10,50))
 
 # Cumulative hazard
 x$cumhazard()
-
-# hazard
-x$hazard()
-
-# cumulative distribution function
-x$cdf()
-
-# probability density function
-x$pdf()
 
 }
 \section{Public fields}{
@@ -70,8 +61,8 @@ Numeric vector of time points corresponding to columns of \code{data}.}
 \item{\code{data_type}}{(\code{character(1)})\cr
 Either \code{"surv"} for survival or \code{"haz"} for hazard matrices.}
 
-\item{\code{inter_type}}{(\code{character(1)})\cr
-Interpolation type; one of \code{"const_surv"}, \code{"linear_surv"}, or \code{"const_haz"}.}
+\item{\code{interp_meth}}{(\code{character(1)})\cr
+Interpolation method; one of \code{"const_surv"}, \code{"linear_surv"}, or \code{"const_haz"}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -102,7 +93,7 @@ Returns the stored data matrix with column names restored to the time points.}
 \subsection{Method \code{new()}}{
 Creates a new instance of this \link[R6:R6Class]{R6} class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(x, data_type = "surv", inter_type = "const_surv", ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(x, data_type = "surv", interp_meth = "const_surv", ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -117,9 +108,9 @@ Column names must correspond to time points.}
 The type of input data.
 Either a survival matrix (\code{"survival"}, default) or a hazard (\code{"hazard"}) matrix.}
 
-\item{\code{inter_type}}{(\code{character(1)})\cr
-The type of interpolation to use for time points different than the ones in
-the stored object (accessible via the \code{\link[=times]{times()}} method).
+\item{\code{interp_meth}}{(\code{character(1)})\cr
+Interpolation method to use when requesting the quantity of interest at time
+points different than the ones in the stored object (accessible via the \code{times} method).
 Currently supported interpolation methods include \code{"const_surv"} (default),
 \code{"linear_surv"} and \code{"const_haz"}. See details.}
 
