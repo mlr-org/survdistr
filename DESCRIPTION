@@ -3,25 +3,22 @@ Title: Survival Distribution Containers
 Version: 0.0.0.9000
 Authors@R: 
     person("John", "Zobolas", , "bblodfon@gmail.com", role = c("aut", "cre"))
-Description: Provides efficient containers for storing and managing prediction outputs 
-    of survival models, such as Cox proportional hazards, random survival forests, 
-    and other classical or modern machine learning-based survival estimators.
-    Container for single-event setting, competing risks and multi-state setting. 
-    Optimized for performance and usability in survival analysis workflows, the package includes 
-    fast methods for evaluating survival probabilities, cumulative hazard functions, 
-    probability density functions, and more at given time points. 
-    Provides several interpolation methods. 
-    An easy-to-use interface for managing predictions and applying post-processing methods.
+Description: Efficient containers for storing and managing prediction
+    outputs from survival models, including Cox proportional hazards,
+    random survival forests, and modern machine learning estimators.
+    Provides fast methods to evaluate survival probabilities, hazards,
+    probability densities, and related quantities at given time points,
+    with support for multiple interpolation methods.
 License: GPL (>= 3)
+Imports: 
+    checkmate,
+    R6,
+    Rcpp
+Suggests: 
+    testthat (>= 3.0.0)
+LinkingTo: 
+    Rcpp
+Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE, r6 = TRUE)
 RoxygenNote: 7.3.2
-LinkingTo: 
-    Rcpp
-Imports: 
-    checkmate,
-    Rcpp,
-    R6
-Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
