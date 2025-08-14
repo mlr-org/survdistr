@@ -1,3 +1,5 @@
+library(checkmate)
+
 gen_surv_mat = function(nrows, ncols) {
   x = matrix(runif(nrows * ncols), nrow = nrows, ncol = ncols)
 
