@@ -17,7 +17,7 @@
 #' @details
 #' The input matrix (survival probabilities \eqn{S(t)} or hazard \eqn{h(t)})
 #' is stored in the `$data` slot, while the interpolation type needed for the
-#' public methods is stored in the `$inter_type` slot.
+#' public methods is stored in the `$interp_meth` slot.
 #'
 #' During construction, the functions [assert_surv_matrix()] or [assert_hazard_matrix()]
 #' are used to validate the input data matrix according to the given `data_type`.
@@ -34,7 +34,7 @@
 #' x$data
 #'
 #' # type of interpolation to use in methods
-#' x$inter_type
+#' x$interp_meth
 #'
 #' # time points
 #' x$times
@@ -42,7 +42,7 @@
 #' # S(t) at given time points (constant interpolation)
 #' x$survival(times = c(10, 30, 42, 45))
 #' # same but with linear interpolation
-#' x$inter_type = "linear_surv"
+#' x$interp_meth = "linear_surv"
 #' survival(x, times = c(10, 30, 42, 45))
 #' # time points can be unordered and duplicated
 #' survival(x, times = c(10,30,10,50))
@@ -73,9 +73,9 @@ survDistr = R6Class(
     #' @field data_type (`character(1)`)\cr
     #'  Either `"surv"` for survival or `"haz"` for hazard matrices.
     data_type = NULL,
-    #' @field inter_type (`character(1)`)\cr
-    #'  Interpolation type; one of `"const_surv"`, `"linear_surv"`, or `"const_haz"`.
-    inter_type = NULL,
+    #' @field interp_meth (`character(1)`)\cr
+    #'  Interpolation method; one of `"const_surv"`, `"linear_surv"`, or `"const_haz"`.
+    interp_meth = NULL,
 
     #' @description
     #' Creates a new instance of this [R6][R6::R6Class] class.
@@ -85,9 +85,9 @@ survDistr = R6Class(
     #'  hazard values (non-negative values).
     #'  Column names must correspond to time points.
     #' @template param_data_type
-    #' @template param_inter_type
+    #' @template param_interp_meth
     #' @param ... currently not used
-    initialize = function(x, data_type = "surv", inter_type = "const_surv", ...) {
+    initialize = function(x, data_type = "surv", interp_meth = "const_surv", ...) {
       # Validate input arguments
       assert_choice(data_type, c("surv", "haz"))
       if (data_type == "surv") {
@@ -95,9 +95,11 @@ survDistr = R6Class(
       } else {
         assert_hazard_matrix(x)
       }
-      assert_choice(inter_type, c("const_surv", "linear_surv", "const_haz"))
-      if (data_type == "haz" && inter_type == "linear_surv") {
-        stop("Hazard metric and piece-wise linear survival interpolation is not supported.")
+
+      assert_choice(interp_meth, c("const_surv", "linear_surv", "const_haz"))
+
+      if (data_type == "haz" && interp_meth == "linear_surv") {
+        stop("Hazard data and piece-wise linear survival interpolation is not supported.")
       }
 
       # Store data and times (strip colnames)
@@ -105,7 +107,7 @@ survDistr = R6Class(
       dimnames(x) = NULL
       self$data = x
       self$data_type = data_type
-      self$inter_type = inter_type
+      self$interp_meth = interp_meth
     },
 
     #' @description
@@ -114,15 +116,18 @@ survDistr = R6Class(
     print = function() {
       nrows = nrow(self$data)
       ncols = ncol(self$data)
-      cat("A [", nrows, " x ", ncols, "] ", self$data_type, " matrix\n", sep = "")
+
+      interp_meth = switch(self$data_type,
+                           "surv" = "survival",
+                           "haz" = "hazard")
+      cat("A [", nrows, " x ", ncols, "] ", interp_meth, " matrix\n", sep = "")
       cat("Number of observations: ", nrows, "\n", sep = "")
       cat("Number of time points: ", ncols, "\n", sep = "")
-      type = switch(self$inter_type,
-                     "const_surv" = "Piece-wise Constant Survival",
-                     "linear_surv" = "Piece-wise Linear Survival",
-                     "const_haz" = "Piece-wise Constant Hazard"
-      )
-      cat("Interpolation type:", type, "\n")
+      interp_meth = switch(self$interp_meth,
+                           "const_surv" = "Piece-wise Constant Survival",
+                           "linear_surv" = "Piece-wise Linear Survival",
+                           "const_haz" = "Piece-wise Constant Hazard")
+      cat("Interpolation method:", interp_meth, "\n")
       invisible(self)
     },
 
@@ -131,7 +136,7 @@ survDistr = R6Class(
     #'
     #' @return a `matrix` of survival probabilities
     survival = function(times = NULL) {
-      if (self$data_type == "haz" || self$inter_type == "const_haz") {
+      if (self$data_type == "haz" || self$interp_meth == "const_haz") {
         stop("Conversion from hazard to survival not yet implemented.")
       }
 
@@ -144,7 +149,7 @@ survDistr = R6Class(
       new_times = assert_numeric(times, lower = 0, any.missing = FALSE, min.len = 1)
 
       mat = rcpp_mat_interp(x = self$data, times = self$times, new_times = new_times,
-                            constant = ifelse(self$inter_type == "const_surv", TRUE, FALSE))
+                            constant = ifelse(self$interp_meth == "const_surv", TRUE, FALSE))
       colnames(mat) = new_times
       mat
     },
@@ -201,7 +206,7 @@ survDistr = R6Class(
     #'
     #' @return a pdf `matrix`.
     pdf = function(times = NULL) {
-      if (self$inter_type != "const_surv") {
+      if (self$interp_meth != "const_surv") {
         stop("Only implemented for constant survival interpolation.")
       }
 

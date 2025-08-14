@@ -1,11 +1,10 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// Row value interpolation of a survival/cdf matrix
-// * `x` is a survival (or cdf) matrix
-// * `times` must be non-negative, unique, increasing numbers
-// * `new_times` can be unordered and duplicated numeric values
-// TODO: new_times ordered will speed up things, can do column ordering in R
+// Row value interpolation of a survival matrix
+// * `x` is a survival matrix
+// * `times` must be positive, unique, increasing numbers
+// * `new_times` must be non-negative, unique, increasing numbers
 // * `surv` denotes the type of `x` (survival matrix by default)
 // * `inter_type` denotes the interpolation type (default: constant, otherwise linear)
 // [[Rcpp::export]]

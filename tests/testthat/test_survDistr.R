@@ -15,7 +15,7 @@ test_that("constructor", {
   expect_equal(obj$data_type, "surv")
   expect_equal(obj$get_data, x)
   expect_equal(obj$times, c(12, 34, 42))
-  expect_equal(obj$inter_type, "const_surv")
+  expect_equal(obj$interp_meth, "const_surv")
 
   # Invalid inputs
   expect_error(survDistr$new(x = NULL), "Must be of type")
@@ -47,7 +47,7 @@ test_that("constant survival", {
 })
 
 test_that("linear survival", {
-  obj$inter_type = "linear_surv"
+  obj$interp_meth = "linear_surv"
 
   # Case: `new_times` entirely before `times`
   res = obj$survival(times = 5)
