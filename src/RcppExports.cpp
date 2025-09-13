@@ -21,9 +21,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_mat_interp
-NumericMatrix rcpp_mat_interp(const NumericMatrix& x, const NumericVector& times, const NumericVector& new_times, bool constant);
-RcppExport SEXP _survdistr_rcpp_mat_interp(SEXP xSEXP, SEXP timesSEXP, SEXP new_timesSEXP, SEXP constantSEXP) {
+// c_surv_interp
+NumericMatrix c_surv_interp(const NumericMatrix& x, const NumericVector& times, const NumericVector& new_times, bool constant);
+RcppExport SEXP _survdistr_c_surv_interp(SEXP xSEXP, SEXP timesSEXP, SEXP new_timesSEXP, SEXP constantSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,7 +31,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericVector& >::type times(timesSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type new_times(new_timesSEXP);
     Rcpp::traits::input_parameter< bool >::type constant(constantSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_mat_interp(x, times, new_times, constant));
+    rcpp_result_gen = Rcpp::wrap(c_surv_interp(x, times, new_times, constant));
+    return rcpp_result_gen;
+END_RCPP
+}
+// c_surv_interp_scan
+NumericMatrix c_surv_interp_scan(const NumericMatrix& x, const NumericVector& times, const NumericVector& new_times, bool constant);
+RcppExport SEXP _survdistr_c_surv_interp_scan(SEXP xSEXP, SEXP timesSEXP, SEXP new_timesSEXP, SEXP constantSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type times(timesSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type new_times(new_timesSEXP);
+    Rcpp::traits::input_parameter< bool >::type constant(constantSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_surv_interp_scan(x, times, new_times, constant));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -63,7 +77,8 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_survdistr_rcpp_assert_surv_matrix", (DL_FUNC) &_survdistr_rcpp_assert_surv_matrix, 1},
-    {"_survdistr_rcpp_mat_interp", (DL_FUNC) &_survdistr_rcpp_mat_interp, 4},
+    {"_survdistr_c_surv_interp", (DL_FUNC) &_survdistr_c_surv_interp, 4},
+    {"_survdistr_c_surv_interp_scan", (DL_FUNC) &_survdistr_c_surv_interp_scan, 4},
     {"_survdistr_rcpp_wcumsum_mat", (DL_FUNC) &_survdistr_rcpp_wcumsum_mat, 2},
     {"_survdistr_rcpp_wcumsum_mat_interp", (DL_FUNC) &_survdistr_rcpp_wcumsum_mat_interp, 3},
     {NULL, NULL, 0}

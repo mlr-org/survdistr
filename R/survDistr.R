@@ -139,8 +139,8 @@ survDistr = R6Class(
 
       new_times = assert_numeric(times, lower = 0, any.missing = FALSE, min.len = 1)
 
-      mat = rcpp_mat_interp(x = self$data, times = self$times, new_times = new_times,
-                            constant = ifelse(self$interp_meth == "const_surv", TRUE, FALSE))
+      mat = c_surv_interp(x = self$data, times = self$times, new_times = new_times,
+                          constant = ifelse(self$interp_meth == "const_surv", TRUE, FALSE))
       colnames(mat) = new_times
       mat
     },

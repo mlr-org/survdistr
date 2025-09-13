@@ -1,56 +1,65 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// Row value interpolation of a survival matrix
-// * `x` is a survival matrix
-// * `times` must be positive, unique, increasing numbers
-// * `new_times` must be non-negative, unique, increasing numbers
-// * `surv` denotes the type of `x` (survival matrix by default)
-// * `inter_type` denotes the interpolation type (default: constant, otherwise linear)
+// Per-row interpolation of a matrix with survival values (optimized single-pass scan)
+// * `x`: survival matrix [observations x times]
+// * `times`: original time points (increasing, unique, non-negative)
+// * `new_times`: new time points (increasing, unique, non-negative)
+// * `constant`: if true, stepwise constant; otherwise linear interpolation
+// * type: "surv", "cdf", or "cif"
 // [[Rcpp::export]]
-NumericMatrix rcpp_mat_interp(const NumericMatrix& x,
-                              const NumericVector& times,
-                              const NumericVector& new_times,
-                              bool constant = true) {
-  // Default values for S(t = 0)
-  constexpr double SURV_DEFAULT = 1.0;
+NumericMatrix c_mat_interp(const NumericMatrix& x,
+                           const NumericVector& times,
+                           const NumericVector& new_times,
+                           bool constant = true,
+                           const std::string& type = "surv") {
+  constexpr double SURV_DEFAULT = 1.0; // S(t=0) = 1
 
   // x => [obs x times], S(t)
-  int n_rows = x.nrow(); // Number of observations
-  int n_times = x.ncol(); // Number of original time points
-  int n_times_new = new_times.length(); // Number of new time points
+  int n_rows = x.nrow(); // observations
+  int n_times = x.ncol(); // original time points
+  int n_times_new = new_times.length(); // requested time points
 
-  // NOTE: `times` is the colnames of `x` matrix
+   // NOTE: `times` is the colnames of `x` matrix - can do also in the R function?
   if (n_times != times.length()) {
-    stop("Number of columns in the input matrix must match the length of 'times'.");
+      stop("Number of columns in x must match length of 'times'.");
   }
 
-  if (n_times_new == 0) {
-    return x; // No interpolation needed
+  if (n_times_new == 0) return x; // No interpolation needed
+
+  // Set baseline value according to type
+  double BASE_DEFAULT;
+  if (type == "surv") {
+    BASE_DEFAULT = 1.0; // S(t=0) = 1
+  } else if (type == "cdf" || type == "cif") {
+    BASE_DEFAULT = 0.0; // CDF(t=0) == CIF(t=0) = 0
+  } else {
+    stop("Invalid 'type'. Must be 'surv', 'cdf', or 'cif'.");
   }
 
-  NumericMatrix mat(n_rows, n_times_new); // Resulting matrix: [n_rows x n_times_new]
+  NumericMatrix mat(n_rows, n_times_new);
 
-  for (int i = 0; i < n_rows; i++) { // Iterate over observations
-    for (int k = 0; k < n_times_new; k++) { // Iterate over new time points
+  // Iterate over observations
+  for (int i = 0; i < n_rows; i++) {
+    int j = 0; // index for scanning times
+
+    // Iterate over requested time points
+    for (int k = 0; k < n_times_new; k++) {
       double t_new = new_times[k];
 
-      // new time is before the first time point (extrapolation)
+      // extrapolation before first time
       if (t_new < times[0]) {
         if (constant) {
-          // Constant interpolation: use default value
-          mat(i, k) = SURV_DEFAULT;
+          mat(i, k) = BASE_DEFAULT;
         } else {
-          // Linear extrapolation considering that S(t = 0) = 1
-          double x1 = SURV_DEFAULT;
+          double x1 = BASE_DEFAULT;
           double x2 = x(i, 0);
-
           mat(i, k) = x1 + t_new * (x2 - x1) / times[0];
         }
         continue;
       }
 
-      // new time is after the last time point (extrapolation)
+      // extrapolation after last time
       if (t_new >= times[n_times - 1]) {
         if (constant || n_times <= 1) {
           mat(i, k) = x(i, n_times - 1); // Use last value for constant extrapolation
@@ -59,28 +68,25 @@ NumericMatrix rcpp_mat_interp(const NumericMatrix& x,
           double t1 = times[n_times - 2], t2 = times[n_times - 1];
           double x1 = x(i, n_times - 2), x2 = x(i, n_times - 1);
           double extrapolated_value = x2 + (t_new - t2) * (x2 - x1) / (t2 - t1);
-
-          // Adjust bounds for survival function
+          // Adjust bounds
           mat(i, k) = std::max(0.0, extrapolated_value);
         }
         continue;
       }
 
-      // Find the correct interval for interpolation
-      for (int j = 0; j < n_times - 1; j++) {
-        if (t_new >= times[j] && t_new < times[j + 1]) {
-          if (constant) {
-            // Constant interpolation (use value at the lower bound)
-            mat(i, k) = x(i, j);
-          } else {
-            // Linear interpolation
-            double t1 = times[j], t2 = times[j + 1];
-            double x1 = x(i, j), x2 = x(i, j + 1);
-            mat(i, k) = x1 + (t_new - t1) * (x2 - x1) / (t2 - t1);
-          }
+      // advance j until t_new is in [times[j], times[j+1])
+      while (j < n_times - 1 && t_new >= times[j + 1])
+        j++;
 
-          break;
-        }
+      // t_new in [times[j], times[j+1])
+      if (constant) {
+        // Constant interpolation (use value at the lower bound)
+        mat(i, k) = x(i, j);
+      } else {
+        // Linear interpolation
+        double t1 = times[j], t2 = times[j + 1];
+        double x1 = x(i, j), x2 = x(i, j + 1);
+        mat(i, k) = x1 + (t_new - t1) * (x2 - x1) / (t2 - t1);
       }
     }
   }
