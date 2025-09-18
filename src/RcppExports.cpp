@@ -22,17 +22,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // c_mat_interp
-NumericMatrix c_mat_interp(const NumericMatrix& x, const NumericVector& times, const NumericVector& new_times, bool constant, const std::string& type);
-RcppExport SEXP _survdistr_c_mat_interp(SEXP xSEXP, SEXP timesSEXP, SEXP new_timesSEXP, SEXP constantSEXP, SEXP typeSEXP) {
+NumericMatrix c_mat_interp(const NumericMatrix& x, const NumericVector& times, const NumericVector& eval_times, bool constant, const std::string& type);
+RcppExport SEXP _survdistr_c_mat_interp(SEXP xSEXP, SEXP timesSEXP, SEXP eval_timesSEXP, SEXP constantSEXP, SEXP typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type times(timesSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type new_times(new_timesSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type eval_times(eval_timesSEXP);
     Rcpp::traits::input_parameter< bool >::type constant(constantSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type type(typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(c_mat_interp(x, times, new_times, constant, type));
+    rcpp_result_gen = Rcpp::wrap(c_mat_interp(x, times, eval_times, constant, type));
     return rcpp_result_gen;
 END_RCPP
 }

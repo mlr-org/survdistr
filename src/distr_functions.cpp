@@ -4,46 +4,32 @@ using namespace Rcpp;
 // Per-row interpolation of a matrix with survival values
 // * `x`: survival matrix [observations x times]
 // * `times`: original time points (increasing, unique, non-negative)
-// * `new_times`: new time points to interpolate (increasing, unique, non-negative)
+// * `eval_times`: new time points to interpolate (increasing, unique, non-negative)
 // * `constant`: if true, stepwise constant (left-continuous); otherwise linear interpolation
 // * type: "surv", "cdf", or "cif"
 // [[Rcpp::export]]
 NumericMatrix c_mat_interp(const NumericMatrix& x,
                            const NumericVector& times,
-                           const NumericVector& new_times,
+                           const NumericVector& eval_times,
                            bool constant = true,
                            const std::string& type = "surv") {
   // x => [obs x times], S(t)
   int n_rows = x.nrow(); // observations
   int n_times = x.ncol(); // original time points
-  int n_times_new = new_times.length(); // requested time points
+  int n_times_eval = eval_times.length(); // requested time points
 
-   // NOTE: `times` is the colnames of `x` matrix - can do also in the R function?
-  if (n_times != times.length()) {
-      stop("Number of columns in x must match length of 'times'.");
-  }
+  // Baseline value for extrapolation
+  double BASE_DEFAULT = (type == "surv") ? 1.0 : 0.0;
 
-  if (n_times_new == 0) return x; // No interpolation needed
-
-  // Set baseline value according to type
-  double BASE_DEFAULT;
-  if (type == "surv") {
-    BASE_DEFAULT = 1.0; // S(0) = 1
-  } else if (type == "cdf" || type == "cif") {
-    BASE_DEFAULT = 0.0; // CDF(0) = CIF(0) = 0
-  } else {
-    stop("Invalid 'type'. Must be 'surv', 'cdf', or 'cif'.");
-  }
-
-  NumericMatrix mat(n_rows, n_times_new);
+  NumericMatrix mat(n_rows, n_times_eval);
 
   // Iterate over observations
   for (int i = 0; i < n_rows; i++) {
     int j = 0; // index for scanning times
 
     // Iterate over requested time points
-    for (int k = 0; k < n_times_new; k++) {
-      double t_new = new_times[k];
+    for (int k = 0; k < n_times_eval; k++) {
+      double t_new = eval_times[k];
 
       // extrapolation before first time
       if (t_new < times[0]) {
@@ -74,11 +60,11 @@ NumericMatrix c_mat_interp(const NumericMatrix& x,
 
           // Adjust bounds
           if (type == "surv") {
-            // survival in [0,1], monotone decreasing
-            mat(i, k) = std::max(0.0, std::min(1.0, extrapolated_value));
+            // avoid S(t) < 0
+            mat(i, k) = std::max(0.0, extrapolated_value);
           } else {
-            // cdf or cif in [0,1], monotone increasing
-            mat(i, k) = std::min(1.0, std::max(0.0, extrapolated_value));
+            // avoid CDF(t) > 1 or CIF(t) > 1
+            mat(i, k) = std::min(1.0, extrapolated_value);
           }
         }
         continue;
