@@ -16,7 +16,8 @@
 #'
 #' @details
 #' The input matrix (survival probabilities \eqn{S(t)} or hazard \eqn{h(t)})
-#' is stored in the `$data` slot, while the interpolation type needed for the
+#' is stored internally and accessed by the `$data` field.
+#' the interpolation type needed for the
 #' public methods is stored in the `$interp_meth` slot.
 #'
 #' During construction, the functions [assert_surv_matrix()] or [assert_hazard_matrix()]
@@ -55,9 +56,6 @@ survDistr = R6Class(
   "survDistr",
 
   public = list(
-    #' @field data (`matrix`)\cr
-    #'  The matrix of survival probabilities or hazard values (rows=observations, columns=times).
-    data = NULL,
     #' @field times (`numeric`])\cr
     #'  Numeric vector of time points corresponding to columns of `data`.
     times = NULL,
@@ -74,29 +72,38 @@ survDistr = R6Class(
     #' @param x (`matrix`)\cr
     #'  A numeric matrix of either survival probabilities (values between 0 and 1) or
     #'  hazard values (non-negative values).
-    #'  Column names must correspond to time points.
+    #'  Column names must correspond to time points if `times` is `NULL`.
     #' @template param_data_type
     #' @template param_interp_meth
+    #' @param times (`numeric(1)`)\cr Numeric vector of time points for matrix `x`,
+    #'  must match the number of columns.
     #' @param ... currently not used
-    initialize = function(x, data_type = "surv", interp_meth = "const_surv", ...) {
-      # Validate input arguments
+    initialize = function(x, times = NULL, data_type = "surv", interp_meth = "const_surv", ...) {
+      # Validate input type
       assert_choice(data_type, c("surv", "haz"))
+
       if (data_type == "surv") {
-        assert_surv_matrix(x)
+        times = assert_surv_matrix(x, times)
       } else {
-        assert_hazard_matrix(x)
+        stop("Input hazard matrix not yet supported.")
       }
 
-      assert_choice(interp_meth, c("const_surv", "linear_surv", "const_haz"))
+      dimnames(x) = NULL # no need to keep these
+      private$.mat = x # store data matrix
 
+      # Validate interpolation method
+      assert_choice(interp_meth, c("const_surv", "linear_surv", "const_haz"))
+      if (interp_meth == "const_haz") {
+        stop("Constant hazard interpolation not yet implemented.")
+      }
+
+      # TODO: check is this is needed at all
       if (data_type == "haz" && interp_meth == "linear_surv") {
         stop("Hazard data and piece-wise linear survival interpolation is not supported.")
       }
 
-      # Store data and times (strip colnames)
-      self$times = as.numeric(colnames(x))
-      dimnames(x) = NULL
-      self$data = x
+      # Fill in public fields
+      self$times = times
       self$data_type = data_type
       self$interp_meth = interp_meth
     },
@@ -105,8 +112,8 @@ survDistr = R6Class(
     #' Displays summary information about a [survDistr] object, including
     #' the number of observations and time points.
     print = function() {
-      nrows = nrow(self$data)
-      ncols = ncol(self$data)
+      nrows = nrow(private$.mat)
+      ncols = ncol(private$.mat)
 
       interp_meth = switch(self$data_type,
                            "surv" = "survival",
@@ -123,24 +130,33 @@ survDistr = R6Class(
     },
 
     #' @description
+    #' Return the stored data matrix.
+    #' @param add_times (`logical(1)`)\cr
+    #' If `TRUE`, add the time points as column names.
+    #' @return (`matrix`)
+    data = function(add_times = FALSE) {
+      assert_logical(add_times)
+      mat = private$.mat
+      if (add_times) {
+        colnames(mat) = self$times
+      }
+
+      mat
+    },
+
+    #' @description
     #' Computes survival probabilities \eqn{S(t)} at the specified time points.
     #'
     #' @return a `matrix` of survival probabilities
     survival = function(times = NULL) {
-      if (self$data_type == "haz" || self$interp_meth == "const_haz") {
-        stop("Conversion from hazard to survival not yet implemented.")
-      }
-
       if (is.null(times)) {
-        if (self$data_type == "surv") {
-          return(self$get_data)
-        }
+        return(self$get_data)
       }
 
       new_times = assert_numeric(times, lower = 0, any.missing = FALSE, min.len = 1)
 
-      mat = c_surv_interp(x = self$data, times = self$times, new_times = new_times,
-                          constant = ifelse(self$interp_meth == "const_surv", TRUE, FALSE))
+      mat = c_mat_interp(x = self$data, times = self$times, new_times = new_times,
+                         constant = ifelse(self$interp_meth == "const_surv", TRUE, FALSE))
       colnames(mat) = new_times
       mat
     },
@@ -156,8 +172,8 @@ survDistr = R6Class(
       }
 
       new_times = assert_numeric(times, lower = 0, any.missing = FALSE, min.len = 1)
-      mat = rcpp_mat_interp(x = 1 - self$data, times = self$times,
-                            new_times = new_times, constant = TRUE)
+      mat = c_mat_interp(x = 1 - self$data, times = self$times,
+                         new_times = new_times, constant = TRUE)
       colnames(mat) = new_times
       mat
     },
@@ -213,13 +229,7 @@ survDistr = R6Class(
     }
   ),
 
-  active = list(
-    #' @field get_data (`matrix`)\cr
-    #' Returns the stored data matrix with column names restored to the time points.
-    get_data = function() {
-      mat = self$data
-      colnames(mat) = as.character(self$times)
-      mat
-    }
+  private = list(
+    .mat = NULL
   )
 )
