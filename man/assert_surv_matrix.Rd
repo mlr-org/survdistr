@@ -4,34 +4,48 @@
 \alias{assert_surv_matrix}
 \title{Assert survival matrix}
 \usage{
-assert_surv_matrix(x)
+assert_surv_matrix(x, times = NULL)
 }
 \arguments{
 \item{x}{(\code{matrix()})\cr
 A survival probability matrix.
-Rows are observations and columns are (increasing) time points.}
+Rows correspond to observations and columns correspond to time points.}
+
+\item{times}{(\code{numeric()}|\code{NULL})\cr
+Optional numeric vector of time points corresponding to the columns of \code{x}.
+If \code{NULL}, the time points are extracted from \code{colnames(x)}.}
 }
 \value{
-if the assertion fails an error occurs, otherwise \code{NULL} is returned
-invisibly.
+If the assertion fails, an error is thrown.
+Otherwise, the validated numeric vector of time points is returned invisibly.
 }
 \description{
-Asserts if the given input is a (discrete) survival
-probabilities matrix using \pkg{Rcpp} code.
+Asserts whether the given input is a valid (discrete) survival probability
+matrix using checks implemented in C++.
+
 The following checks are performed:
 \enumerate{
-\item All values are probabilities, i.e. \eqn{S(t) \in [0,1]}
-\item Column names correspond to time points and should therefore be coercable to
-\code{numeric} and increasing
-\item Per row (observation), the survival probabilities decrease non-strictly, i.e.
-\eqn{S(t) \ge S(t+1)}
+\item The input \code{x} is a numeric matrix with no missing values.
+\item Time points (\code{times}) are numeric, non-negative, unique, and sorted.
+If not supplied, they are derived from the column names of \code{x}
+(coerced to numeric, possibly with loss of accuracy).
+\item The number of time points matches the number of columns of \code{x}.
+\item All values are valid probabilities, i.e. \eqn{S(t) \in [0,1]}.
+\item Per row (observation-wise), the survival probabilities decrease
+non-strictly, i.e. \eqn{S(t_i) \ge S(t_{i+1})}.
+\item If the first time point is 0, then \eqn{S(t = 0) = 1}.
 }
 }
 \examples{
-x = matrix(data = c(1,0.6,0.4,0.8,0.8,0.7), nrow = 2, ncol = 3, byrow = TRUE)
-colnames(x) = c(12, 34, 42)
-x
+x = matrix(data = c(1, 0.6, 0.4,
+                    0.8, 0.8, 0.7),
+           nrow = 2, ncol = 3, byrow = TRUE)
 
+# Explicitly provide time points
+assert_surv_matrix(x, times = c(12, 34, 42))
+
+# Or use column names as time points
+colnames(x) = c(12, 34, 42)
 assert_surv_matrix(x)
 
 }

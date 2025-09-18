@@ -14,7 +14,8 @@ The main prediction data type can be a survival or a hazard matrix, where
 }
 \details{
 The input matrix (survival probabilities \eqn{S(t)} or hazard \eqn{h(t)})
-is stored in the \verb{$data} slot, while the interpolation type needed for the
+is stored internally and accessed by the \verb{$data} field.
+the interpolation type needed for the
 public methods is stored in the \verb{$interp_meth} slot.
 
 During construction, the functions \code{\link[=assert_surv_matrix]{assert_surv_matrix()}} or \code{\link[=assert_hazard_matrix]{assert_hazard_matrix()}}
@@ -52,9 +53,6 @@ x$cumhazard()
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{data}}{(\code{matrix})\cr
-The matrix of survival probabilities or hazard values (rows=observations, columns=times).}
-
 \item{\code{times}}{(\code{numeric}])\cr
 Numeric vector of time points corresponding to columns of \code{data}.}
 
@@ -66,19 +64,12 @@ Interpolation method; one of \code{"const_surv"}, \code{"linear_surv"}, or \code
 }
 \if{html}{\out{</div>}}
 }
-\section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{get_data}}{(\code{matrix})\cr
-Returns the stored data matrix with column names restored to the time points.}
-}
-\if{html}{\out{</div>}}
-}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-survDistr-new}{\code{survDistr$new()}}
 \item \href{#method-survDistr-print}{\code{survDistr$print()}}
+\item \href{#method-survDistr-data}{\code{survDistr$data()}}
 \item \href{#method-survDistr-survival}{\code{survDistr$survival()}}
 \item \href{#method-survDistr-cdf}{\code{survDistr$cdf()}}
 \item \href{#method-survDistr-cumhazard}{\code{survDistr$cumhazard()}}
@@ -93,7 +84,13 @@ Returns the stored data matrix with column names restored to the time points.}
 \subsection{Method \code{new()}}{
 Creates a new instance of this \link[R6:R6Class]{R6} class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(x, data_type = "surv", interp_meth = "const_surv", ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(
+  x,
+  times = NULL,
+  data_type = "surv",
+  interp_meth = "const_surv",
+  ...
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -102,7 +99,10 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
 \item{\code{x}}{(\code{matrix})\cr
 A numeric matrix of either survival probabilities (values between 0 and 1) or
 hazard values (non-negative values).
-Column names must correspond to time points.}
+Column names must correspond to time points if \code{times} is \code{NULL}.}
+
+\item{\code{times}}{(\code{numeric(1)})\cr Numeric vector of time points for matrix \code{x},
+must match the number of columns.}
 
 \item{\code{data_type}}{(\code{character(1)})\cr
 The type of input data.
@@ -129,6 +129,27 @@ the number of observations and time points.
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$print()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-survDistr-data"></a>}}
+\if{latex}{\out{\hypertarget{method-survDistr-data}{}}}
+\subsection{Method \code{data()}}{
+Return the stored data matrix.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$data(add_times = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE}, add the time points as column names.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+(\code{matrix})
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-survDistr-survival"></a>}}
