@@ -1,11 +1,11 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// Per-row interpolation of a matrix with survival values (optimized single-pass scan)
+// Per-row interpolation of a matrix with survival values
 // * `x`: survival matrix [observations x times]
 // * `times`: original time points (increasing, unique, non-negative)
-// * `new_times`: new time points (increasing, unique, non-negative)
-// * `constant`: if true, stepwise constant; otherwise linear interpolation
+// * `new_times`: new time points to interpolate (increasing, unique, non-negative)
+// * `constant`: if true, stepwise constant (left-continuous); otherwise linear interpolation
 // * type: "surv", "cdf", or "cif"
 // [[Rcpp::export]]
 NumericMatrix c_mat_interp(const NumericMatrix& x,
@@ -13,8 +13,6 @@ NumericMatrix c_mat_interp(const NumericMatrix& x,
                            const NumericVector& new_times,
                            bool constant = true,
                            const std::string& type = "surv") {
-  constexpr double SURV_DEFAULT = 1.0; // S(t=0) = 1
-
   // x => [obs x times], S(t)
   int n_rows = x.nrow(); // observations
   int n_times = x.ncol(); // original time points
@@ -30,9 +28,9 @@ NumericMatrix c_mat_interp(const NumericMatrix& x,
   // Set baseline value according to type
   double BASE_DEFAULT;
   if (type == "surv") {
-    BASE_DEFAULT = 1.0; // S(t=0) = 1
+    BASE_DEFAULT = 1.0; // S(0) = 1
   } else if (type == "cdf" || type == "cif") {
-    BASE_DEFAULT = 0.0; // CDF(t=0) == CIF(t=0) = 0
+    BASE_DEFAULT = 0.0; // CDF(0) = CIF(0) = 0
   } else {
     stop("Invalid 'type'. Must be 'surv', 'cdf', or 'cif'.");
   }
@@ -52,9 +50,13 @@ NumericMatrix c_mat_interp(const NumericMatrix& x,
         if (constant) {
           mat(i, k) = BASE_DEFAULT;
         } else {
-          double x1 = BASE_DEFAULT;
-          double x2 = x(i, 0);
-          mat(i, k) = x1 + t_new * (x2 - x1) / times[0];
+          if (times[0] == 0.0) {
+            mat(i, k) = x(i, 0); // avoid div-by-zero
+          } else {
+            double x1 = BASE_DEFAULT;
+            double x2 = x(i, 0);
+            mat(i, k) = x1 + t_new * (x2 - x1) / times[0];
+          }
         }
         continue;
       }
@@ -62,14 +64,22 @@ NumericMatrix c_mat_interp(const NumericMatrix& x,
       // extrapolation after last time
       if (t_new >= times[n_times - 1]) {
         if (constant || n_times <= 1) {
-          mat(i, k) = x(i, n_times - 1); // Use last value for constant extrapolation
+          // Use last value for constant extrapolation (left-continuity)
+          mat(i, k) = x(i, n_times - 1);
         } else {
           // Linear extrapolation using the last time interval
           double t1 = times[n_times - 2], t2 = times[n_times - 1];
           double x1 = x(i, n_times - 2), x2 = x(i, n_times - 1);
           double extrapolated_value = x2 + (t_new - t2) * (x2 - x1) / (t2 - t1);
+
           // Adjust bounds
-          mat(i, k) = std::max(0.0, extrapolated_value);
+          if (type == "surv") {
+            // survival in [0,1], monotone decreasing
+            mat(i, k) = std::max(0.0, std::min(1.0, extrapolated_value));
+          } else {
+            // cdf or cif in [0,1], monotone increasing
+            mat(i, k) = std::min(1.0, std::max(0.0, extrapolated_value));
+          }
         }
         continue;
       }
