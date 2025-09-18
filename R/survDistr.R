@@ -179,11 +179,11 @@ survDistr = R6Class(
     #' @return a hazard `matrix`.
     hazard = function(times = NULL, eps = 1e-6) {
       if (is.null(times)) {
-        return(.rowwise_diffs(self$cumhazard(eps = eps)))
+        return(rowwise_diffs(self$cumhazard(eps = eps)))
       }
 
       utimes = sort(unique(times))
-      haz = .rowwise_diffs(self$cumhazard(times = utimes))
+      haz = rowwise_diffs(self$cumhazard(times = utimes))
 
       indx = match(times, utimes)
       haz[, indx, drop = FALSE]
@@ -202,11 +202,11 @@ survDistr = R6Class(
       }
 
       if (is.null(times)) {
-        return(.rowwise_diffs(self$cdf()))
+        return(rowwise_diffs(self$cdf()))
       }
 
       utimes = sort(unique(times))
-      pdf_mat = .rowwise_diffs(self$cdf(times = utimes))
+      pdf_mat = rowwise_diffs(self$cdf(times = utimes))
 
       indx = match(times, utimes)
       pdf_mat[, indx, drop = FALSE]
