@@ -164,9 +164,9 @@ Computes survival probabilities \eqn{S(t)} at the specified time points.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
-Numeric vector of non-negative time points at which to evaluate.
-Values do not need to be sorted or unique.
-If \code{NULL} (default), the object's stored time points are used.}
+New time points at which to interpolate.
+Values do not need to be sorted or unique, just non-negative.
+If \code{NULL}, the input object's stored time points are used.}
 }
 \if{html}{\out{</div>}}
 }
@@ -188,9 +188,9 @@ Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the speci
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
-Numeric vector of non-negative time points at which to evaluate.
-Values do not need to be sorted or unique.
-If \code{NULL} (default), the object's stored time points are used.}
+New time points at which to interpolate.
+Values do not need to be sorted or unique, just non-negative.
+If \code{NULL}, the input object's stored time points are used.}
 }
 \if{html}{\out{</div>}}
 }
@@ -212,9 +212,9 @@ Computes the cumulative hazard at the specified time points as:
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
-Numeric vector of non-negative time points at which to evaluate.
-Values do not need to be sorted or unique.
-If \code{NULL} (default), the object's stored time points are used.}
+New time points at which to interpolate.
+Values do not need to be sorted or unique, just non-negative.
+If \code{NULL}, the input object's stored time points are used.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors
@@ -240,9 +240,9 @@ Computes the hazard at the specified time points as: \eqn{h(t) = H(t) - H(t-1)}.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
-Numeric vector of non-negative time points at which to evaluate.
-Values do not need to be sorted or unique.
-If \code{NULL} (default), the object's stored time points are used.}
+New time points at which to interpolate.
+Values do not need to be sorted or unique, just non-negative.
+If \code{NULL}, the input object's stored time points are used.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors
@@ -271,9 +271,9 @@ For constant survival interpolation, \eqn{f(t) = F(t) - F(t-1)}, where
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
-Numeric vector of non-negative time points at which to evaluate.
-Values do not need to be sorted or unique.
-If \code{NULL} (default), the object's stored time points are used.}
+New time points at which to interpolate.
+Values do not need to be sorted or unique, just non-negative.
+If \code{NULL}, the input object's stored time points are used.}
 }
 \if{html}{\out{</div>}}
 }

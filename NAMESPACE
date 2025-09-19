@@ -2,6 +2,7 @@
 
 export(assert_hazard_matrix)
 export(assert_surv_matrix)
+export(mat_interp)
 export(survDistr)
 importFrom(R6,R6Class)
 importFrom(Rcpp,sourceCpp)

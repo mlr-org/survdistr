@@ -115,10 +115,10 @@ survDistr = R6Class(
       nrows = nrow(private$.mat)
       ncols = ncol(private$.mat)
 
-      interp_meth = switch(self$data_type,
-                           "surv" = "survival",
-                           "haz" = "hazard")
-      cat("A [", nrows, " x ", ncols, "] ", interp_meth, " matrix\n", sep = "")
+      data_type = switch(self$data_type,
+                         "surv" = "survival",
+                         "haz" = "hazard")
+      cat("A [", nrows, " x ", ncols, "] ", data_type, " matrix\n", sep = "")
       cat("Number of observations: ", nrows, "\n", sep = "")
       cat("Number of time points: ", ncols, "\n", sep = "")
       interp_meth = switch(self$interp_meth,
@@ -135,7 +135,8 @@ survDistr = R6Class(
     #' If `TRUE`, add the time points as column names.
     #' @return (`matrix`)
     data = function(add_times = FALSE) {
-      assert_logical(add_times)
+      assert_flag(add_times)
+
       mat = private$.mat
       if (add_times) {
         colnames(mat) = self$times
@@ -149,16 +150,15 @@ survDistr = R6Class(
     #'
     #' @return a `matrix` of survival probabilities
     survival = function(times = NULL) {
-      if (is.null(times)) {
-        return(self$get_data)
-      }
-
-      new_times = assert_numeric(times, lower = 0, any.missing = FALSE, min.len = 1)
-
-      mat = c_mat_interp(x = self$data, times = self$times, new_times = new_times,
-                         constant = ifelse(self$interp_meth == "const_surv", TRUE, FALSE))
-      colnames(mat) = new_times
-      mat
+      mat_interp(
+        x = private$.mat,
+        times = self$times,
+        eval_times = times,
+        constant = self$interp_meth == "const_surv",
+        type = "surv",
+        add_times = TRUE,
+        check = FALSE # input `x` is already checked in initialize()
+      )
     },
 
     #' @description
@@ -167,15 +167,15 @@ survDistr = R6Class(
     #'
     #' @return a cdf `matrix`.
     cdf = function(times = NULL) {
-      if (is.null(times)) {
-        return(1 - self$get_data)
-      }
-
-      new_times = assert_numeric(times, lower = 0, any.missing = FALSE, min.len = 1)
-      mat = c_mat_interp(x = 1 - self$data, times = self$times,
-                         new_times = new_times, constant = TRUE)
-      colnames(mat) = new_times
-      mat
+      mat_interp(
+        x = 1 - private$.mat, # convert survival => CDF
+        times = self$times,
+        eval_times = times,
+        constant = self$interp_meth == "const_surv",
+        type = "cdf",
+        add_times = TRUE,
+        check = FALSE # input `x` is already checked in initialize()
+      )
     },
 
     #' @description
