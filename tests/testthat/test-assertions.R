@@ -8,20 +8,24 @@ test_that("assert_surv_matrix works", {
   ncols = 500
   x = gen_surv_mat(nrows, ncols)
 
-  # no time points specified
-  expect_error(assert_surv_matrix(x), "Must have colnames")
+  # times not specified and no column names
+  expect_error(assert_surv_matrix(x), "Column names are required")
 
   # time points specified, but are decreasing
   colnames(x) = ncols:1
   expect_error(assert_surv_matrix(x), "Must be sorted")
 
-  # all time points are the same
+  # duplicate time points
   colnames(x) = 1:ncols
   colnames(x)[100] = 99
   expect_error(assert_surv_matrix(x), "Contains duplicated values")
 
   # time points specified and numeric
-  colnames(x) = 1:ncols
+  times = 1:ncols
+  expect_silent(assert_surv_matrix(x, times))
+
+  # time points specified as colnames
+  colnames(x) = times
   expect_silent(assert_surv_matrix(x))
 
   # S(t) >= S(t+1)
