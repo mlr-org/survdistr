@@ -1,4 +1,4 @@
 #' @param times (`numeric`)\cr
-#' Numeric vector of non-negative time points at which to evaluate.
-#' Values do not need to be sorted or unique.
-#' If `NULL` (default), the object's stored time points are used.
+#' New time points at which to interpolate.
+#' Values do not need to be sorted or unique, just non-negative.
+#' If `NULL`, the input object's stored time points are used.
