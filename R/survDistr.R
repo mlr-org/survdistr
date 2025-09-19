@@ -147,6 +147,7 @@ survDistr = R6Class(
 
     #' @description
     #' Computes survival probabilities \eqn{S(t)} at the specified time points.
+    #' Uses [mat_interp()].
     #'
     #' @return a `matrix` of survival probabilities
     survival = function(times = NULL) {
@@ -164,6 +165,7 @@ survDistr = R6Class(
     #' @description
     #' Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the specified time points.
     #' \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
+    #' Uses [mat_interp()].
     #'
     #' @return a cdf `matrix`.
     cdf = function(times = NULL) {

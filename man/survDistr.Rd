@@ -156,6 +156,7 @@ If \code{TRUE}, add the time points as column names.}
 \if{latex}{\out{\hypertarget{method-survDistr-survival}{}}}
 \subsection{Method \code{survival()}}{
 Computes survival probabilities \eqn{S(t)} at the specified time points.
+Uses \code{\link[=mat_interp]{mat_interp()}}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(times = NULL)}\if{html}{\out{</div>}}
 }
@@ -180,6 +181,7 @@ a \code{matrix} of survival probabilities
 \subsection{Method \code{cdf()}}{
 Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the specified time points.
 \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
+Uses \code{\link[=mat_interp]{mat_interp()}}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$cdf(times = NULL)}\if{html}{\out{</div>}}
 }
