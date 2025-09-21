@@ -1,8 +1,8 @@
 # TODO Notes:
+# compare linear vs constant (exact values) on the vectorized version
 # new_times values entirely before times.
 # new_times values entirely after times.
 # Mixed new_times values spanning the range of times.
-# Empty times, new_times, or x.
 # Check the behavior for both constant and linear interpolation.
 set.seed(42)
 x = gen_mat(nrows = 2, ncols = 3, type = "surv")

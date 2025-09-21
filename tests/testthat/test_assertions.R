@@ -2,7 +2,7 @@ test_that("assert_prob_matrix works", {
   # no data.frame allowed
   expect_error(assert_prob_matrix(data.frame(1)), "Must be of type")
 
-  # make a survival matrix
+  # generate a survival matrix
   set.seed(42)
   nrows = 100
   ncols = 500
