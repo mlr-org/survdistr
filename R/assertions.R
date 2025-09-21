@@ -75,10 +75,10 @@ assert_prob_matrix = function(x, times = NULL, type = "surv") {
 
   if (times[1] == 0) {
     if (type == "surv") {
-      if (!all(x[, 1] == 1)) stop("First time point is zero but S(t = 0) != 1.")
+      if (!all(x[, 1] == 1)) stop("S(0) must equal 1.")
     } else {
       # type is either "cdf" or "cif"
-      if (!all(x[, 1] == 0)) stop("First time point is zero but CDF/CIF(t=0) != 0.")
+      if (!all(x[, 1] == 0)) stop("CDF/CIF(0) must equal 0.")
     }
   }
 
