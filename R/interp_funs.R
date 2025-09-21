@@ -75,7 +75,7 @@ mat_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE, type 
   }
 
   if (add_times) {
-    colnames(mat) = eval_times
+    colnames(mat) = as.character(eval_times)
   }
 
   mat
