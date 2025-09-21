@@ -18,33 +18,33 @@ is stored internally and accessed by the \verb{$data} field.
 the interpolation type needed for the
 public methods is stored in the \verb{$interp_meth} slot.
 
-During construction, the functions \code{\link[=assert_surv_matrix]{assert_surv_matrix()}} or \code{\link[=assert_hazard_matrix]{assert_hazard_matrix()}}
-are used to validate the input data matrix according to the given \code{data_type}.
+During construction, the function \code{\link[=assert_prop_matrix]{assert_prop_matrix()}} is used to validate
+the input data matrix according to the given \code{data_type}.
 }
 \examples{
 # generate survival matrix
-x = matrix(data = c(1,0.6,0.4,0.8,0.8,0.7), nrow = 2,
-           ncol = 3, byrow = TRUE)
-colnames(x) = c(12, 34, 42)
-x = survDistr$new(x)
+mat = matrix(data = c(1,0.6,0.4,0.8,0.8,0.7), nrow = 2,
+             ncol = 3, byrow = TRUE)
+times = c(12, 34, 42)
+x = survDistr$new(mat, times)
 x
 
 # stored survival matrix
-x$data
+x$data()
 
-# type of interpolation to use in methods
+# interpolation method
 x$interp_meth
 
 # time points
 x$times
 
 # S(t) at given time points (constant interpolation)
-x$survival(times = c(10, 30, 42, 45))
+x$survival(times = c(10, 30, 42, 50))
 # same but with linear interpolation
 x$interp_meth = "linear_surv"
-x$survival(times = c(10, 30, 42, 45))
+x$survival(times = c(10, 30, 42, 50))
 # time points can be unordered and duplicated
-x$survival(times = c(10,30,10,50))
+x$survival(times = c(10, 30, 10, 50))
 
 # Cumulative hazard
 x$cumhazard()
@@ -136,14 +136,14 @@ the number of observations and time points.
 \subsection{Method \code{data()}}{
 Return the stored data matrix.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$data(add_times = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$data(add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE}, add the time points as column names.}
+If \code{TRUE}, column names are set to the relevant time points.}
 }
 \if{html}{\out{</div>}}
 }
@@ -158,7 +158,7 @@ If \code{TRUE}, add the time points as column names.}
 Computes survival probabilities \eqn{S(t)} at the specified time points.
 Uses \code{\link[=mat_interp]{mat_interp()}}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(times = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -167,7 +167,10 @@ Uses \code{\link[=mat_interp]{mat_interp()}}.
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
 Values do not need to be sorted or unique, just non-negative.
-If \code{NULL}, the input object's stored time points are used.}
+If \code{NULL}, the object's stored time points are used.}
+
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE}, column names are set to the relevant time points.}
 }
 \if{html}{\out{</div>}}
 }
@@ -183,7 +186,7 @@ Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the speci
 \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
 Uses \code{\link[=mat_interp]{mat_interp()}}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$cdf(times = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$cdf(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -192,7 +195,10 @@ Uses \code{\link[=mat_interp]{mat_interp()}}.
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
 Values do not need to be sorted or unique, just non-negative.
-If \code{NULL}, the input object's stored time points are used.}
+If \code{NULL}, the object's stored time points are used.}
+
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE}, column names are set to the relevant time points.}
 }
 \if{html}{\out{</div>}}
 }
@@ -207,7 +213,7 @@ a cdf \code{matrix}.
 Computes the cumulative hazard at the specified time points as:
 \eqn{H(t) = -log(S(t))}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(times = NULL, eps = 1e-06)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(times = NULL, add_times = TRUE, eps = 1e-06)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -216,7 +222,10 @@ Computes the cumulative hazard at the specified time points as:
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
 Values do not need to be sorted or unique, just non-negative.
-If \code{NULL}, the input object's stored time points are used.}
+If \code{NULL}, the object's stored time points are used.}
+
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE}, column names are set to the relevant time points.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors
@@ -244,7 +253,7 @@ Computes the hazard at the specified time points as: \eqn{h(t) = H(t) - H(t-1)}.
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
 Values do not need to be sorted or unique, just non-negative.
-If \code{NULL}, the input object's stored time points are used.}
+If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors
@@ -275,7 +284,7 @@ For constant survival interpolation, \eqn{f(t) = F(t) - F(t-1)}, where
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
 Values do not need to be sorted or unique, just non-negative.
-If \code{NULL}, the input object's stored time points are used.}
+If \code{NULL}, the object's stored time points are used.}
 }
 \if{html}{\out{</div>}}
 }

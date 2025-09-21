@@ -34,7 +34,7 @@ If \code{FALSE}, use piecewise-linear interpolation.}
 One of \code{"surv"}, \code{"cdf"}, or \code{"cif"}, indicating the data type of the input matrix.}
 
 \item{add_times}{(\code{logical(1)})\cr
-If \code{TRUE}, sets the column names of the returned matrix to the requested \code{eval_times}.}
+If \code{TRUE}, column names are set to the relevant time points.}
 
 \item{check}{(\code{logical(1)})\cr
 If \code{TRUE}, run input matrix validation via \code{\link[=assert_surv_matrix]{assert_surv_matrix()}};
@@ -51,8 +51,9 @@ Can be used for survival, cumulative distribution (CDF), or cumulative
 incidence (CIF) matrices.
 }
 \examples{
-x = matrix(c(1,0.8,0.6,
-             1,0.7,0.4), nrow = 2, byrow = TRUE)
+x = matrix(c(1, 0.8, 0.6,
+             1, 0.7, 0.4),
+           nrow = 2, byrow = TRUE)
 times = c(0, 10, 20)
 eval_times = c(5, 15, 25, 15)  # duplicates & unordered
 mat_interp(x, times, eval_times, constant = TRUE, type = "surv")
