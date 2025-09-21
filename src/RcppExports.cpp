@@ -37,6 +37,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_vec_interp
+NumericVector c_vec_interp(const NumericVector& x, const NumericVector& times, const NumericVector& eval_times, bool constant, const std::string& type);
+RcppExport SEXP _survdistr_c_vec_interp(SEXP xSEXP, SEXP timesSEXP, SEXP eval_timesSEXP, SEXP constantSEXP, SEXP typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type times(timesSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type eval_times(eval_timesSEXP);
+    Rcpp::traits::input_parameter< bool >::type constant(constantSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type type(typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_vec_interp(x, times, eval_times, constant, type));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_wcumsum_mat
 NumericMatrix rcpp_wcumsum_mat(const NumericMatrix& x, const NumericVector& times);
 RcppExport SEXP _survdistr_rcpp_wcumsum_mat(SEXP xSEXP, SEXP timesSEXP) {
@@ -66,6 +81,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_survdistr_c_assert_prob_matrix", (DL_FUNC) &_survdistr_c_assert_prob_matrix, 2},
     {"_survdistr_c_mat_interp", (DL_FUNC) &_survdistr_c_mat_interp, 5},
+    {"_survdistr_c_vec_interp", (DL_FUNC) &_survdistr_c_vec_interp, 5},
     {"_survdistr_rcpp_wcumsum_mat", (DL_FUNC) &_survdistr_rcpp_wcumsum_mat, 2},
     {"_survdistr_rcpp_wcumsum_mat_interp", (DL_FUNC) &_survdistr_rcpp_wcumsum_mat_interp, 3},
     {NULL, NULL, 0}
