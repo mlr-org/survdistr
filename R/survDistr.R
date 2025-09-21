@@ -11,6 +11,7 @@
 #' **rows represent observations and columns represent time points**.
 #'
 #' @template param_times
+#' @template param_add_times
 #' @template param_eps
 #' @templateVar eps 1e-6
 #'
@@ -20,33 +21,33 @@
 #' the interpolation type needed for the
 #' public methods is stored in the `$interp_meth` slot.
 #'
-#' During construction, the functions [assert_surv_matrix()] or [assert_hazard_matrix()]
-#' are used to validate the input data matrix according to the given `data_type`.
+#' During construction, the function [assert_prop_matrix()] is used to validate
+#' the input data matrix according to the given `data_type`.
 #'
 #' @examples
 #' # generate survival matrix
-#' x = matrix(data = c(1,0.6,0.4,0.8,0.8,0.7), nrow = 2,
-#'            ncol = 3, byrow = TRUE)
-#' colnames(x) = c(12, 34, 42)
-#' x = survDistr$new(x)
+#' mat = matrix(data = c(1,0.6,0.4,0.8,0.8,0.7), nrow = 2,
+#'              ncol = 3, byrow = TRUE)
+#' times = c(12, 34, 42)
+#' x = survDistr$new(mat, times)
 #' x
 #'
 #' # stored survival matrix
-#' x$data
+#' x$data()
 #'
-#' # type of interpolation to use in methods
+#' # interpolation method
 #' x$interp_meth
 #'
 #' # time points
 #' x$times
 #'
 #' # S(t) at given time points (constant interpolation)
-#' x$survival(times = c(10, 30, 42, 45))
+#' x$survival(times = c(10, 30, 42, 50))
 #' # same but with linear interpolation
 #' x$interp_meth = "linear_surv"
-#' x$survival(times = c(10, 30, 42, 45))
+#' x$survival(times = c(10, 30, 42, 50))
 #' # time points can be unordered and duplicated
-#' x$survival(times = c(10,30,10,50))
+#' x$survival(times = c(10, 30, 10, 50))
 #'
 #' # Cumulative hazard
 #' x$cumhazard()
@@ -83,7 +84,7 @@ survDistr = R6Class(
       assert_choice(data_type, c("surv", "haz"))
 
       if (data_type == "surv") {
-        times = assert_surv_matrix(x, times)
+        times = assert_prob_matrix(x, times, type = "surv")
       } else {
         stop("Input hazard matrix not yet supported.")
       }
@@ -131,15 +132,13 @@ survDistr = R6Class(
 
     #' @description
     #' Return the stored data matrix.
-    #' @param add_times (`logical(1)`)\cr
-    #' If `TRUE`, add the time points as column names.
     #' @return (`matrix`)
-    data = function(add_times = FALSE) {
+    data = function(add_times = TRUE) {
       assert_flag(add_times)
 
       mat = private$.mat
       if (add_times) {
-        colnames(mat) = self$times
+        colnames(mat) = as.character(self$times)
       }
 
       mat
@@ -150,14 +149,14 @@ survDistr = R6Class(
     #' Uses [mat_interp()].
     #'
     #' @return a `matrix` of survival probabilities
-    survival = function(times = NULL) {
+    survival = function(times = NULL, add_times = TRUE) {
       mat_interp(
         x = private$.mat,
         times = self$times,
         eval_times = times,
         constant = self$interp_meth == "const_surv",
         type = "surv",
-        add_times = TRUE,
+        add_times = add_times,
         check = FALSE # input `x` is already checked in initialize()
       )
     },
@@ -168,14 +167,14 @@ survDistr = R6Class(
     #' Uses [mat_interp()].
     #'
     #' @return a cdf `matrix`.
-    cdf = function(times = NULL) {
+    cdf = function(times = NULL, add_times = TRUE) {
       mat_interp(
         x = 1 - private$.mat, # convert survival => CDF
         times = self$times,
         eval_times = times,
         constant = self$interp_meth == "const_surv",
         type = "cdf",
-        add_times = TRUE,
+        add_times = add_times,
         check = FALSE # input `x` is already checked in initialize()
       )
     },
@@ -185,8 +184,8 @@ survDistr = R6Class(
     #' \eqn{H(t) = -log(S(t))}.
     #'
     #' @return a `matrix` of cumulative hazards.
-    cumhazard = function(times = NULL, eps = 1e-6) {
-      surv_mat = self$survival(times = times)
+    cumhazard = function(times = NULL, add_times = TRUE, eps = 1e-6) {
+      surv_mat = self$survival(times = times, add_times = add_times)
       surv_mat[surv_mat == 0] = eps
       -log(surv_mat)
     },
