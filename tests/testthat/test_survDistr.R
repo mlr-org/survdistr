@@ -5,7 +5,7 @@
 # Empty times, new_times, or x.
 # Check the behavior for both constant and linear interpolation.
 set.seed(42)
-x = gen_surv_mat(nrows = 2, ncols = 3)
+x = gen_mat(nrows = 2, ncols = 3, type = "surv")
 times = c(12, 34, 42)
 obj = survDistr$new(x, times)
 
@@ -13,7 +13,7 @@ test_that("constructor", {
   # Valid input
   checkmate::expect_r6(obj, "survDistr")
   expect_equal(obj$data_type, "surv")
-  expect_equal(obj$data(), x)
+  expect_equal(obj$data(add_times = FALSE), x)
   expect_equal(obj$times, c(12, 34, 42))
   expect_equal(obj$interp_meth, "const_surv")
 
@@ -37,9 +37,9 @@ test_that("constant survival", {
   expect_equal(res[, 1], obj$data()[, 3]) # S(t > t_max) = S(t_max)
 
   # Interpolation case: requested time points are a bit after the original ones we have
-  res = obj$survival(times = c(13, 38, 45))
-  expect_matrix(res, nrows = 2, ncols = 3, col.names = "named")
-  expect_equal(unname(res), obj$data()) # equal due to left-continuous interpolation
+  res = obj$survival(times = c(13, 38, 45), add_times = FALSE)
+  expect_matrix(res, nrows = 2, ncols = 3, col.names = "unnamed")
+  expect_equal(res, obj$data(add_times = FALSE)) # equal due to left-continuous interpolation
 
   # Case: Empty `new_times`
   res = obj$survival(times = NULL)
@@ -47,6 +47,7 @@ test_that("constant survival", {
 })
 
 test_that("linear survival", {
+  # can 'hack' the interpolation method
   obj$interp_meth = "linear_surv"
 
   # Extrapolation case 1: requested time before earliest time
