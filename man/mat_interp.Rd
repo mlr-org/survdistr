@@ -37,8 +37,8 @@ One of \code{"surv"}, \code{"cdf"}, or \code{"cif"}, indicating the data type of
 If \code{TRUE}, column names are set to the relevant time points.}
 
 \item{check}{(\code{logical(1)})\cr
-If \code{TRUE}, run input matrix validation via \code{\link[=assert_surv_matrix]{assert_surv_matrix()}};
-set \code{FALSE} to skip checks (NOT recommended for external use).}
+If \code{TRUE}, run input matrix validation via \code{\link[=assert_prob_matrix]{assert_prob_matrix()}};
+set to \code{FALSE} to skip checks (NOT recommended for external use).}
 }
 \value{
 A numeric matrix with the same number of rows as \code{x} and number of

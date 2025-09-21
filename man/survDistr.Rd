@@ -18,7 +18,7 @@ is stored internally and accessed by the \verb{$data} field.
 the interpolation type needed for the
 public methods is stored in the \verb{$interp_meth} slot.
 
-During construction, the function \code{\link[=assert_prop_matrix]{assert_prop_matrix()}} is used to validate
+During construction, the function \code{\link[=assert_prob_matrix]{assert_prob_matrix()}} is used to validate
 the input data matrix according to the given \code{data_type}.
 }
 \examples{
