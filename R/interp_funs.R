@@ -20,8 +20,8 @@
 #'  One of `"surv"`, `"cdf"`, or `"cif"`, indicating the data type of the input matrix.
 #' @template param_add_times
 #' @param check (`logical(1)`)\cr
-#'  If `TRUE`, run input matrix validation via [assert_surv_matrix()];
-#'  set `FALSE` to skip checks (NOT recommended for external use).
+#'  If `TRUE`, run input matrix validation via [assert_prob_matrix()];
+#'  set to `FALSE` to skip checks (NOT recommended for external use).
 #'
 #' @return A numeric matrix with the same number of rows as `x` and number of
 #'   columns equal to `length(eval_times)`.
@@ -65,7 +65,7 @@ mat_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE, type 
   # unique + sorted eval_times for C++
   eval_times_unique = sort(unique(eval_times))
 
-  # call C++ interpolation once
+  # call C++ interpolation
   mat = c_mat_interp(x, times, eval_times_unique, constant, type)
 
   # map back to requested order (with duplicates) if necessary
