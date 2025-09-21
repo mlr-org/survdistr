@@ -1,8 +1,8 @@
-#' @title Assert survival matrix
+#' @title Assert probability matrix
 #'
 #' @description
-#' Asserts whether the given input is a valid (discrete) survival probability
-#' matrix using checks implemented in C++.
+#' Asserts whether the given input is a valid (discrete) survival/CDF/CIF probability
+#' matrix using the internal Rcpp function `c_assert_prob_matrix()`.
 #'
 #' The following checks are performed:
 #'
@@ -17,11 +17,14 @@
 #' 6. If the first time point is 0, then \eqn{S(t = 0) = 1}.
 #'
 #' @param x (`matrix()`)\cr
-#'   A survival probability matrix.
-#'   Rows correspond to observations and columns correspond to time points.
+#'  A probability matrix.
+#'  Rows correspond to observations and columns correspond to time points.
 #' @param times (`numeric()`|`NULL`)\cr
-#'   Optional numeric vector of time points corresponding to the columns of `x`.
-#'   If `NULL`, the time points are extracted from `colnames(x)`.
+#'  Optional numeric vector of time points corresponding to the columns of `x`.
+#'  If `numeric()`, these will be returned after the checks are performed.
+#'  If `NULL`, the time points are extracted from `colnames(x)`.
+#' @param type (`character(1)`)\cr
+#'  One of `"surv"`, `"cdf"`, `"cif"`.
 #'
 #' @return
 #' If the assertion fails, an error is thrown.
@@ -33,21 +36,21 @@
 #'            nrow = 2, ncol = 3, byrow = TRUE)
 #'
 #' # Explicitly provide time points
-#' assert_surv_matrix(x, times = c(12, 34, 42))
+#' assert_prob_matrix(x, times = c(12, 34, 42), type = "surv")
 #'
 #' # Or use column names as time points
 #' colnames(x) = c(12, 34, 42)
-#' assert_surv_matrix(x)
+#' assert_prob_matrix(x)
 #'
 #' @export
-assert_surv_matrix = function(x, times = NULL) {
+assert_prob_matrix = function(x, times = NULL, type = "surv") {
   assert_matrix(x, any.missing = FALSE, min.rows = 1, min.cols = 1)
+  type = assert_choice(type, c("surv", "cdf", "cif"))
 
-  # check times
+  # check or derive times
   if (is.null(times)) {
     if (is.null(colnames(x))) {
-      stop("Column names are required if 'times' is not provided. These will be
-           coerced to numerics so there might be loss of accuracy.")
+      stop("Column names are required if 'times' is not provided.")
     }
     times = assert_numeric(as.numeric(colnames(x)),
                            lower = 0, unique = TRUE, sorted = TRUE,
@@ -61,16 +64,25 @@ assert_surv_matrix = function(x, times = NULL) {
     }
   }
 
-  # S(t) checks
-  if (!rcpp_assert_surv_matrix(x)) {
-    stop("Survival probabilities must be (non-strictly) decreasing and between [0, 1].")
+  # Check values and monotonicity via Rcpp code
+  if (!c_assert_prob_matrix(x, type = type)) {
+    msg = switch(type,
+                 "surv" = "Survival probabilities must be non-increasing and in [0,1].",
+                 "cdf"  = "CDF probabilities must be non-decreasing and in [0,1].",
+                 "cif"  = "CIF probabilities must be non-decreasing and in [0,1].")
+    stop(msg)
   }
 
-  if (times[1] == 0 && !all(x[, 1] == 1)) {
-    stop("First time point is equal to zero and S(t = 0) != 1.")
+  if (times[1] == 0) {
+    if (type == "surv") {
+      if (!all(x[, 1] == 1)) stop("First time point is zero but S(t = 0) != 1.")
+    } else {
+      # type is either "cdf" or "cif"
+      if (!all(x[, 1] == 0)) stop("First time point is zero but CDF/CIF(t=0) != 0.")
+    }
   }
 
-  invisible(times) # return times
+  invisible(times)
 }
 
 #' @title Assert hazard matrix
@@ -96,7 +108,7 @@ assert_surv_matrix = function(x, times = NULL) {
 #'
 #' assert_hazard_matrix(x)
 #'
-#' @export
+#' @noRd
 assert_hazard_matrix = function(x) {
   assert_matrix(x, any.missing = FALSE, min.rows = 1, min.cols = 1, col.names = "named")
   assert_numeric(as.numeric(colnames(x)), unique = TRUE, sorted = TRUE,
