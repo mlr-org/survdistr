@@ -15,11 +15,11 @@
 #' 3. The number of time points equals the number of columns of `x`.
 #' 4. All values are valid probabilities, i.e. lie in \eqn{[0,1]}.
 #' 5. Each row is monotone:
-#'    - `"surv"`: non-increasing survival curves (\eqn{S(t_i) \ge S(t_{i+1})}).
-#'    - `"cdf"` / `"cif"`: non-decreasing functions.
+#'    - `"surv"`: non-increasing survival curves, i.e. \eqn{S(t_i) \ge S(t_{i+1})}.
+#'    - `"cdf"` / `"cif"`: non-decreasing functions, i.e. \eqn{F(t_i) \le F(t_{i+1})}.
 #' 6. Boundary condition at `t = 0`:
 #'    - `"surv"`: \eqn{S(0) = 1}.
-#'    - `"cdf"` / `"cif"`: value at 0 must equal 0.
+#'    - `"cdf"` / `"cif"`: \eqn{F(0) = 0}.
 #'
 #' @param x (`matrix()`)\cr
 #'  A probability matrix.
@@ -46,6 +46,9 @@
 #' # Or use column names as time points
 #' colnames(x) = c(12, 34, 42)
 #' assert_prob_matrix(x)
+#'
+#' # check CDF
+#' assert_prob_matrix(1 - x, type = "cdf")
 #'
 #' @export
 assert_prob_matrix = function(x, times = NULL, type = "surv") {

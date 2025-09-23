@@ -39,13 +39,13 @@ If not supplied, they are derived from \code{colnames(x)} (coerced to \code{nume
 \item All values are valid probabilities, i.e. lie in \eqn{[0,1]}.
 \item Each row is monotone:
 \itemize{
-\item \code{"surv"}: non-increasing survival curves (\eqn{S(t_i) \ge S(t_{i+1})}).
-\item \code{"cdf"} / \code{"cif"}: non-decreasing functions.
+\item \code{"surv"}: non-increasing survival curves, i.e. \eqn{S(t_i) \ge S(t_{i+1})}.
+\item \code{"cdf"} / \code{"cif"}: non-decreasing functions, i.e. \eqn{F(t_i) \le F(t_{i+1})}.
 }
 \item Boundary condition at \code{t = 0}:
 \itemize{
 \item \code{"surv"}: \eqn{S(0) = 1}.
-\item \code{"cdf"} / \code{"cif"}: value at 0 must equal 0.
+\item \code{"cdf"} / \code{"cif"}: \eqn{F(0) = 0}.
 }
 }
 }
@@ -60,5 +60,8 @@ assert_prob_matrix(x, times = c(12, 34, 42), type = "surv")
 # Or use column names as time points
 colnames(x) = c(12, 34, 42)
 assert_prob_matrix(x)
+
+# check CDF
+assert_prob_matrix(1 - x, type = "cdf")
 
 }
