@@ -14,36 +14,37 @@ The main prediction data type can be a survival or a hazard matrix, where
 }
 \details{
 The input matrix (survival probabilities \eqn{S(t)} or hazard \eqn{h(t)})
-is stored in the \verb{$data} slot, while the interpolation type needed for the
+is stored internally and accessed by the \verb{$data} field.
+the interpolation type needed for the
 public methods is stored in the \verb{$interp_meth} slot.
 
-During construction, the functions \code{\link[=assert_surv_matrix]{assert_surv_matrix()}} or \code{\link[=assert_hazard_matrix]{assert_hazard_matrix()}}
-are used to validate the input data matrix according to the given \code{data_type}.
+During construction, the function \code{\link[=assert_prob_matrix]{assert_prob_matrix()}} is used to validate
+the input data matrix according to the given \code{data_type}.
 }
 \examples{
 # generate survival matrix
-x = matrix(data = c(1,0.6,0.4,0.8,0.8,0.7), nrow = 2,
-           ncol = 3, byrow = TRUE)
-colnames(x) = c(12, 34, 42)
-x = survDistr$new(x)
+mat = matrix(data = c(1,0.6,0.4,0.8,0.8,0.7), nrow = 2,
+             ncol = 3, byrow = TRUE)
+times = c(12, 34, 42)
+x = survDistr$new(mat, times)
 x
 
 # stored survival matrix
-x$data
+x$data()
 
-# type of interpolation to use in methods
+# interpolation method
 x$interp_meth
 
 # time points
 x$times
 
 # S(t) at given time points (constant interpolation)
-x$survival(times = c(10, 30, 42, 45))
+x$survival(times = c(10, 30, 42, 50))
 # same but with linear interpolation
 x$interp_meth = "linear_surv"
-x$survival(times = c(10, 30, 42, 45))
+x$survival(times = c(10, 30, 42, 50))
 # time points can be unordered and duplicated
-x$survival(times = c(10,30,10,50))
+x$survival(times = c(10, 30, 10, 50))
 
 # Cumulative hazard
 x$cumhazard()
@@ -52,9 +53,6 @@ x$cumhazard()
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{data}}{(\code{matrix})\cr
-The matrix of survival probabilities or hazard values (rows=observations, columns=times).}
-
 \item{\code{times}}{(\code{numeric}])\cr
 Numeric vector of time points corresponding to columns of \code{data}.}
 
@@ -66,19 +64,12 @@ Interpolation method; one of \code{"const_surv"}, \code{"linear_surv"}, or \code
 }
 \if{html}{\out{</div>}}
 }
-\section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{get_data}}{(\code{matrix})\cr
-Returns the stored data matrix with column names restored to the time points.}
-}
-\if{html}{\out{</div>}}
-}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-survDistr-new}{\code{survDistr$new()}}
 \item \href{#method-survDistr-print}{\code{survDistr$print()}}
+\item \href{#method-survDistr-data}{\code{survDistr$data()}}
 \item \href{#method-survDistr-survival}{\code{survDistr$survival()}}
 \item \href{#method-survDistr-cdf}{\code{survDistr$cdf()}}
 \item \href{#method-survDistr-cumhazard}{\code{survDistr$cumhazard()}}
@@ -93,7 +84,7 @@ Returns the stored data matrix with column names restored to the time points.}
 \subsection{Method \code{new()}}{
 Creates a new instance of this \link[R6:R6Class]{R6} class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(x, data_type = "surv", interp_meth = "const_surv", ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(x, times = NULL, data_type = "surv", interp_meth = "const_surv")}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -102,7 +93,10 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
 \item{\code{x}}{(\code{matrix})\cr
 A numeric matrix of either survival probabilities (values between 0 and 1) or
 hazard values (non-negative values).
-Column names must correspond to time points.}
+Column names must correspond to time points if \code{times} is \code{NULL}.}
+
+\item{\code{times}}{(\code{numeric(1)})\cr Numeric vector of time points for matrix \code{x},
+must match the number of columns.}
 
 \item{\code{data_type}}{(\code{character(1)})\cr
 The type of input data.
@@ -113,8 +107,6 @@ Interpolation method to use when requesting the quantity of interest at time
 points different than the ones in the stored object (accessible via the \code{times} method).
 Currently supported interpolation methods include \code{"const_surv"} (default),
 \code{"linear_surv"} and \code{"const_haz"}. See details.}
-
-\item{\code{...}}{currently not used}
 }
 \if{html}{\out{</div>}}
 }
@@ -131,21 +123,46 @@ the number of observations and time points.
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-survDistr-data"></a>}}
+\if{latex}{\out{\hypertarget{method-survDistr-data}{}}}
+\subsection{Method \code{data()}}{
+Return the stored data matrix.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$data(add_times = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE} (default), column names are set to the relevant time points.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+(\code{matrix})
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-survDistr-survival"></a>}}
 \if{latex}{\out{\hypertarget{method-survDistr-survival}{}}}
 \subsection{Method \code{survival()}}{
 Computes survival probabilities \eqn{S(t)} at the specified time points.
+Uses \code{\link[=mat_interp]{mat_interp()}}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(times = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
-Numeric vector of non-negative time points at which to evaluate.
-Values do not need to be sorted or unique.
-If \code{NULL} (default), the object's stored time points are used.}
+New time points at which to interpolate.
+Values do not need to be sorted or unique, just non-negative.
+If \code{NULL}, the object's stored time points are used.}
+
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE} (default), column names are set to the relevant time points.}
 }
 \if{html}{\out{</div>}}
 }
@@ -159,17 +176,21 @@ a \code{matrix} of survival probabilities
 \subsection{Method \code{cdf()}}{
 Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the specified time points.
 \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
+Uses \code{\link[=mat_interp]{mat_interp()}}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$cdf(times = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$cdf(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
-Numeric vector of non-negative time points at which to evaluate.
-Values do not need to be sorted or unique.
-If \code{NULL} (default), the object's stored time points are used.}
+New time points at which to interpolate.
+Values do not need to be sorted or unique, just non-negative.
+If \code{NULL}, the object's stored time points are used.}
+
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE} (default), column names are set to the relevant time points.}
 }
 \if{html}{\out{</div>}}
 }
@@ -184,16 +205,19 @@ a cdf \code{matrix}.
 Computes the cumulative hazard at the specified time points as:
 \eqn{H(t) = -log(S(t))}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(times = NULL, eps = 1e-06)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(times = NULL, add_times = TRUE, eps = 1e-06)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
-Numeric vector of non-negative time points at which to evaluate.
-Values do not need to be sorted or unique.
-If \code{NULL} (default), the object's stored time points are used.}
+New time points at which to interpolate.
+Values do not need to be sorted or unique, just non-negative.
+If \code{NULL}, the object's stored time points are used.}
+
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE} (default), column names are set to the relevant time points.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors
@@ -219,9 +243,9 @@ Computes the hazard at the specified time points as: \eqn{h(t) = H(t) - H(t-1)}.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
-Numeric vector of non-negative time points at which to evaluate.
-Values do not need to be sorted or unique.
-If \code{NULL} (default), the object's stored time points are used.}
+New time points at which to interpolate.
+Values do not need to be sorted or unique, just non-negative.
+If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors
@@ -250,9 +274,9 @@ For constant survival interpolation, \eqn{f(t) = F(t) - F(t-1)}, where
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
-Numeric vector of non-negative time points at which to evaluate.
-Values do not need to be sorted or unique.
-If \code{NULL} (default), the object's stored time points are used.}
+New time points at which to interpolate.
+Values do not need to be sorted or unique, just non-negative.
+If \code{NULL}, the object's stored time points are used.}
 }
 \if{html}{\out{</div>}}
 }

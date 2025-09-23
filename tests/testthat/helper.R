@@ -1,8 +1,12 @@
 library(checkmate)
 
-gen_surv_mat = function(nrows, ncols) {
+gen_mat = function(nrows, ncols, type = "surv") {
   x = matrix(runif(nrows * ncols), nrow = nrows, ncol = ncols)
 
-  # Sort each row in decreasing order to make it a survival matrix
-  t(apply(x, 1, function(row) sort(row, decreasing = TRUE)))
+  # Sort each row in decreasing order => survival matrix
+  if (type == "surv") {
+    t(apply(x, 1, function(row) sort(row, decreasing = TRUE)))
+  } else { # CDF/CIF => increasing values
+    t(apply(x, 1, function(row) sort(row, decreasing = FALSE)))
+  }
 }
