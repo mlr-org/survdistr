@@ -1,6 +1,6 @@
 Package: survdistr
 Title: Survival Distribution Containers
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
     person("John", "Zobolas", , "bblodfon@gmail.com", role = c("aut", "cre"))
 Description: Efficient containers for storing and managing prediction
