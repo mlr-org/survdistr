@@ -1,20 +1,25 @@
 #' @title Assert probability matrix
 #'
 #' @description
-#' Asserts whether the given input is a valid (discrete) survival/CDF/CIF probability
-#' matrix using the internal Rcpp function `c_assert_prob_matrix()`.
+ #' Validates that the input is a proper probability matrix representing either
+#' a survival function (`"surv"`), cumulative distribution function (`"cdf"`),
+#' or cumulative incidence function (`"cif"`).
+#' Uses the internal Rcpp function `c_assert_prob_matrix()`.
 #'
-#' The following checks are performed:
+#' @details
+#' The following conditions must hold:
 #'
 #' 1. The input `x` is a numeric matrix with no missing values.
 #' 2. Time points (`times`) are numeric, non-negative, unique, and sorted.
-#'    If not supplied, they are derived from the column names of `x`
-#'    (coerced to numeric, possibly with loss of accuracy).
-#' 3. The number of time points matches the number of columns of `x`.
-#' 4. All values are valid probabilities, i.e. \eqn{S(t) \in [0,1]}.
-#' 5. Per row (observation-wise), the survival probabilities decrease
-#'    non-strictly, i.e. \eqn{S(t_i) \ge S(t_{i+1})}.
-#' 6. If the first time point is 0, then \eqn{S(t = 0) = 1}.
+#'    If not supplied, they are derived from `colnames(x)` (coerced to `numeric`).
+#' 3. The number of time points equals the number of columns of `x`.
+#' 4. All values are valid probabilities, i.e. lie in \eqn{[0,1]}.
+#' 5. Each row is monotone:
+#'    - `"surv"`: non-increasing survival curves (\eqn{S(t_i) \ge S(t_{i+1})}).
+#'    - `"cdf"` / `"cif"`: non-decreasing functions.
+#' 6. Boundary condition at `t = 0`:
+#'    - `"surv"`: \eqn{S(0) = 1}.
+#'    - `"cdf"` / `"cif"`: value at 0 must equal 0.
 #'
 #' @param x (`matrix()`)\cr
 #'  A probability matrix.
@@ -22,13 +27,13 @@
 #' @param times (`numeric()`|`NULL`)\cr
 #'  Optional numeric vector of time points corresponding to the columns of `x`.
 #'  If `numeric()`, these will be returned after the checks are performed.
-#'  If `NULL`, the time points are extracted from `colnames(x)`.
+#'  If `NULL` (default), the time points are extracted from `colnames(x)`.
 #' @param type (`character(1)`)\cr
-#'  One of `"surv"`, `"cdf"`, `"cif"`.
+#'  Type of probability function: `"surv"` (default), `"cdf"`, or `"cif"`.
 #'
 #' @return
-#' If the assertion fails, an error is thrown.
-#' Otherwise, the validated numeric vector of time points is returned invisibly.
+#' Invisibly returns the validated numeric vector of time points.
+#' Throws an error if validation fails.
 #'
 #' @examples
 #' x = matrix(data = c(1, 0.6, 0.4,
@@ -67,19 +72,19 @@ assert_prob_matrix = function(x, times = NULL, type = "surv") {
   # Check values and monotonicity via Rcpp code
   if (!c_assert_prob_matrix(x, type = type)) {
     msg = switch(type,
-                 "surv" = "Survival probabilities must be non-increasing and in [0,1].",
-                 "cdf"  = "CDF probabilities must be non-decreasing and in [0,1].",
-                 "cif"  = "CIF probabilities must be non-decreasing and in [0,1].")
+      "surv" = "Survival probabilities must be non-increasing and in [0,1].",
+      "cdf"  = "CDF probabilities must be non-decreasing and in [0,1].",
+      "cif"  = "CIF probabilities must be non-decreasing and in [0,1].")
     stop(msg)
   }
 
+  # boundary at t = 0
   if (times[1] == 0) {
-    if (type == "surv") {
-      if (!all(x[, 1] == 1)) stop("S(0) must equal 1.")
-    } else {
-      # type is either "cdf" or "cif"
-      if (!all(x[, 1] == 0)) stop("CDF/CIF(0) must equal 0.")
-    }
+    switch(type,
+      "surv" = if (!all(x[, 1] == 1)) stop("At t = 0, survival S(0) must equal 1."),
+      "cdf"  = if (!all(x[, 1] == 0)) stop("At t = 0, CDF(0) must equal 0."),
+      "cif"  = if (!all(x[, 1] == 0)) stop("At t = 0, CIF(0) must equal 0.")
+    )
   }
 
   invisible(times)

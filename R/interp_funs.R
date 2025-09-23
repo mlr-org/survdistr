@@ -9,19 +9,11 @@
 #'  and columns as time points.
 #' @param times (`numeric()`|`NULL`)\cr
 #'  Original time points corresponding to columns of `x`.
-#' @param eval_times (`numeric()`|`NULL`)\cr
-#'  New time points at which to interpolate.
-#'  Values do not need to be sorted or unique, just non-negative.
-#'  If `NULL`, `x` is returned unchanged.
-#' @param constant (`logical(1)`)\cr
-#'  If `TRUE`, use piecewise-constant (left-continuous) interpolation.
-#'  If `FALSE`, use piecewise-linear interpolation.
-#' @param type (`character(1)`)\cr
-#'  One of `"surv"`, `"cdf"`, or `"cif"`, indicating the data type of the input matrix.
+#' @template param_eval_times
+#' @template param_constant
+#' @template param_type
 #' @template param_add_times
-#' @param check (`logical(1)`)\cr
-#'  If `TRUE`, run input matrix validation via [assert_prob_matrix()];
-#'  set to `FALSE` to skip checks (NOT recommended for external use).
+#' @template param_check
 #'
 #' @return A numeric matrix with the same number of rows as `x` and number of
 #'   columns equal to `length(eval_times)`.
@@ -31,7 +23,7 @@
 #'              1, 0.7, 0.4),
 #'            nrow = 2, byrow = TRUE)
 #' times = c(0, 10, 20)
-#' eval_times = c(5, 15, 25, 15)  # duplicates & unordered
+#' eval_times = c(5, 15, 25, 15) # duplicates & unordered
 #' mat_interp(x, times, eval_times, constant = TRUE, type = "surv")
 #' @export
 mat_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE, type = "surv",
@@ -94,18 +86,12 @@ mat_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE, type 
 #' @param times (`numeric()`|`NULL`)\cr
 #'   Original time points corresponding to `x`.
 #'   If `NULL`, extracted from `names(x)`.
-#' @param eval_times (`numeric()`|`NULL`)\cr
-#'   New time points at which to interpolate.
-#'   Values do not need to be sorted or unique, just non-negative.
-#'   If `NULL`, `x` is returned unchanged.
-#' @param constant (`logical(1)`)\cr
-#'   If `TRUE`, use piecewise-constant (left-continuous) interpolation.
-#'   If `FALSE`, use piecewise-linear interpolation.
-#' @param type (`character(1)`)\cr
-#'   One of `"surv"`, `"cdf"`, or `"cif"`, indicating the data type of the input vector.
+#' @template param_eval_times
+#' @template param_constant
+#' @template param_type
 #' @template param_add_times
 #' @param check (`logical(1)`)\cr
-#'   If `TRUE`, perform simple validation (range, monotonicity, and bounds).
+#'   If `TRUE` (default), perform simple validation (range, monotonicity, and bounds).
 #'   Set to `FALSE` to skip checks (NOT recommended for external use).
 #'
 #' @return A numeric vector of length `length(eval_times)` with interpolated values.

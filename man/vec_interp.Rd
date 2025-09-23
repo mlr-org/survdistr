@@ -29,25 +29,27 @@ Values do not need to be sorted or unique, just non-negative.
 If \code{NULL}, \code{x} is returned unchanged.}
 
 \item{constant}{(\code{logical(1)})\cr
-If \code{TRUE}, use piecewise-constant (left-continuous) interpolation.
+If \code{TRUE} (default), use piecewise-constant (left-continuous) interpolation.
 If \code{FALSE}, use piecewise-linear interpolation.}
 
 \item{type}{(\code{character(1)})\cr
-One of \code{"surv"}, \code{"cdf"}, or \code{"cif"}, indicating the data type of the input vector.}
+One of \code{"surv"} (default), \code{"cdf"}, or \code{"cif"}, indicating the input data type.}
 
 \item{add_times}{(\code{logical(1)})\cr
-If \code{TRUE}, column names are set to the relevant time points.}
+If \code{TRUE} (default), column names are set to the relevant time points.}
 
 \item{check}{(\code{logical(1)})\cr
-If \code{TRUE}, perform simple validation (range, monotonicity, and bounds).
+If \code{TRUE} (default), perform simple validation (range, monotonicity, and bounds).
 Set to \code{FALSE} to skip checks (NOT recommended for external use).}
 }
 \value{
 A numeric vector of length \code{length(eval_times)} with interpolated values.
 }
 \description{
-Lightweight wrapper for the Rcpp function \code{c_mat_interp()} that handles a single
-survival, cumulative distribution (CDF), or cumulative incidence (CIF) vector.
+Wrapper around the internal C++ interpolation function \code{c_vec_interp}.
+Performs input validation before calling the underlying C++ code.
+Can be used for survival, cumulative distribution (CDF), or cumulative
+incidence (CIF) curves (vectors).
 }
 \examples{
 surv_vec = c(1, 0.8, 0.6)

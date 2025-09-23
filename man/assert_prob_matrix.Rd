@@ -14,30 +14,39 @@ Rows correspond to observations and columns correspond to time points.}
 \item{times}{(\code{numeric()}|\code{NULL})\cr
 Optional numeric vector of time points corresponding to the columns of \code{x}.
 If \code{numeric()}, these will be returned after the checks are performed.
-If \code{NULL}, the time points are extracted from \code{colnames(x)}.}
+If \code{NULL} (default), the time points are extracted from \code{colnames(x)}.}
 
 \item{type}{(\code{character(1)})\cr
-One of \code{"surv"}, \code{"cdf"}, \code{"cif"}.}
+Type of probability function: \code{"surv"} (default), \code{"cdf"}, or \code{"cif"}.}
 }
 \value{
-If the assertion fails, an error is thrown.
-Otherwise, the validated numeric vector of time points is returned invisibly.
+Invisibly returns the validated numeric vector of time points.
+Throws an error if validation fails.
 }
 \description{
-Asserts whether the given input is a valid (discrete) survival/CDF/CIF probability
-matrix using the internal Rcpp function \code{c_assert_prob_matrix()}.
-
-The following checks are performed:
+Validates that the input is a proper probability matrix representing either
+a survival function (\code{"surv"}), cumulative distribution function (\code{"cdf"}),
+or cumulative incidence function (\code{"cif"}).
+Uses the internal Rcpp function \code{c_assert_prob_matrix()}.
+}
+\details{
+The following conditions must hold:
 \enumerate{
 \item The input \code{x} is a numeric matrix with no missing values.
 \item Time points (\code{times}) are numeric, non-negative, unique, and sorted.
-If not supplied, they are derived from the column names of \code{x}
-(coerced to numeric, possibly with loss of accuracy).
-\item The number of time points matches the number of columns of \code{x}.
-\item All values are valid probabilities, i.e. \eqn{S(t) \in [0,1]}.
-\item Per row (observation-wise), the survival probabilities decrease
-non-strictly, i.e. \eqn{S(t_i) \ge S(t_{i+1})}.
-\item If the first time point is 0, then \eqn{S(t = 0) = 1}.
+If not supplied, they are derived from \code{colnames(x)} (coerced to \code{numeric}).
+\item The number of time points equals the number of columns of \code{x}.
+\item All values are valid probabilities, i.e. lie in \eqn{[0,1]}.
+\item Each row is monotone:
+\itemize{
+\item \code{"surv"}: non-increasing survival curves (\eqn{S(t_i) \ge S(t_{i+1})}).
+\item \code{"cdf"} / \code{"cif"}: non-decreasing functions.
+}
+\item Boundary condition at \code{t = 0}:
+\itemize{
+\item \code{"surv"}: \eqn{S(0) = 1}.
+\item \code{"cdf"} / \code{"cif"}: value at 0 must equal 0.
+}
 }
 }
 \examples{

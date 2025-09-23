@@ -74,12 +74,11 @@ survDistr = R6Class(
     #'  A numeric matrix of either survival probabilities (values between 0 and 1) or
     #'  hazard values (non-negative values).
     #'  Column names must correspond to time points if `times` is `NULL`.
-    #' @template param_data_type
-    #' @template param_interp_meth
     #' @param times (`numeric(1)`)\cr Numeric vector of time points for matrix `x`,
     #'  must match the number of columns.
-    #' @param ... currently not used
-    initialize = function(x, times = NULL, data_type = "surv", interp_meth = "const_surv", ...) {
+    #' @template param_data_type
+    #' @template param_interp_meth
+    initialize = function(x, times = NULL, data_type = "surv", interp_meth = "const_surv") {
       # Validate input type
       assert_choice(data_type, c("surv", "haz"))
 

@@ -84,13 +84,7 @@ Interpolation method; one of \code{"const_surv"}, \code{"linear_surv"}, or \code
 \subsection{Method \code{new()}}{
 Creates a new instance of this \link[R6:R6Class]{R6} class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(
-  x,
-  times = NULL,
-  data_type = "surv",
-  interp_meth = "const_surv",
-  ...
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(x, times = NULL, data_type = "surv", interp_meth = "const_surv")}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -113,8 +107,6 @@ Interpolation method to use when requesting the quantity of interest at time
 points different than the ones in the stored object (accessible via the \code{times} method).
 Currently supported interpolation methods include \code{"const_surv"} (default),
 \code{"linear_surv"} and \code{"const_haz"}. See details.}
-
-\item{\code{...}}{currently not used}
 }
 \if{html}{\out{</div>}}
 }
@@ -143,7 +135,7 @@ Return the stored data matrix.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE}, column names are set to the relevant time points.}
+If \code{TRUE} (default), column names are set to the relevant time points.}
 }
 \if{html}{\out{</div>}}
 }
@@ -170,7 +162,7 @@ Values do not need to be sorted or unique, just non-negative.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE}, column names are set to the relevant time points.}
+If \code{TRUE} (default), column names are set to the relevant time points.}
 }
 \if{html}{\out{</div>}}
 }
@@ -198,7 +190,7 @@ Values do not need to be sorted or unique, just non-negative.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE}, column names are set to the relevant time points.}
+If \code{TRUE} (default), column names are set to the relevant time points.}
 }
 \if{html}{\out{</div>}}
 }
@@ -225,7 +217,7 @@ Values do not need to be sorted or unique, just non-negative.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE}, column names are set to the relevant time points.}
+If \code{TRUE} (default), column names are set to the relevant time points.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors
