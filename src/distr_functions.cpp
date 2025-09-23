@@ -56,14 +56,8 @@ NumericMatrix c_mat_interp(const NumericMatrix& x,
           double x1 = x(i, n_times - 2), x2 = x(i, n_times - 1);
           double val = x2 + (t_new - t2) * (x2 - x1) / (t2 - t1);
 
-          // Adjust bounds
-          if (type == "surv") {
-            // avoid S(t) < 0
-            mat(i, k) = std::max(0.0, val);
-          } else {
-            // avoid CDF(t) > 1 or CIF(t) > 1
-            mat(i, k) = std::min(1.0, val);
-          }
+          // Adjust bounds (avoid S(t) < 0 and CDF(t) > 1 or CIF(t) > 1)
+          mat(i, k) = (type == "surv") ? std::max(0.0, val) : std::min(1.0, val);
         }
         continue;
       }
