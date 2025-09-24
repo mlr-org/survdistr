@@ -19,11 +19,11 @@ vec_interp(
 Survival/CDF/CIF vector at given time points.
 Optionally named with the corresponding times.}
 
-\item{times}{(\code{numeric()}|\code{NULL})\cr
+\item{times}{(\code{numeric()} | \code{NULL})\cr
 Original time points corresponding to \code{x}.
 If \code{NULL}, extracted from \code{names(x)}.}
 
-\item{eval_times}{(\code{numeric()}|\code{NULL})\cr
+\item{eval_times}{(\code{numeric()} | \code{NULL})\cr
 New time points at which to interpolate.
 Values do not need to be sorted or unique, just non-negative.
 If \code{NULL}, \code{x} is returned unchanged.}
