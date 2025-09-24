@@ -18,7 +18,7 @@ mat_interp(
 \item{x}{(\code{matrix()})\cr Survival/CDF/CIF matrix with rows as observations
 and columns as time points.}
 
-\item{times}{(\code{numeric()}|\code{NULL})\cr
+\item{times}{(\code{numeric()} | \code{NULL})\cr
 Original time points corresponding to columns of \code{x}.}
 
 \item{eval_times}{(\code{numeric()}|\code{NULL})\cr

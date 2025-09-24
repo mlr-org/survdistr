@@ -7,7 +7,7 @@
 #'
 #' @param x (`matrix()`)\cr Survival/CDF/CIF matrix with rows as observations
 #'  and columns as time points.
-#' @param times (`numeric()`|`NULL`)\cr
+#' @param times (`numeric()` | `NULL`)\cr
 #'  Original time points corresponding to columns of `x`.
 #' @template param_eval_times
 #' @template param_constant
@@ -39,17 +39,15 @@ mat_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE, type 
   # Optional matrix check
   if (check) {
     times = assert_prob_matrix(x, times, type = type)
+  } else {
+    # at least derive and check the time points
+    times = extract_times(x, times)
   }
 
   # case: no interpolation requested
   if (is.null(eval_times)) {
     if (add_times && is.null(colnames(x))) {
-      # derive the times if possible
-      if (check ||
-          test_numeric(times, lower = 0, unique = TRUE, len = ncol(x),
-                       sorted = TRUE, any.missing = FALSE, null.ok = FALSE)) {
-        colnames(x) = as.character(times)
-      }
+      colnames(x) = as.character(times)
     }
     return(x)
   }
@@ -83,7 +81,7 @@ mat_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE, type 
 #' @param x (`numeric()`)\cr
 #'   Survival/CDF/CIF vector at given time points.
 #'   Optionally named with the corresponding times.
-#' @param times (`numeric()`|`NULL`)\cr
+#' @param times (`numeric()` | `NULL`)\cr
 #'   Original time points corresponding to `x`.
 #'   If `NULL`, extracted from `names(x)`.
 #' @template param_eval_times

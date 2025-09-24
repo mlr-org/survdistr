@@ -1,3 +1,41 @@
+#' Extract time points from a probability matrix
+#'
+#' Internal helper to consistently obtain the time points associated with
+#' a survival / CDF / CIF matrix. If `times` is `NULL`, the function derives
+#' them from the column names of `x`. If `times` is supplied, it validates
+#' against the matrix dimensions. In either case, the time points must be
+#' non-negative, unique and increasing.
+#'
+#' @param x (`matrix()`)\cr
+#'  Probability matrix with rows = observations, columns = time points.
+#' @param times (`numeric()` | `NULL`)\cr
+#'  Optional vector of time points corresponding to column of `x`.
+#'
+#' @return A validated numeric vector of time points.
+#'
+#' @noRd
+#' @keywords internal
+extract_times = function(x, times = NULL) {
+  if (is.null(times)) {
+    if (is.null(colnames(x))) {
+      stop("Column names are required if 'times' is not provided.")
+    }
+    times = assert_numeric(
+      as.numeric(colnames(x)),
+      lower = 0, unique = TRUE, sorted = TRUE, any.missing = FALSE
+    )
+  } else {
+    times = assert_numeric(
+      times,
+      lower = 0, unique = TRUE, sorted = TRUE, any.missing = FALSE, null.ok = FALSE
+    )
+    if (ncol(x) != length(times)) {
+      stop("Number of columns in 'x' must match length of provided 'times'.")
+    }
+  }
+  times
+}
+
 #' Row-wise first differences of a matrix
 #'
 #' If `x` is a matrix with monotonically non-decreasing values in each row

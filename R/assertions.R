@@ -55,22 +55,8 @@ assert_prob_matrix = function(x, times = NULL, type = "surv") {
   assert_matrix(x, any.missing = FALSE, min.rows = 1, min.cols = 1)
   type = assert_choice(type, c("surv", "cdf", "cif"))
 
-  # check or derive times
-  if (is.null(times)) {
-    if (is.null(colnames(x))) {
-      stop("Column names are required if 'times' is not provided.")
-    }
-    times = assert_numeric(as.numeric(colnames(x)),
-                           lower = 0, unique = TRUE, sorted = TRUE,
-                           any.missing = FALSE)
-  } else {
-    times = assert_numeric(times,
-                           lower = 0, unique = TRUE, sorted = TRUE,
-                           any.missing = FALSE, null.ok = FALSE)
-    if (ncol(x) != length(times)) {
-      stop("Number of columns in 'x' must match length of provided 'times'.")
-    }
-  }
+  # extract and check times
+  times = extract_times(x, times)
 
   # Check values and monotonicity via Rcpp code
   if (!c_assert_prob_matrix(x, type = type)) {
