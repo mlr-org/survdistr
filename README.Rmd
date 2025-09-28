@@ -9,8 +9,7 @@ This package is experimental and not yet intended for general use.
 APIs may change without notice, and functionality is incomplete.  
 Please use only for testing and development purposes.
 
-Survival distribution containers for efficient storage, management,  
-and evaluation of survival model predictions.
+Survival distribution containers for efficient storage, management, and evaluation of survival model predictions.
 
 <!-- badges: start -->
 [![r-cmd-check](https://github.com/mlr-org/survdistr/actions/workflows/r-cmd-check.yml/badge.svg)](https://github.com/mlr-org/mlr3survival/actions/workflows/r-cmd-check.yml)
@@ -27,3 +26,52 @@ pak::pak("mlr-org/survdistr")
 ```
 
 ## Example
+
+Linear interpolation of a survival matrix using the `survDistr` R6 class:
+```{r}
+library(survdistr)
+
+# generate survival matrix
+mat = matrix(data = c(1,0.6,0.4,0.8,0.8,0.7), nrow = 2,
+             ncol = 3, byrow = TRUE)
+x = survDistr$new(x = mat, times = c(12, 34, 42), interp_meth = "linear_surv")
+x
+
+# stored survival matrix
+x$data()
+
+# S(t) at given time points (linear interpolation)
+x$survival(times = c(5, 30, 42, 50))
+
+# Cumulative hazard H(t)
+x$cumhazard(times = c(50, 5, 5, 42)) # times can be unordered or duplicated
+```
+
+Interpolation of a Kaplan-Meier survival curve using exported R function that calls C code:
+```{r}
+library(survival)
+library(data.table)
+
+fit = survfit(formula = Surv(time, status) ~ 1, data = veteran)
+tab = data.table(time = fit$time, surv = fit$surv)
+tab
+
+# constant S(t) interpolation
+vec_interp(
+  x = tab$surv, 
+  times = tab$time, 
+  eval_times = c(0, 3.5, 995, 1000),
+  constant = TRUE,
+  type = "surv"
+)
+
+# linear S(t) interpolation
+vec_interp(
+  x = tab$surv, 
+  times = tab$time, 
+  eval_times = c(0, 3.5, 995, 1000),
+  constant = FALSE,
+  type = "surv"
+)
+```
+
