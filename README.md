@@ -126,3 +126,9 @@ vec_interp(
 
     ##           0         3.5         995        1000 
     ## 1.000000000 0.967153285 0.004502255 0.000000000
+
+## Code of Conduct
+
+Please note that the survdistr project is released with a [Contributor
+Code of Conduct](https://survdistr.mlr-org.com/CODE_OF_CONDUCT.html). By
+contributing to this project, you agree to abide by its terms.
