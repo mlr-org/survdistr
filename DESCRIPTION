@@ -9,7 +9,7 @@ Description: Efficient containers for storing and managing prediction
     Provides fast methods to evaluate survival probabilities, hazards,
     probability densities, and related quantities at given time points,
     with support for multiple interpolation methods.
-License: GPL (>= 3)
+License: MIT + file LICENSE
 Imports: 
     checkmate,
     R6,
