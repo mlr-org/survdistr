@@ -7,8 +7,6 @@ on:
 
 name: test-coverage.yaml
 
-permissions: read-all
-
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
@@ -27,23 +25,24 @@ jobs:
           extra-packages: any::covr, any::xml2
           needs: coverage
 
-      - name: Test coverage
+      - name: Run test coverage
         run: |
           cov <- covr::package_coverage(
             quiet = FALSE,
             clean = FALSE,
-            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+            install_path = file.path(
+              normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"),
+              "package"
+            )
           )
-          covr::to_cobertura(cov)
+          covr::to_cobertura(cov, file = "cobertura.xml")
         shell: Rscript {0}
 
-      - uses: codecov/codecov-action@v5
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          # Fail if error if not on PR, or if on PR and token is given
-          fail_ci_if_error: ${{ github.event_name != 'pull_request' || secrets.CODECOV_TOKEN }}
-          file: ./cobertura.xml
-          plugin: noop
-          disable_search: true
+          files: cobertura.xml
+          fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: mlr-org/survdistr
 
@@ -54,7 +53,7 @@ jobs:
           find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
 
-      - name: Upload test results
+      - name: Upload test results on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
