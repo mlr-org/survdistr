@@ -1,0 +1,28 @@
+url: https://survdistr.mlr-org.com
+template:
+  bootstrap: 5
+  light-switch: true
+  math-rendering: mathjax
+
+toc:
+  depth: 3
+
+navbar:
+  structure:
+    right: [search, github, lightswitch]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/mlr-org/survdistr
+      aria-label: GitHub
+
+reference:
+- title: Survival Prediction Class
+  contents:
+    - survDistr
+- title: Interpolation Functions
+  contents:
+    - contains("interp")
+- title: Assertion Functions
+  contents:
+    - starts_with("assert")
