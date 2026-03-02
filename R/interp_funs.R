@@ -1,136 +1,94 @@
-#' Interpolate Survival / CDF / CIF Matrices
+#' Interpolate Survival Curves
 #'
-#' Wrapper around the internal C++ interpolation function \code{c_mat_interp}.
-#' Performs input validation before calling the underlying C++ code.
-#' Can be used for survival, cumulative distribution (CDF), or cumulative
-#' incidence (CIF) matrices.
+#' Interpolates survival curves (vector or matrix) at new time points using
+#' internal C interpolation functions.
+#' Output can be the survival, cumulative distribution, or density functions, as well as
+#' the hazard or cumulative hazard function.
+#' Input must always represent survival probabilities.
 #'
-#' @param x (`matrix()`)\cr Survival/CDF/CIF matrix with rows as observations
-#'  and columns as time points.
+#' @param x (`numeric()` | `matrix()`)\cr
+#'   Survival vector or matrix (rows = observations, columns = time points).
 #' @param times (`numeric()` | `NULL`)\cr
-#'  Original time points corresponding to columns of `x`.
+#'   Original time points. If `NULL`, extracted from names/colnames.
+#' @param method (`character(1)`)\cr
+#'   Interpolation method: `"const_surv"` or `"linear_surv"`.
+#' @param output (`character(1)`)\cr
+#'   Output type: `"surv"`, `"cdf"`, or `"cumhaz"`.
+#' @param add_times (`logical(1)`)\cr
+#'   If `TRUE`, attach `eval_times` as names/colnames.
+#'
 #' @template param_eval_times
-#' @template param_constant
-#' @template param_type
-#' @template param_add_times
 #' @template param_check
+#' @template param_eps
 #'
-#' @return A numeric matrix with the same number of rows as `x` and number of
-#'   columns equal to `length(eval_times)`.
-#'
+#' @return A numeric vector or matrix of interpolated values.
+#' 
 #' @examples
 #' x = matrix(c(1, 0.8, 0.6,
 #'              1, 0.7, 0.4),
 #'            nrow = 2, byrow = TRUE)
 #' times = c(0, 10, 20)
 #' eval_times = c(5, 15, 25)
-#' mat_interp(x, times, eval_times, constant = TRUE, type = "surv")
+#' interp(x, times, eval_times, output = "surv")
+#' interp(x, times, eval_times, method = "linear_surv", output = "surv")
 #' @export
-mat_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE, type = "surv",
-                      add_times = TRUE, check = TRUE) {
+interp = function(x,
+                  times = NULL,
+                  eval_times,
+                  method = "const_surv",
+                  output = "surv",
+                  add_times = TRUE,
+                  check = TRUE,
+                  eps = 1e-6) {
   # quick assertions
-  assert_flag(constant)
-  type = assert_choice(type, c("surv", "cdf", "cif"))
+  method = assert_choice(method, c("const_surv", "linear_surv"))
+  output = assert_choice(output, c("surv", "cdf", "cumhaz"))
   assert_flag(add_times)
   assert_flag(check)
-  eval_times = assert_numeric(eval_times, lower = 0, unique = TRUE, sorted = TRUE, 
-    any.missing = FALSE, null.ok = TRUE, min.len = 1)
+  eval_times = assert_numeric(
+    eval_times, lower = 0, unique = TRUE, sorted = TRUE,
+    null.ok = TRUE, any.missing = FALSE, min.len = 1
+  )
+  # access names/colnames in a generic way
+  is_mat = is.matrix(x)
+  name_attr = if (is_mat) colnames else names
 
-  # Optional matrix check
+  # optional S(t) check
   if (check) {
-    times = assert_prob_matrix(x, times, type = type)
+    times = assert_prob(x, times, type = "surv")
   } else {
-    # at least derive and check the time points
     times = extract_times(x, times)
-  }
-
-  # case: no interpolation requested
-  if (is.null(eval_times)) {
-    if (add_times && is.null(colnames(x))) {
-      colnames(x) = as.character(times)
-    }
-    return(x)
-  }
-
-  # call C++ interpolation
-  mat = c_mat_interp(x, times, eval_times, constant, type)
-
-  if (add_times) {
-    colnames(mat) = as.character(eval_times)
-  }
-
-  mat
-}
-
-#' Interpolate a Survival / CDF / CIF Vector
-#'
-#' Wrapper around the internal C++ interpolation function \code{c_vec_interp}.
-#' Performs input validation before calling the underlying C++ code.
-#' Can be used for survival, cumulative distribution (CDF), or cumulative
-#' incidence (CIF) curves (vectors).
-#'
-#' @param x (`numeric()`)\cr
-#'   Survival/CDF/CIF vector at given time points.
-#'   Optionally named with the corresponding times.
-#' @param times (`numeric()` | `NULL`)\cr
-#'   Original time points corresponding to `x`.
-#'   If `NULL`, extracted from `names(x)`.
-#' @template param_eval_times
-#' @template param_constant
-#' @template param_type
-#' @template param_add_times
-#' @param check (`logical(1)`)\cr
-#'   If `TRUE` (default), perform simple validation (range, monotonicity, and bounds).
-#'   Set to `FALSE` to skip checks (NOT recommended for external use).
-#'
-#' @return A numeric vector of length `length(eval_times)` with interpolated values.
-#'
-#' @examples
-#' surv_vec = c(1, 0.8, 0.6)
-#' names(surv_vec) = c(0, 10, 20)
-#' eval_times = c(5, 15, 25)
-#' vec_interp(surv_vec, eval_times = eval_times, type = "surv")
-#' @export
-vec_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE,
-                      type = "surv", add_times = TRUE, check = TRUE) {
-  # Quick assertions
-  assert_numeric(x, any.missing = FALSE, min.len = 1)
-  assert_flag(constant)
-  type = assert_choice(type, c("surv", "cdf", "cif"))
-  assert_flag(add_times)
-  assert_flag(check)
-  eval_times = assert_numeric(eval_times, lower = 0, unique = TRUE, sorted = TRUE, 
-    any.missing = FALSE, null.ok = TRUE, min.len = 1)
-
-  # get `times` from argument or names(x)
-  times = extract_times(x, times)
-
-  # Simple check (if requested)
-  if (check) {
-    if (any(x < 0 | x > 1)) stop("Values must be in [0,1].")
-    diffs = diff(x)
-    if (type == "surv" && any(diffs > 0)) stop("Survival must be non-increasing.")
-    if (type %in% c("cdf", "cif") && any(diffs < 0)) stop("CDF/CIF must be non-decreasing.")
-    if (times[1] == 0) {
-      if (type == "surv" && x[1] != 1) stop("S(0) must equal 1.")
-      if (type %in% c("cdf", "cif") && x[1] != 0) stop("CDF/CIF(0) must equal 0.")
-    }
   }
 
   # Case: no interpolation requested
   if (is.null(eval_times)) {
-    if (add_times && is.null(names(x))) {
-      names(x) = as.character(times)
+    if (add_times) {
+      if (is.null(name_attr(x))) {
+        name_attr(x) = as.character(times)
+      }
     }
     return(x)
   }
 
   # call C++ interpolation
-  vec = c_vec_interp(x, times, eval_times, constant, type)
-
-  if (add_times) {
-    names(vec) = as.character(eval_times)
+  if (is_mat) {
+    res = c_interp_surv_mat(x, times, eval_times, method)
+  } else {
+    res = c_interp_surv_vec(x, times, eval_times, method)
   }
 
-  vec
+  # transform output
+  if (output == "cdf") {
+    res = 1 - res
+  } else if (output == "cumhaz") {
+    # avoid -Inf for zero survival probabilities
+    res = -log(pmax(res, eps))
+  }
+
+   # attach time labels
+  if (add_times) {
+    name_attr(res) = as.character(eval_times)
+  }
+
+  res
 }

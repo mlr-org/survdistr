@@ -133,16 +133,16 @@ survDistr = R6Class(
 
     #' @description
     #' Computes survival probabilities \eqn{S(t)} at the specified time points.
-    #' Uses [mat_interp()].
+    #' Uses [interp()].
     #'
     #' @return a `matrix` of survival probabilities
     survival = function(times = NULL, add_times = TRUE) {
-      mat_interp(
+      interp(
         x = private$.mat,
         times = self$times,
         eval_times = times,
-        constant = self$interp_meth == "const_surv",
-        type = "surv",
+        method = self$interp_meth,
+        output = "surv",
         add_times = add_times,
         check = FALSE # input `x` is already checked in initialize()
       )
@@ -151,16 +151,16 @@ survDistr = R6Class(
     #' @description
     #' Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the specified time points.
     #' \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
-    #' Uses [mat_interp()].
+    #' Uses [interp()].
     #'
     #' @return a cdf `matrix`.
     cdf = function(times = NULL, add_times = TRUE) {
-      mat_interp(
-        x = 1 - private$.mat, # convert survival => CDF
+      interp(
+        x = private$.mat,
         times = self$times,
         eval_times = times,
-        constant = self$interp_meth == "const_surv",
-        type = "cdf",
+        method = self$interp_meth,
+        output = "cdf",
         add_times = add_times,
         check = FALSE # input `x` is already checked in initialize()
       )
