@@ -42,8 +42,6 @@
 #' # same but with linear interpolation
 #' x$interp_meth = "linear_surv"
 #' x$survival(times = c(10, 30, 42, 50))
-#' # time points can be unordered and duplicated
-#' x$survival(times = c(10, 30, 10, 50))
 #'
 #' # Cumulative hazard
 #' x$cumhazard()
