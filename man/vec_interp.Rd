@@ -25,7 +25,7 @@ If \code{NULL}, extracted from \code{names(x)}.}
 
 \item{eval_times}{(\code{numeric()} | \code{NULL})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, \code{x} is returned unchanged.}
 
 \item{constant}{(\code{logical(1)})\cr

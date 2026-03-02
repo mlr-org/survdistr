@@ -151,7 +151,7 @@ Uses \code{\link[=mat_interp]{mat_interp()}}.
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
@@ -179,7 +179,7 @@ Uses \code{\link[=mat_interp]{mat_interp()}}.
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
@@ -206,7 +206,7 @@ Computes the cumulative hazard at the specified time points as:
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
@@ -227,7 +227,7 @@ a \code{matrix} of cumulative hazards.
 \if{html}{\out{<a id="method-survDistr-hazard"></a>}}
 \if{latex}{\out{\hypertarget{method-survDistr-hazard}{}}}
 \subsection{Method \code{hazard()}}{
-Computes the hazard at the specified time points as: \eqn{h(t) = H(t) - H(t-1)}.
+Computes the hazard at the specified time points.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$hazard(times = NULL, eps = 1e-06)}\if{html}{\out{</div>}}
 }
@@ -237,7 +237,7 @@ Computes the hazard at the specified time points as: \eqn{h(t) = H(t) - H(t-1)}.
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
@@ -257,6 +257,7 @@ a hazard \code{matrix}.
 \subsection{Method \code{pdf()}}{
 Computes the probability density function \eqn{f(t)} at the specified time points.
 \eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
+
 For constant survival interpolation, \eqn{f(t) = F(t) - F(t-1)}, where
 \eqn{F(t)} is the cumulative distribution.
 \subsection{Usage}{
@@ -268,7 +269,7 @@ For constant survival interpolation, \eqn{f(t) = F(t) - F(t-1)}, where
 \describe{
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 }
 \if{html}{\out{</div>}}

@@ -23,7 +23,7 @@ Original time points corresponding to columns of \code{x}.}
 
 \item{eval_times}{(\code{numeric()} | \code{NULL})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, \code{x} is returned unchanged.}
 
 \item{constant}{(\code{logical(1)})\cr
@@ -55,6 +55,6 @@ x = matrix(c(1, 0.8, 0.6,
              1, 0.7, 0.4),
            nrow = 2, byrow = TRUE)
 times = c(0, 10, 20)
-eval_times = c(5, 15, 25, 15) # duplicates & unordered
+eval_times = c(5, 15, 25)
 mat_interp(x, times, eval_times, constant = TRUE, type = "surv")
 }
