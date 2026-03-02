@@ -49,9 +49,7 @@ interp = function(x,
     eval_times, lower = 0, unique = TRUE, sorted = TRUE,
     null.ok = TRUE, any.missing = FALSE, min.len = 1
   )
-  # access names/colnames in a generic way
   is_mat = is.matrix(x)
-  name_attr = if (is_mat) colnames else names
 
   # optional S(t) check
   if (check) {
@@ -63,9 +61,8 @@ interp = function(x,
   # Case: no interpolation requested
   if (is.null(eval_times)) {
     if (add_times) {
-      if (is.null(name_attr(x))) {
-        name_attr(x) = as.character(times)
-      }
+      if (is_mat && is.null(colnames(x))) colnames(x) = as.character(times)
+      if (!is_mat && is.null(names(x))) names(x) = as.character(times)
     }
     return(x)
   }
@@ -87,7 +84,11 @@ interp = function(x,
 
    # attach time labels
   if (add_times) {
-    name_attr(res) = as.character(eval_times)
+    if (is_mat) {
+      colnames(res) = as.character(eval_times)
+    } else {
+      names(res) = as.character(eval_times)
+    }
   }
 
   res
