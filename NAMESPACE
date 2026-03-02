@@ -3,6 +3,7 @@
 export(assert_prob_matrix)
 export(assert_prob_vec)
 export(interp)
+export(interp_cif)
 export(survDistr)
 importFrom(R6,R6Class)
 importFrom(Rcpp,sourceCpp)

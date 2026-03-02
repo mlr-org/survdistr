@@ -9,7 +9,7 @@
 #' @param x (`numeric()` | `matrix()`)\cr
 #'   Survival vector or matrix (rows = observations, columns = time points).
 #' @param times (`numeric()` | `NULL`)\cr
-#'   Original time points. If `NULL`, extracted from names/colnames.
+#'   Anchor time points. If `NULL`, extracted from names/colnames.
 #' @param method (`character(1)`)\cr
 #'   Interpolation method: `"const_surv"` or `"linear_surv"`.
 #' @param output (`character(1)`)\cr
@@ -34,7 +34,7 @@
 #' @export
 interp = function(x,
                   times = NULL,
-                  eval_times,
+                  eval_times = NULL,
                   method = "const_surv",
                   output = "surv",
                   add_times = TRUE,
@@ -88,6 +88,58 @@ interp = function(x,
    # attach time labels
   if (add_times) {
     name_attr(res) = as.character(eval_times)
+  }
+
+  res
+}
+
+#' Interpolate CIF matrix
+#'
+#' Interpolates cumulative incidence functions (corresponding to one competing event only)
+#' using constant-CIF interpolation.
+#'
+#' @param x (`matrix()`)\cr
+#'   CIF matrix (rows = observations, columns = time points).
+#' @param times (`numeric()` | `NULL`)\cr
+#'   Anchor time points. If `NULL`, extracted from `colnames(x)`.
+#' @param add_times (`logical(1)`)\cr
+#'   If `TRUE`, attach `eval_times` as colnames in the output matrix.
+#' @template param_eval_times
+#' @template param_check
+#'
+#' @return Interpolated CIF matrix.
+#' @export
+interp_cif = function(x, times = NULL, eval_times = NULL, add_times = TRUE, check = TRUE) {
+  # quick assertions
+  assert_flag(add_times)
+  assert_flag(check)
+  eval_times = assert_numeric(
+    eval_times, lower = 0, unique = TRUE, sorted = TRUE,
+    null.ok = TRUE, any.missing = FALSE, min.len = 1
+  )
+
+  # optional CIF(t) check
+  if (check) {
+    times = assert_prob_matrix(x, times, type = "cif")
+  } else {
+    times = extract_times(x, times)
+  }
+
+  # Case: no interpolation requested
+  if (is.null(eval_times)) {
+    if (add_times) {
+      if (is.null(colnames(x))) {
+        colnames(x) = as.character(times)
+      }
+    }
+    return(x)
+  }
+
+  # call C++ interpolation
+  res = c_interp_cif_mat(x, times, eval_times)
+
+  if (add_times) {
+    colnames(res) = as.character(eval_times)
   }
 
   res
