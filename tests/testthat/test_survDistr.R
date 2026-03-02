@@ -5,7 +5,7 @@
 # Mixed new_times values spanning the range of times.
 # Check the behavior for both constant and linear interpolation.
 set.seed(42)
-x = gen_mat(nrows = 2, ncols = 3, type = "surv")
+x = gen_random_mat(nrows = 2, ncols = 3, type = "surv")
 times = c(12, 34, 42)
 obj = survDistr$new(x, times)
 

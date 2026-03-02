@@ -6,10 +6,10 @@ test_that("assert_prob_matrix works", {
   set.seed(42)
   nrows = 100
   ncols = 500
-  x = gen_mat(nrows, ncols, "surv")
+  x = gen_random_mat(nrows, ncols, "surv")
 
   # times not specified and no column names
-  expect_error(assert_prob_matrix(x), "Column names are required")
+  expect_error(assert_prob_matrix(x), "Time points must be provided")
 
   # time points specified, but are decreasing
   colnames(x) = ncols:1

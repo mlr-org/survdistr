@@ -1,6 +1,6 @@
 library(checkmate)
 
-gen_mat = function(nrows, ncols, type = "surv") {
+gen_random_mat = function(nrows, ncols, type = "surv") {
   x = matrix(runif(nrows * ncols), nrow = nrows, ncol = ncols)
 
   # Sort each row in decreasing order => survival matrix
