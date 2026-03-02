@@ -23,7 +23,7 @@
 #'              1, 0.7, 0.4),
 #'            nrow = 2, byrow = TRUE)
 #' times = c(0, 10, 20)
-#' eval_times = c(5, 15, 25, 15) # duplicates & unordered
+#' eval_times = c(5, 15, 25)
 #' mat_interp(x, times, eval_times, constant = TRUE, type = "surv")
 #' @export
 mat_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE, type = "surv",
@@ -33,8 +33,8 @@ mat_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE, type 
   type = assert_choice(type, c("surv", "cdf", "cif"))
   assert_flag(add_times)
   assert_flag(check)
-  eval_times = assert_numeric(eval_times, lower = 0, any.missing = FALSE,
-                              null.ok = TRUE, min.len = 1)
+  eval_times = assert_numeric(eval_times, lower = 0, unique = TRUE, sorted = TRUE, 
+    any.missing = FALSE, null.ok = TRUE, min.len = 1)
 
   # Optional matrix check
   if (check) {
@@ -52,17 +52,8 @@ mat_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE, type 
     return(x)
   }
 
-  # unique + sorted eval_times for C++
-  eval_times_unique = sort(unique(eval_times))
-
   # call C++ interpolation
-  mat = c_mat_interp(x, times, eval_times_unique, constant, type)
-
-  # map back to requested order (with duplicates) if necessary
-  if (!identical(eval_times, eval_times_unique)) {
-    idx = match(eval_times, eval_times_unique)
-    mat = mat[, idx, drop = FALSE]
-  }
+  mat = c_mat_interp(x, times, eval_times, constant, type)
 
   if (add_times) {
     colnames(mat) = as.character(eval_times)
@@ -108,25 +99,11 @@ vec_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE,
   type = assert_choice(type, c("surv", "cdf", "cif"))
   assert_flag(add_times)
   assert_flag(check)
-  eval_times = assert_numeric(eval_times, lower = 0, any.missing = FALSE,
-                              null.ok = TRUE, min.len = 1)
+  eval_times = assert_numeric(eval_times, lower = 0, unique = TRUE, sorted = TRUE, 
+    any.missing = FALSE, null.ok = TRUE, min.len = 1)
 
   # get `times` from argument or names(x)
-  if (is.null(times)) {
-    if (is.null(names(x))) {
-      stop("If 'times' is NULL, names(x) must provide the time points.")
-    }
-    times = assert_numeric(as.numeric(names(x)),
-                           lower = 0, unique = TRUE, sorted = TRUE,
-                           any.missing = FALSE)
-  } else {
-    times = assert_numeric(times,
-                           lower = 0, unique = TRUE, sorted = TRUE,
-                           any.missing = FALSE, null.ok = FALSE)
-    if (length(x) != length(times)) {
-      stop("Length of 'x' must match length of 'times'.")
-    }
-  }
+  times = extract_times(x, times)
 
   # Simple check (if requested)
   if (check) {
@@ -148,17 +125,8 @@ vec_interp = function(x, times = NULL, eval_times = NULL, constant = TRUE,
     return(x)
   }
 
-  # Unique + sorted eval_times for C++
-  eval_times_unique = sort(unique(eval_times))
-
   # call C++ interpolation
-  vec = c_vec_interp(x, times, eval_times_unique, constant, type)
-
-  # Map back to requested eval_times
-  if (!identical(eval_times, eval_times_unique)) {
-    idx = match(eval_times, eval_times_unique)
-    vec = vec[idx]
-  }
+  vec = c_vec_interp(x, times, eval_times, constant, type)
 
   if (add_times) {
     names(vec) = as.character(eval_times)
