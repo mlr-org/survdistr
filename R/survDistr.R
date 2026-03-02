@@ -180,41 +180,23 @@ survDistr = R6Class(
     },
 
     #' @description
-    #' Computes the hazard at the specified time points as: \eqn{h(t) = H(t) - H(t-1)}.
+    #' Computes the hazard at the specified time points.
     #'
     #' @return a hazard `matrix`.
     hazard = function(times = NULL, eps = 1e-6) {
-      # if (is.null(times)) {
-      #   return(rowwise_diffs(self$cumhazard(eps = eps)))
-      # }
-
-      # utimes = sort(unique(times))
-      # haz = rowwise_diffs(self$cumhazard(times = utimes))
-
-      # indx = match(times, utimes)
-      # haz[, indx, drop = FALSE]
       stop("Hazard method not yet implemented.")
     },
 
     #' @description
     #' Computes the probability density function \eqn{f(t)} at the specified time points.
     #' \eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
+    #' 
     #' For constant survival interpolation, \eqn{f(t) = F(t) - F(t-1)}, where
     #' \eqn{F(t)} is the cumulative distribution.
     #'
     #' @return a pdf `matrix`.
     pdf = function(times = NULL) {
       stop("PDF method not yet implemented.")
-
-      # if (is.null(times)) {
-      #   return(rowwise_diffs(self$cdf()))
-      # }
-
-      # utimes = sort(unique(times))
-      # pdf_mat = rowwise_diffs(self$cdf(times = utimes))
-
-      # indx = match(times, utimes)
-      # pdf_mat[, indx, drop = FALSE]
     }
   ),
 
