@@ -126,7 +126,7 @@ Return the stored data matrix.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE} (default), column names are set to the relevant time points.}
+If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 }
 \if{html}{\out{</div>}}
 }
@@ -139,7 +139,7 @@ If \code{TRUE} (default), column names are set to the relevant time points.}
 \if{latex}{\out{\hypertarget{method-survDistr-survival}{}}}
 \subsection{Method \code{survival()}}{
 Computes survival probabilities \eqn{S(t)} at the specified time points.
-Uses \code{\link[=mat_interp]{mat_interp()}}.
+Uses \code{\link[=interp]{interp()}}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
@@ -153,7 +153,7 @@ Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE} (default), column names are set to the relevant time points.}
+If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 }
 \if{html}{\out{</div>}}
 }
@@ -167,7 +167,7 @@ a \code{matrix} of survival probabilities
 \subsection{Method \code{cdf()}}{
 Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the specified time points.
 \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
-Uses \code{\link[=mat_interp]{mat_interp()}}.
+Uses \code{\link[=interp]{interp()}}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$cdf(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
@@ -181,7 +181,7 @@ Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE} (default), column names are set to the relevant time points.}
+If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 }
 \if{html}{\out{</div>}}
 }
@@ -208,7 +208,7 @@ Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE} (default), column names are set to the relevant time points.}
+If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors
