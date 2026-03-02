@@ -7,7 +7,7 @@
 interp(
   x,
   times = NULL,
-  eval_times,
+  eval_times = NULL,
   method = "const_surv",
   output = "surv",
   add_times = TRUE,
@@ -20,7 +20,7 @@ interp(
 Survival vector or matrix (rows = observations, columns = time points).}
 
 \item{times}{(\code{numeric()} | \code{NULL})\cr
-Original time points. If \code{NULL}, extracted from names/colnames.}
+Anchor time points. If \code{NULL}, extracted from names/colnames.}
 
 \item{eval_times}{(\code{numeric()} | \code{NULL})\cr
 New time points at which to interpolate.
@@ -37,8 +37,7 @@ Output type: \code{"surv"}, \code{"cdf"}, or \code{"cumhaz"}.}
 If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 
 \item{check}{(\code{logical(1)})\cr
-If \code{TRUE}, run input matrix validation via \code{\link[=assert_prob_matrix]{assert_prob_matrix()}};
-set to \code{FALSE} to skip checks (NOT recommended for external use).}
+If \code{TRUE}, run input matrix validation checks. Set to \code{FALSE} to skip checks (NOT recommended for external use).;}
 
 \item{eps}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors

@@ -96,8 +96,7 @@ Currently supported interpolation methods include \code{"const_surv"} (default),
 \code{"linear_surv"} and \code{"const_haz"}. See details.}
 
 \item{\code{check}}{(\code{logical(1)})\cr
-If \code{TRUE}, run input matrix validation via \code{\link[=assert_prob_matrix]{assert_prob_matrix()}};
-set to \code{FALSE} to skip checks (NOT recommended for external use).}
+If \code{TRUE}, run input matrix validation checks. Set to \code{FALSE} to skip checks (NOT recommended for external use).;}
 }
 \if{html}{\out{</div>}}
 }
