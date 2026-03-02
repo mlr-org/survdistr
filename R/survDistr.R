@@ -19,6 +19,7 @@
 #' The input matrix (survival probabilities \eqn{S(t)} is stored internally and accessed by the `$data` field.
 #' The interpolation type needed for the public methods is stored in the `$interp_meth` slot.
 #' During construction, the function [assert_prob_matrix()] is used to validate the input data matrix if `check` is TRUE.
+#' Interpolation is performed using the [interp()] function.
 #'
 #' @examples
 #' # generate survival matrix
@@ -151,7 +152,6 @@ survDistr = R6Class(
     #' @description
     #' Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the specified time points.
     #' \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
-    #' Uses [interp()].
     #'
     #' @return a cdf `matrix`.
     cdf = function(times = NULL, add_times = TRUE) {
@@ -172,13 +172,20 @@ survDistr = R6Class(
     #'
     #' @return a `matrix` of cumulative hazards.
     cumhazard = function(times = NULL, add_times = TRUE, eps = 1e-6) {
-      surv_mat = self$survival(times = times, add_times = add_times)
-      surv_mat[surv_mat == 0] = eps
-      -log(surv_mat)
+     interp(
+        x = private$.mat,
+        times = self$times,
+        eval_times = times,
+        method = self$interp_meth,
+        output = "cumhaz",
+        add_times = add_times,
+        check = FALSE, # input `x` is already checked in initialize()
+        eps = eps
+      )
     },
 
     #' @description
-    #' Computes the hazard at the specified time points.
+    #' Computes the hazard \eqn{h(t)} at the specified time points.
     #'
     #' @return a hazard `matrix`.
     hazard = function(times = NULL, eps = 1e-6) {
@@ -188,9 +195,6 @@ survDistr = R6Class(
     #' @description
     #' Computes the probability density function \eqn{f(t)} at the specified time points.
     #' \eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
-    #' 
-    #' For constant survival interpolation, \eqn{f(t) = F(t) - F(t-1)}, where
-    #' \eqn{F(t)} is the cumulative distribution.
     #'
     #' @return a pdf `matrix`.
     pdf = function(times = NULL) {
