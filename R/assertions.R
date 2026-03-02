@@ -111,3 +111,5 @@ assert_hazard_matrix = function(x) {
 
   invisible(NULL)
 }
+#TODO: this can be extended to cumhazard matrices + density as well
+

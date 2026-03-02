@@ -12,7 +12,6 @@ obj = survDistr$new(x, times)
 test_that("constructor", {
   # Valid input
   checkmate::expect_r6(obj, "survDistr")
-  expect_equal(obj$data_type, "surv")
   expect_equal(obj$data(add_times = FALSE), x)
   expect_equal(obj$times, c(12, 34, 42))
   expect_equal(obj$interp_meth, "const_surv")

@@ -7,7 +7,7 @@
 #' This includes models such as Cox proportional hazards, random survival forests,
 #' and other classical or machine learning-based survival estimators.
 #'
-#' The main prediction data type can be a survival or a hazard matrix, where
+#' The main prediction data type is survival matrix, where
 #' **rows represent observations and columns represent time points**.
 #'
 #' @template param_times
@@ -16,13 +16,9 @@
 #' @templateVar eps 1e-6
 #'
 #' @details
-#' The input matrix (survival probabilities \eqn{S(t)} or hazard \eqn{h(t)})
-#' is stored internally and accessed by the `$data` field.
-#' the interpolation type needed for the
-#' public methods is stored in the `$interp_meth` slot.
-#'
-#' During construction, the function [assert_prob_matrix()] is used to validate
-#' the input data matrix according to the given `data_type`.
+#' The input matrix (survival probabilities \eqn{S(t)} is stored internally and accessed by the `$data` field.
+#' The interpolation type needed for the public methods is stored in the `$interp_meth` slot.
+#' During construction, the function [assert_prob_matrix()] is used to validate the input data matrix if `check` is TRUE.
 #'
 #' @examples
 #' # generate survival matrix
@@ -60,9 +56,10 @@ survDistr = R6Class(
     #' @field times (`numeric`])\cr
     #'  Numeric vector of time points corresponding to columns of `data`.
     times = NULL,
-    #' @field data_type (`character(1)`)\cr
-    #'  Either `"surv"` for survival or `"haz"` for hazard matrices.
-    data_type = NULL,
+    # TODO: we need a preprocessing option depending on the given `interp_method` to transform:
+    # 1) const_surv:  discrete f(t) or h(t) => S(t)
+    # 2) linear_surv: f(t) => S(t) (can be discrete or continuous density)
+    # 3) const_haz:   h(t) => S(t) (can be discrete or continuous hazards)
     #' @field interp_meth (`character(1)`)\cr
     #'  Interpolation method; one of `"const_surv"`, `"linear_surv"`, or `"const_haz"`.
     interp_meth = NULL,
@@ -76,16 +73,15 @@ survDistr = R6Class(
     #'  Column names must correspond to time points if `times` is `NULL`.
     #' @param times (`numeric(1)`)\cr Numeric vector of time points for matrix `x`,
     #'  must match the number of columns.
-    #' @template param_data_type
     #' @template param_interp_meth
-    initialize = function(x, times = NULL, data_type = "surv", interp_meth = "const_surv") {
-      # Validate input type
-      assert_choice(data_type, c("surv", "haz"))
+    #' @template param_check
+    initialize = function(x, times = NULL, interp_meth = "const_surv", check = TRUE) {
+      assert_flag(check)
 
-      if (data_type == "surv") {
+      if (isTRUE(check)) {
         times = assert_prob_matrix(x, times, type = "surv")
       } else {
-        stop("Input hazard matrix not yet supported.")
+        times = extract_times(x, times)
       }
 
       dimnames(x) = NULL # no need to keep these
@@ -93,18 +89,13 @@ survDistr = R6Class(
 
       # Validate interpolation method
       assert_choice(interp_meth, c("const_surv", "linear_surv", "const_haz"))
+      # TODO: remove when implemented
       if (interp_meth == "const_haz") {
         stop("Constant hazard interpolation not yet implemented.")
       }
 
-      # TODO: check is this is needed at all
-      if (data_type == "haz" && interp_meth == "linear_surv") {
-        stop("Hazard data and piece-wise linear survival interpolation is not supported.")
-      }
-
       # Fill in public fields
       self$times = times
-      self$data_type = data_type
       self$interp_meth = interp_meth
     },
 
@@ -115,16 +106,15 @@ survDistr = R6Class(
       nrows = nrow(private$.mat)
       ncols = ncol(private$.mat)
 
-      data_type = switch(self$data_type,
-                         "surv" = "survival",
-                         "haz" = "hazard")
-      cat("A [", nrows, " x ", ncols, "] ", data_type, " matrix\n", sep = "")
+      cat("A [", nrows, " x ", ncols, "] survival matrix\n", sep = "")
       cat("Number of observations: ", nrows, "\n", sep = "")
       cat("Number of time points: ", ncols, "\n", sep = "")
-      interp_meth = switch(self$interp_meth,
-                           "const_surv" = "Piece-wise Constant Survival",
-                           "linear_surv" = "Piece-wise Linear Survival",
-                           "const_haz" = "Piece-wise Constant Hazard")
+      interp_meth = switch(
+        self$interp_meth,
+        "const_surv"  = "Piece-wise Constant Survival",
+        "linear_surv" = "Piece-wise Linear Survival (Constant Density)",
+        "const_haz"   = "Piece-wise Constant Hazard (Exponential Survival)"
+      )
       cat("Interpolation method:", interp_meth, "\n")
       invisible(self)
     },
@@ -194,15 +184,16 @@ survDistr = R6Class(
     #'
     #' @return a hazard `matrix`.
     hazard = function(times = NULL, eps = 1e-6) {
-      if (is.null(times)) {
-        return(rowwise_diffs(self$cumhazard(eps = eps)))
-      }
+      # if (is.null(times)) {
+      #   return(rowwise_diffs(self$cumhazard(eps = eps)))
+      # }
 
-      utimes = sort(unique(times))
-      haz = rowwise_diffs(self$cumhazard(times = utimes))
+      # utimes = sort(unique(times))
+      # haz = rowwise_diffs(self$cumhazard(times = utimes))
 
-      indx = match(times, utimes)
-      haz[, indx, drop = FALSE]
+      # indx = match(times, utimes)
+      # haz[, indx, drop = FALSE]
+      stop("Hazard method not yet implemented.")
     },
 
     #' @description
@@ -213,19 +204,17 @@ survDistr = R6Class(
     #'
     #' @return a pdf `matrix`.
     pdf = function(times = NULL) {
-      if (self$interp_meth != "const_surv") {
-        stop("Only implemented for constant survival interpolation.")
-      }
+      stop("PDF method not yet implemented.")
 
-      if (is.null(times)) {
-        return(rowwise_diffs(self$cdf()))
-      }
+      # if (is.null(times)) {
+      #   return(rowwise_diffs(self$cdf()))
+      # }
 
-      utimes = sort(unique(times))
-      pdf_mat = rowwise_diffs(self$cdf(times = utimes))
+      # utimes = sort(unique(times))
+      # pdf_mat = rowwise_diffs(self$cdf(times = utimes))
 
-      indx = match(times, utimes)
-      pdf_mat[, indx, drop = FALSE]
+      # indx = match(times, utimes)
+      # pdf_mat[, indx, drop = FALSE]
     }
   ),
 
