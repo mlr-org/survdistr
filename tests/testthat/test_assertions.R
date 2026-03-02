@@ -24,6 +24,9 @@ test_that("assert_prob_matrix works", {
   times = 1:ncols
   expect_silent(assert_prob_matrix(x, times))
 
+  # assert_prob works for matrix input
+  expect_silent(assert_prob(x, times))
+
   # time points specified as colnames
   colnames(x) = times
   expect_silent(assert_prob_matrix(x))
@@ -34,4 +37,41 @@ test_that("assert_prob_matrix works", {
   # x is a survival matrix so this fails for CDF/CIF as well
   expect_error(assert_prob_matrix(x, type = "cdf"), "CDF probabilities must be")
   expect_error(assert_prob_matrix(x, type = "cif"), "CIF probabilities must be")
+})
+
+test_that("assert_prob_vec works", {
+  # no data.frame allowed
+  expect_error(assert_prob_vec(data.frame(1)), "Must be of type")
+
+  # generate a survival vector
+  set.seed(42)
+  n = 25
+  x = sort(runif(n), decreasing = TRUE)
+
+  # times not specified and no names
+  expect_error(assert_prob_vec(x), "Time points must be provided")
+
+  # time points specified, but are decreasing
+  names(x) = n:1
+  expect_error(assert_prob_vec(x), "Must be sorted")
+
+  # duplicate time points
+  names(x) = 1:n
+  names(x)[25] = 24
+  expect_error(assert_prob_vec(x), "Contains duplicated values")
+
+  # time points specified and numeric
+  times = 1:n
+  expect_silent(assert_prob_vec(x, times))
+
+  # assert_prob works for vector input
+  expect_silent(assert_prob(x, times))
+
+  # time points specified as names
+  names(x) = times
+  expect_silent(assert_prob_vec(x))
+
+  # S(t) >= S(t+1)
+  x[24] = x[23] + .01
+  expect_error(assert_prob_vec(x), "Survival probabilities must be")
 })
