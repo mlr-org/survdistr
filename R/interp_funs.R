@@ -71,7 +71,7 @@ interp = function(x,
   if (is_mat) {
     res = c_interp_surv_mat(x, times, eval_times, method)
   } else {
-    res = c_interp_surv_vec(x, times, eval_times, method)
+    res = c_interp_surv_mat(matrix(x, nrow = 1), times, eval_times, method)[1, ]
   }
 
   # transform output
@@ -96,8 +96,8 @@ interp = function(x,
 
 #' Interpolate CIF matrix
 #'
-#' Interpolates cumulative incidence functions (corresponding to one competing event only)
-#' using constant-CIF interpolation.
+#' Interpolates cumulative incidence (CIF) functions (corresponding to one competing event only)
+#' using left-continuous constant interpolation.
 #'
 #' @param x (`matrix()`)\cr
 #'   CIF matrix (rows = observations, columns = time points).
