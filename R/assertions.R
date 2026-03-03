@@ -165,33 +165,37 @@ assert_prob = function(x, times = NULL, type = "surv") {
   }
 }
 
-#' @title Assert Positive matrix
+#' @title Assert non‑negative matrix
 #'
-#' @description Asserts if the given input is a non-negative matrix.
+#' @description Asserts if the given input is a matrix with non‑negative entries.
 #' The following checks are performed:
 #'
-#' 1. All values are non-negative (i.e. \eqn{\ge 0}).
-#' 2. Column names correspond to time points and should therefore be coercable to
-#' `numeric` and increasing
+#' 1. All values are non‑negative (i.e. \eqn{\ge 0}).
+#' 2. Column names correspond to time points and must be coercible to
+#'    `numeric` and increasing.
 #'
 #' @param x (`matrix()`)\cr
-#' Input matrix (rows = observations, columns = time points).
+#'   Input matrix (rows = observations, columns = time points).
 #'
-#' @return if the assertion fails an error occurs, otherwise `NULL` is returned
-#' invisibly.
+#' @return If the assertion fails an error occurs, otherwise `NULL` is returned
+#'   invisibly.
 #'
 #' @examples
-#' x = matrix(data = c(0,0.2,0.1,0.5,0.05,0.7), nrow = 2, ncol = 3, byrow = TRUE)
+#' x = matrix(data = c(0, 0.2, 0.1, 0.5, 0.05, 0.7), nrow = 2, ncol = 3, byrow = TRUE)
 #' colnames(x) = c(12, 34, 42)
 #' x
-#'
-#' assert_pos_mat(x)
+#' assert_nonneg_mat(x)
 #'
 #' @noRd
-assert_pos_mat = function(x) {
-  assert_matrix(x, mode = "numeric", any.missing = FALSE, min.rows = 1, min.cols = 1, col.names = "named")
+assert_nonneg_mat = function(x) {
+  assert_matrix(x, mode = "numeric", any.missing = FALSE,
+                min.rows = 1, min.cols = 1, col.names = "named")
+  # Column names must be numeric and increasing
   assert_numeric(as.numeric(colnames(x)), unique = TRUE, sorted = TRUE,
                  any.missing = FALSE, null.ok = FALSE)
-  stopifnot(x >= 0)
+  # Non‑negativity check
+  if (any(x < 0)) {
+    stop("All entries must be non‑negative.")
+  }
   invisible(NULL)
 }
