@@ -32,7 +32,7 @@
 #'  Type of probability function: `"surv"` (default), `"cdf"`, or `"cif"`.
 #'
 #' @return
-#' Invisibly returns the validated numeric vector of time points.
+#' Invisibly returns the validated numeric time points.
 #' Throws an error if validation fails.
 #'
 #' @examples
@@ -95,7 +95,7 @@ assert_prob_matrix = function(x, times = NULL, type = "surv") {
 #' @param type (`character(1)`)\cr
 #'  Type of probability function: `"surv"` (default), `"cdf"`, or `"cif"`.
 #' 
-#' @return Invisibly returns validated numeric time points.
+#' @return Invisibly returns the validated numeric time points.
 #' @export
 assert_prob_vec = function(x, times = NULL, type = "surv") {
   assert_numeric(x, any.missing = FALSE, min.len = 1)
@@ -154,7 +154,7 @@ assert_prob_vec = function(x, times = NULL, type = "surv") {
 #' @param type (`character(1)`)\cr
 #'  Type of probability function: `"surv"` (default), `"cdf"`, or `"cif"`.
 #' 
-#' @return Invisibly returns validated numeric time points.
+#' @return Invisibly returns the validated numeric time points.
 #' 
 #' @noRd
 assert_prob = function(x, times = NULL, type = "surv") {
@@ -175,27 +175,30 @@ assert_prob = function(x, times = NULL, type = "surv") {
 #'    `numeric` and increasing.
 #'
 #' @param x (`matrix()`)\cr
-#'   Input matrix (rows = observations, columns = time points).
+#'  Input matrix (rows = observations, columns = time points).
+#' @param times (`numeric()` | `NULL`)\cr
+#'  Original time points. If `NULL`, extracted from names/colnames.
 #'
-#' @return If the assertion fails an error occurs, otherwise `NULL` is returned
-#'   invisibly.
+#' @return Invisibly returns the validated numeric time points.s
 #'
 #' @examples
 #' x = matrix(data = c(0, 0.2, 0.1, 0.5, 0.05, 0.7), nrow = 2, ncol = 3, byrow = TRUE)
 #' colnames(x) = c(12, 34, 42)
 #' x
-#' assert_nonneg_mat(x)
+#' assert_nonneg_matrix(x)
 #'
 #' @noRd
-assert_nonneg_mat = function(x) {
+assert_nonneg_matrix = function(x, times = NULL) {
   assert_matrix(x, mode = "numeric", any.missing = FALSE,
                 min.rows = 1, min.cols = 1, col.names = "named")
-  # Column names must be numeric and increasing
-  assert_numeric(as.numeric(colnames(x)), unique = TRUE, sorted = TRUE,
-                 any.missing = FALSE, null.ok = FALSE)
+  
+  # extract and check times
+  times = extract_times(x, times)
+
   # Non‑negativity check
   if (any(x < 0)) {
     stop("All entries must be non‑negative.")
   }
-  invisible(NULL)
+
+  invisible(times)
 }

@@ -90,3 +90,29 @@ test_that("assert_prob_vec works", {
   expect_error(assert_prob_vec(0.1, times = 0, type = "cdf"), "CDF must equal 0")
   expect_error(assert_prob_vec(0.1, times = 0, type = "cif"), "CIF must equal 0")
 })
+
+test_that("assert_nonneg_matrix works", {
+  # Valid matrix with non‑negative entries and proper column names
+  x = matrix(c(0, 0.2, 0.1, 0.5, 0.05, 0.7), nrow = 2, byrow = TRUE)
+  colnames(x) = c(12, 34, 42)
+  expect_silent(assert_nonneg_matrix(x))
+
+  # Matrix with zero values only
+  x_zero = matrix(0, nrow = 2, ncol = 3)
+  colnames(x_zero) = c(1, 2, 3)
+  expect_silent(assert_nonneg_matrix(x_zero))
+
+  # Matrix containing a negative value
+  x_neg = matrix(c(0, -0.1, 0.2, 0.3), nrow = 2)
+  colnames(x_neg) = c(5, 10)
+  expect_error(assert_nonneg_matrix(x_neg), "All entries must be non‑negative")
+
+  # fails for invalid column names
+  x = matrix(1:6, nrow = 2)
+  # Missing column names
+  expect_error(assert_nonneg_matrix(x), "Must have colnames")
+
+  # Column names not increasing
+  colnames(x) = c(10, 5, 7)
+  expect_error(assert_nonneg_matrix(x), "Must be sorted")
+})
