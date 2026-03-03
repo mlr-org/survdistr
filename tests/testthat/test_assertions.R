@@ -105,7 +105,7 @@ test_that("assert_nonneg_matrix works", {
   # Matrix containing a negative value
   x_neg = matrix(c(0, -0.1, 0.2, 0.3), nrow = 2)
   colnames(x_neg) = c(5, 10)
-  expect_error(assert_nonneg_matrix(x_neg), "All entries must be non‑negative")
+  expect_error(assert_nonneg_matrix(x_neg), "All entries must be non negative")
 
   # fails for invalid column names
   x = matrix(1:6, nrow = 2)

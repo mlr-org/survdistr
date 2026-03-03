@@ -61,9 +61,9 @@ assert_prob_matrix = function(x, times = NULL, type = "surv") {
   # Check values and monotonicity via Rcpp code
   if (!c_assert_prob_matrix(x, type = type)) {
     msg = switch(type,
-      "surv" = "Survival probabilities must be non-increasing and in [0,1].",
-      "cdf"  = "CDF probabilities must be non-decreasing and in [0,1].",
-      "cif"  = "CIF probabilities must be non-decreasing and in [0,1]."
+      "surv" = "Survival probabilities must be nonincreasing and in [0,1].",
+      "cdf"  = "CDF probabilities must be non decreasing and in [0,1].",
+      "cif"  = "CIF probabilities must be non decreasing and in [0,1]."
     )
     stop(msg)
   }
@@ -116,9 +116,9 @@ assert_prob_vec = function(x, times = NULL, type = "surv") {
   )
   if (!monotonic_ok) {
     msg = switch(type,
-      "surv" = "Survival probabilities must be non‑increasing.",
-      "cdf"  = "CDF probabilities must be non‑decreasing.",
-      "cif"  = "CIF probabilities must be non‑decreasing."
+      "surv" = "Survival probabilities must be non increasing.",
+      "cdf"  = "CDF probabilities must be non decreasing.",
+      "cif"  = "CIF probabilities must be non decreasing."
     )
     stop(msg)
   }
@@ -165,14 +165,13 @@ assert_prob = function(x, times = NULL, type = "surv") {
   }
 }
 
-#' @title Assert non‑negative matrix
+#' @title Assert non negative matrix
 #'
-#' @description Asserts if the given input is a matrix with non‑negative entries.
-#' The following checks are performed:
+#' @description Performs the following checks on the given input:
 #'
-#' 1. All values are non‑negative (i.e. \eqn{\ge 0}).
-#' 2. Column names correspond to time points and must be coercible to
-#'    `numeric` and increasing.
+#' 1. The input `x` is a numeric matrix with no missing values.
+#' 2. Time points (`times`) are numeric, non-negative, unique, and sorted.
+#' 3. All values of `x` are non negative (i.e. \eqn{\ge 0}).
 #'
 #' @param x (`matrix()`)\cr
 #'  Input matrix (rows = observations, columns = time points).
@@ -195,9 +194,9 @@ assert_nonneg_matrix = function(x, times = NULL) {
   # extract and check times
   times = extract_times(x, times)
 
-  # Non‑negativity check
+  # Non negativity check
   if (any(x < 0)) {
-    stop("All entries must be non‑negative.")
+    stop("All entries must be non negative.")
   }
 
   invisible(times)
