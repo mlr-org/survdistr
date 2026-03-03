@@ -22,12 +22,13 @@ If \code{NULL}, \code{x} is returned unchanged.}
 If \code{TRUE}, attach \code{eval_times} as colnames in the output matrix.}
 
 \item{check}{(\code{logical(1)})\cr
-If \code{TRUE}, run input matrix validation checks. Set to \code{FALSE} to skip checks (NOT recommended for external use).;}
+If \code{TRUE}, run input matrix validation checks;
+set to \code{FALSE} to skip checks (NOT recommended for external use).}
 }
 \value{
 Interpolated CIF matrix.
 }
 \description{
-Interpolates cumulative incidence functions (corresponding to one competing event only)
-using constant-CIF interpolation.
+Interpolates cumulative incidence (CIF) functions (corresponding to one competing event only)
+using left-continuous constant interpolation.
 }

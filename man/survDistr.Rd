@@ -16,6 +16,7 @@ The main prediction data type is survival matrix, where
 The input matrix (survival probabilities \eqn{S(t)} is stored internally and accessed by the \verb{$data} field.
 The interpolation type needed for the public methods is stored in the \verb{$interp_meth} slot.
 During construction, the function \code{\link[=assert_prob_matrix]{assert_prob_matrix()}} is used to validate the input data matrix if \code{check} is TRUE.
+Interpolation is performed using the \code{\link[=interp]{interp()}} function.
 }
 \examples{
 # generate survival matrix
@@ -96,7 +97,8 @@ Currently supported interpolation methods include \code{"const_surv"} (default),
 \code{"linear_surv"} and \code{"const_haz"}. See details.}
 
 \item{\code{check}}{(\code{logical(1)})\cr
-If \code{TRUE}, run input matrix validation checks. Set to \code{FALSE} to skip checks (NOT recommended for external use).;}
+If \code{TRUE}, run input matrix validation checks;
+set to \code{FALSE} to skip checks (NOT recommended for external use).}
 }
 \if{html}{\out{</div>}}
 }
@@ -166,7 +168,6 @@ a \code{matrix} of survival probabilities
 \subsection{Method \code{cdf()}}{
 Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the specified time points.
 \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
-Uses \code{\link[=interp]{interp()}}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$cdf(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
@@ -224,7 +225,7 @@ a \code{matrix} of cumulative hazards.
 \if{html}{\out{<a id="method-survDistr-hazard"></a>}}
 \if{latex}{\out{\hypertarget{method-survDistr-hazard}{}}}
 \subsection{Method \code{hazard()}}{
-Computes the hazard at the specified time points.
+Computes the hazard \eqn{h(t)} at the specified time points.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$hazard(times = NULL, eps = 1e-06)}\if{html}{\out{</div>}}
 }
@@ -254,9 +255,6 @@ a hazard \code{matrix}.
 \subsection{Method \code{pdf()}}{
 Computes the probability density function \eqn{f(t)} at the specified time points.
 \eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
-
-For constant survival interpolation, \eqn{f(t) = F(t) - F(t-1)}, where
-\eqn{F(t)} is the cumulative distribution.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$pdf(times = NULL)}\if{html}{\out{</div>}}
 }

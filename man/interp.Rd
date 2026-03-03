@@ -37,7 +37,8 @@ Output type: \code{"surv"}, \code{"cdf"}, or \code{"cumhaz"}.}
 If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 
 \item{check}{(\code{logical(1)})\cr
-If \code{TRUE}, run input matrix validation checks. Set to \code{FALSE} to skip checks (NOT recommended for external use).;}
+If \code{TRUE}, run input matrix validation checks;
+set to \code{FALSE} to skip checks (NOT recommended for external use).}
 
 \item{eps}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors
