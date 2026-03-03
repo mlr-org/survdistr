@@ -63,7 +63,8 @@ assert_prob_matrix = function(x, times = NULL, type = "surv") {
     msg = switch(type,
       "surv" = "Survival probabilities must be non-increasing and in [0,1].",
       "cdf"  = "CDF probabilities must be non-decreasing and in [0,1].",
-      "cif"  = "CIF probabilities must be non-decreasing and in [0,1].")
+      "cif"  = "CIF probabilities must be non-decreasing and in [0,1]."
+    )
     stop(msg)
   }
 
@@ -71,9 +72,9 @@ assert_prob_matrix = function(x, times = NULL, type = "surv") {
   if (times[1] == 0) {
     # Do we need some tolerance here? i.e. 1 - .Machine$double.eps^0.9 still counts as 1?
     switch(type,
-      "surv" = if (!all(x[, 1] == 1)) stop("At t = 0, survival S(0) must equal 1."),
-      "cdf"  = if (!all(x[, 1] == 0)) stop("At t = 0, CDF(0) must equal 0."),
-      "cif"  = if (!all(x[, 1] == 0)) stop("At t = 0, CIF(0) must equal 0.")
+      "surv" = if (!all(x[, 1] == 1)) stop("At t = 0, survival must equal 1."),
+      "cdf"  = if (!all(x[, 1] == 0)) stop("At t = 0, CDF must equal 0."),
+      "cif"  = if (!all(x[, 1] == 0)) stop("At t = 0, CIF must equal 0.")
     )
   }
 
@@ -106,22 +107,36 @@ assert_prob_vec = function(x, times = NULL, type = "surv") {
     stop("Probabilities must lie in [0,1].")
   }
 
-  # monotonicity
+  # Monotonicity
   diffs = diff(x)
-  if (type == "surv" && any(diffs > 0)) {
-    stop("Survival probabilities must be non-increasing.")
-  }
-  if (type %in% c("cdf", "cif") && any(diffs < 0)) {
-    stop("CDF/CIF probabilities must be non-decreasing.")
+  monotonic_ok = switch(type,
+    "surv" = all(diffs <= 0),
+    "cdf"  = all(diffs >= 0),
+    "cif"  = all(diffs >= 0)
+  )
+  if (!monotonic_ok) {
+    msg = switch(type,
+      "surv" = "Survival probabilities must be non‑increasing.",
+      "cdf"  = "CDF probabilities must be non‑decreasing.",
+      "cif"  = "CIF probabilities must be non‑decreasing."
+    )
+    stop(msg)
   }
 
   # boundary at t = 0
   if (times[1] == 0) {
-    if (type == "surv" && x[1] != 1) {
-      stop("At t = 0, survival S(0) must equal 1.")
-    }
-    if (type %in% c("cdf", "cif") && x[1] != 0) {
-      stop("At t = 0, CDF/CIF(0) must equal 0.")
+    boundary_ok = switch(type,
+      "surv" = x[1] == 1,
+      "cdf"  = x[1] == 0,
+      "cif"  = x[1] == 0
+    )
+    if (!boundary_ok) {
+      msg = switch(type,
+        "surv" = "At t = 0, survival must equal 1.",
+        "cdf"  = "At t = 0, CDF must equal 0.",
+        "cif"  = "At t = 0, CIF must equal 0."
+      )
+      stop(msg)
     }
   }
 

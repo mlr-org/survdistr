@@ -37,6 +37,12 @@ test_that("assert_prob_matrix works", {
   # x is a survival matrix so this fails for CDF/CIF as well
   expect_error(assert_prob_matrix(x, type = "cdf"), "CDF probabilities must be")
   expect_error(assert_prob_matrix(x, type = "cif"), "CIF probabilities must be")
+
+  # checks
+  x = matrix(0.9)
+  expect_error(assert_prob_matrix(x, times = 0), "survival must equal 1")
+  expect_error(assert_prob_matrix(x, times = 0, type = "cdf"), "CDF must equal 0")
+  expect_error(assert_prob_matrix(x, times = 0, type = "cif"), "CIF must equal 0")
 })
 
 test_that("assert_prob_vec works", {
@@ -74,4 +80,13 @@ test_that("assert_prob_vec works", {
   # S(t) >= S(t+1)
   x[24] = x[23] + .01
   expect_error(assert_prob_vec(x), "Survival probabilities must be")
+
+  # checks
+  expect_error(assert_prob_vec(-0.21, times = 1), "Probabilities must lie in")
+  expect_error(assert_prob_vec(c(0.9, 0.91), times = c(1, 2)), "Survival probabilities must be")
+  expect_error(assert_prob_vec(c(0.9, 0.8), times = c(1, 2), type = "cdf"), "CDF probabilities must be")
+  expect_error(assert_prob_vec(c(0.9, 0.8), times = c(1, 2), type = "cif"), "CIF probabilities must be")
+  expect_error(assert_prob_vec(0.1, times = 0), "survival must equal 1")
+  expect_error(assert_prob_vec(0.1, times = 0, type = "cdf"), "CDF must equal 0")
+  expect_error(assert_prob_vec(0.1, times = 0, type = "cif"), "CIF must equal 0")
 })
