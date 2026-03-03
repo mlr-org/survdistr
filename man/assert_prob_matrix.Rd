@@ -20,7 +20,7 @@ If \code{NULL} (default), the time points are extracted from \code{colnames(x)}.
 Type of probability function: \code{"surv"} (default), \code{"cdf"}, or \code{"cif"}.}
 }
 \value{
-Invisibly returns the validated numeric vector of time points.
+Invisibly returns the validated numeric time points.
 Throws an error if validation fails.
 }
 \description{

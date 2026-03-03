@@ -17,7 +17,7 @@ Optional time points corresponding to \code{x}. If \code{NULL}, extracted from \
 Type of probability function: \code{"surv"} (default), \code{"cdf"}, or \code{"cif"}.}
 }
 \value{
-Invisibly returns validated numeric time points.
+Invisibly returns the validated numeric time points.
 }
 \description{
 Validates that the input is a proper probability vector representing either
