@@ -5,16 +5,12 @@ c_assert_prob_matrix <- function(x, type = "surv") {
     .Call(`_survdistr_c_assert_prob_matrix`, x, type)
 }
 
-c_interp_surv_mat <- function(x, times, eval_times, method = "const_surv") {
-    .Call(`_survdistr_c_interp_surv_mat`, x, times, eval_times, method)
-}
-
-c_interp_surv_vec <- function(x, times, eval_times, method = "const_surv") {
-    .Call(`_survdistr_c_interp_surv_vec`, x, times, eval_times, method)
-}
-
 c_interp_cif_mat <- function(x, times, eval_times) {
     .Call(`_survdistr_c_interp_cif_mat`, x, times, eval_times)
+}
+
+c_interp_surv_mat <- function(x, times, eval_times, method = "const_surv") {
+    .Call(`_survdistr_c_interp_surv_mat`, x, times, eval_times, method)
 }
 
 c_mat_interp_pointwise <- function(x, times, eval_times, constant = TRUE, type = "surv") {
