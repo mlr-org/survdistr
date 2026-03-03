@@ -1,10 +1,11 @@
-#' Interpolate Survival Curves
+#' @title Interpolate Survival Curves
 #'
+#' @description
 #' Interpolates survival curves (vector or matrix) at new time points using
 #' internal C interpolation functions.
 #' Output can be the survival, cumulative distribution, or density functions, as well as
-#' the hazard or cumulative hazard function.
-#' Input must always represent survival probabilities.
+#' the hazard or cumulative hazard functions.
+#' Input must always be survival probabilities.
 #'
 #' @param x (`numeric()` | `matrix()`)\cr
 #'   Survival vector or matrix (rows = observations, columns = time points).
@@ -20,6 +21,7 @@
 #' @template param_eval_times
 #' @template param_check
 #' @template param_eps
+#' @templateVar eps 1e-6
 #'
 #' @return A numeric vector or matrix of interpolated values.
 #' 
@@ -29,8 +31,13 @@
 #'            nrow = 2, byrow = TRUE)
 #' times = c(0, 10, 20)
 #' eval_times = c(5, 15, 25)
-#' interp(x, times, eval_times, output = "surv")
-#' interp(x, times, eval_times, method = "linear_surv", output = "surv")
+#'
+#' # S(t) with constant interpolation
+#' interp(x, times, eval_times)
+#' # S(t) with linear interpolation
+#' interp(x, times, eval_times, method = "linear_surv")
+#' # H(t) with linear interpolation
+#' interp(x, times, eval_times, method = "linear_surv", output = "cumhaz")
 #' @export
 interp = function(x,
                   times = NULL,

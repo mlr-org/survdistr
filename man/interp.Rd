@@ -43,7 +43,7 @@ set to \code{FALSE} to skip checks (NOT recommended for external use).}
 \item{eps}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors
 in e.g. log(0) and/or division-by-zero calculations.
-Default value is .}
+Default value is 1e-06.}
 }
 \value{
 A numeric vector or matrix of interpolated values.
@@ -52,8 +52,8 @@ A numeric vector or matrix of interpolated values.
 Interpolates survival curves (vector or matrix) at new time points using
 internal C interpolation functions.
 Output can be the survival, cumulative distribution, or density functions, as well as
-the hazard or cumulative hazard function.
-Input must always represent survival probabilities.
+the hazard or cumulative hazard functions.
+Input must always be survival probabilities.
 }
 \examples{
 x = matrix(c(1, 0.8, 0.6,
@@ -61,6 +61,11 @@ x = matrix(c(1, 0.8, 0.6,
            nrow = 2, byrow = TRUE)
 times = c(0, 10, 20)
 eval_times = c(5, 15, 25)
-interp(x, times, eval_times, output = "surv")
-interp(x, times, eval_times, method = "linear_surv", output = "surv")
+
+# S(t) with constant interpolation
+interp(x, times, eval_times)
+# S(t) with linear interpolation
+interp(x, times, eval_times, method = "linear_surv")
+# H(t) with linear interpolation
+interp(x, times, eval_times, method = "linear_surv", output = "cumhaz")
 }
