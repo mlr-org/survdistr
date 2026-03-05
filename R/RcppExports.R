@@ -13,10 +13,6 @@ c_interp_surv_mat <- function(x, times, eval_times, method = "const_surv") {
     .Call(`_survdistr_c_interp_surv_mat`, x, times, eval_times, method)
 }
 
-c_mat_interp_pointwise <- function(x, times, eval_times, constant = TRUE, type = "surv") {
-    .Call(`_survdistr_c_mat_interp_pointwise`, x, times, eval_times, constant, type)
-}
-
 rcpp_wcumsum_mat <- function(x, times) {
     .Call(`_survdistr_rcpp_wcumsum_mat`, x, times)
 }
