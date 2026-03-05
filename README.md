@@ -44,7 +44,7 @@ x
     ## A [2 x 3] survival matrix
     ## Number of observations: 2
     ## Number of time points: 3
-    ## Interpolation method: Piece-wise Linear Survival
+    ## Interpolation method: Piece-wise Linear Survival (Constant Density)
 
 ``` r
 # stored survival matrix
@@ -66,12 +66,12 @@ x$survival(times = c(5, 30, 42, 50))
 
 ``` r
 # Cumulative hazard H(t)
-x$cumhazard(times = c(50, 5, 5, 42)) # times can be unordered or duplicated
+x$cumhazard(times = c(5, 42))
 ```
 
-    ##             50          5          5        42
-    ## [1,] 1.6094379 0.00000000 0.00000000 0.9162907
-    ## [2,] 0.5108256 0.08701138 0.08701138 0.3566749
+    ##               5        42
+    ## [1,] 0.00000000 0.9162907
+    ## [2,] 0.08701138 0.3566749
 
 Interpolation of a Kaplan-Meier survival curve using exported R function
 that calls C code:
@@ -101,12 +101,10 @@ tab
 
 ``` r
 # constant S(t) interpolation
-vec_interp(
-  x = tab$surv, 
-  times = tab$time, 
-  eval_times = c(0, 3.5, 995, 1000),
-  constant = TRUE,
-  type = "surv"
+interp(
+  x = tab$surv,
+  times = tab$time,
+  eval_times = c(0, 3.5, 995, 1000)
 )
 ```
 
@@ -115,12 +113,11 @@ vec_interp(
 
 ``` r
 # linear S(t) interpolation
-vec_interp(
-  x = tab$surv, 
-  times = tab$time, 
+interp(
+  x = tab$surv,
+  times = tab$time,
   eval_times = c(0, 3.5, 995, 1000),
-  constant = FALSE,
-  type = "surv"
+  method = "linear_surv"
 )
 ```
 

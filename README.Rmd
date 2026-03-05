@@ -45,7 +45,7 @@ x$data()
 x$survival(times = c(5, 30, 42, 50))
 
 # Cumulative hazard H(t)
-x$cumhazard(times = c(50, 5, 5, 42)) # times can be unordered or duplicated
+x$cumhazard(times = c(5, 42))
 ```
 
 Interpolation of a Kaplan-Meier survival curve using exported R function that calls C code:
@@ -58,21 +58,18 @@ tab = data.table(time = fit$time, surv = fit$surv)
 tab
 
 # constant S(t) interpolation
-vec_interp(
-  x = tab$surv, 
-  times = tab$time, 
-  eval_times = c(0, 3.5, 995, 1000),
-  constant = TRUE,
-  type = "surv"
+interp(
+  x = tab$surv,
+  times = tab$time,
+  eval_times = c(0, 3.5, 995, 1000)
 )
 
 # linear S(t) interpolation
-vec_interp(
-  x = tab$surv, 
-  times = tab$time, 
+interp(
+  x = tab$surv,
+  times = tab$time,
   eval_times = c(0, 3.5, 995, 1000),
-  constant = FALSE,
-  type = "surv"
+  method = "linear_surv"
 )
 ```
 
