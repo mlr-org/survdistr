@@ -12,6 +12,7 @@
 #'
 #' @template param_times
 #' @template param_add_times
+#' @template param_rows
 #' @template param_eps
 #' @templateVar eps 1e-6
 #'
@@ -121,10 +122,10 @@ survDistr = R6Class(
     #' @description
     #' Return the stored data matrix.
     #' @return (`matrix`)
-    data = function(add_times = TRUE) {
+    data = function(rows = NULL, add_times = TRUE) {
       assert_flag(add_times)
 
-      mat = private$.mat
+      mat = private$.filter_mat(rows)
       if (add_times) {
         colnames(mat) = as.character(self$times)
       }
@@ -133,13 +134,7 @@ survDistr = R6Class(
     },
 
     #' @description
-    #' Filters observations in-place by subsetting rows of the stored matrix.
-    #'
-    #' @param rows (`integer()` | `logical()` | `NULL`)\cr
-    #'  Row indices or a logical vector used to retain observations.
-    #'  Logical vectors must have length equal to the number of observations.
-    #'  Integer indices must be positive and within range.
-    #'  If `NULL`, no filtering is applied.
+    #' Filters observations \textbf{in-place} by subsetting rows of the stored matrix.
     #'
     #' @return Invisibly returns `self`.
     filter = function(rows = NULL) {
@@ -147,15 +142,7 @@ survDistr = R6Class(
         return(invisible(self))
       }
 
-      n = nrow(private$.mat)
-
-      if (is.logical(rows)) {
-        rows = assert_logical(rows, any.missing = FALSE, len = n)
-      } else {
-        rows = assert_integerish(rows, lower = 1L, upper = n, unique = TRUE, sorted = TRUE, any.missing = FALSE)
-      }
-
-      private$.mat = private$.mat[rows, , drop = FALSE]
+      private$.mat = private$.filter_mat(rows)
       invisible(self)
     },
 
@@ -164,9 +151,9 @@ survDistr = R6Class(
     #' Uses [interp()].
     #'
     #' @return a `matrix` of survival probabilities
-    survival = function(times = NULL, add_times = TRUE) {
+    survival = function(rows = NULL, times = NULL, add_times = TRUE) {
       interp(
-        x = private$.mat,
+        x = private$.filter_mat(rows),
         times = self$times,
         eval_times = times,
         method = self$interp_meth,
@@ -181,9 +168,9 @@ survDistr = R6Class(
     #' \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
     #'
     #' @return a cdf `matrix`.
-    cdf = function(times = NULL, add_times = TRUE) {
+    cdf = function(rows = NULL, times = NULL, add_times = TRUE) {
       interp(
-        x = private$.mat,
+        x = private$.filter_mat(rows),
         times = self$times,
         eval_times = times,
         method = self$interp_meth,
@@ -198,9 +185,9 @@ survDistr = R6Class(
     #' \eqn{H(t) = -log(S(t))}.
     #'
     #' @return a `matrix` of cumulative hazards.
-    cumhazard = function(times = NULL, add_times = TRUE, eps = 1e-6) {
+    cumhazard = function(rows = NULL, times = NULL, add_times = TRUE, eps = 1e-6) {
      interp(
-        x = private$.mat,
+        x = private$.filter_mat(rows),
         times = self$times,
         eval_times = times,
         method = self$interp_meth,
@@ -215,7 +202,7 @@ survDistr = R6Class(
     #' Computes the hazard \eqn{h(t)} at the specified time points.
     #'
     #' @return a hazard `matrix`.
-    hazard = function(times = NULL, eps = 1e-6) {
+    hazard = function(rows = NULL, times = NULL, eps = 1e-6) {
       stop("Hazard method not yet implemented.")
     },
 
@@ -224,12 +211,27 @@ survDistr = R6Class(
     #' \eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
     #'
     #' @return a pdf `matrix`.
-    pdf = function(times = NULL) {
+    pdf = function(rows = NULL, times = NULL) {
       stop("PDF method not yet implemented.")
     }
   ),
 
   private = list(
-    .mat = NULL
+    .mat = NULL,
+    .filter_mat = function(rows = NULL) {
+      # check rows and return filtered matrix
+      if (is.null(rows)) {
+        return(private$.mat)
+      }
+
+      n = nrow(private$.mat)
+      if (is.logical(rows)) {
+        rows = assert_logical(rows, any.missing = FALSE, len = n)
+      } else {
+        rows = assert_integerish(rows, lower = 1L, upper = n, unique = TRUE, sorted = TRUE, any.missing = FALSE)
+      }
+
+      private$.mat[rows, , drop = FALSE]
+    }
   )
 )

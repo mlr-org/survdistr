@@ -121,12 +121,18 @@ the number of observations and time points.
 \subsection{Method \code{data()}}{
 Return the stored data matrix.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$data(add_times = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$data(rows = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{add_times}}{(\code{logical(1)})\cr
 If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 }
@@ -140,7 +146,7 @@ If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 \if{html}{\out{<a id="method-survDistr-filter"></a>}}
 \if{latex}{\out{\hypertarget{method-survDistr-filter}{}}}
 \subsection{Method \code{filter()}}{
-Filters observations in-place by subsetting rows of the stored matrix.
+Filters observations \textbf{in-place} by subsetting rows of the stored matrix.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$filter(rows = NULL)}\if{html}{\out{</div>}}
 }
@@ -149,7 +155,7 @@ Filters observations in-place by subsetting rows of the stored matrix.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
-Row indices or a logical vector used to retain observations.
+Row indices or a logical vector used to filter observations.
 Logical vectors must have length equal to the number of observations.
 Integer indices must be positive and within range.
 If \code{NULL}, no filtering is applied.}
@@ -167,12 +173,18 @@ Invisibly returns \code{self}.
 Computes survival probabilities \eqn{S(t)} at the specified time points.
 Uses \code{\link[=interp]{interp()}}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(rows = NULL, times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
 Values need to be unique, increasing non-negative numbers.
@@ -194,12 +206,18 @@ a \code{matrix} of survival probabilities
 Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the specified time points.
 \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$cdf(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$cdf(rows = NULL, times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
 Values need to be unique, increasing non-negative numbers.
@@ -221,12 +239,18 @@ a cdf \code{matrix}.
 Computes the cumulative hazard at the specified time points as:
 \eqn{H(t) = -log(S(t))}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(times = NULL, add_times = TRUE, eps = 1e-06)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(rows = NULL, times = NULL, add_times = TRUE, eps = 1e-06)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
 Values need to be unique, increasing non-negative numbers.
@@ -252,12 +276,18 @@ a \code{matrix} of cumulative hazards.
 \subsection{Method \code{hazard()}}{
 Computes the hazard \eqn{h(t)} at the specified time points.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$hazard(times = NULL, eps = 1e-06)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$hazard(rows = NULL, times = NULL, eps = 1e-06)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
 Values need to be unique, increasing non-negative numbers.
@@ -281,12 +311,18 @@ a hazard \code{matrix}.
 Computes the probability density function \eqn{f(t)} at the specified time points.
 \eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$pdf(times = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$pdf(rows = NULL, times = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
 Values need to be unique, increasing non-negative numbers.
