@@ -66,39 +66,34 @@ interp = function(x,
   }
 
   # Case: no interpolation requested
+  # Return original matrix, possibly transformed, with optional time labels
   if (is.null(eval_times)) {
-    if (add_times) {
-      if (is_mat && is.null(colnames(x))) colnames(x) = as.character(times)
-      if (!is_mat && is.null(names(x))) names(x) = as.character(times)
-    }
-    return(x)
+    return(
+      transform_result(
+        res = x,
+        times = times,
+        output = output,
+        add_times = add_times,
+        eps = eps
+      )
+    )
   }
 
-  # call C++ interpolation
+  # call C++ interpolation: interpolate S(t)
   if (is_mat) {
     res = c_interp_surv_mat(x, times, eval_times, method)
   } else {
     res = c_interp_surv_mat(matrix(x, nrow = 1), times, eval_times, method)[1, ]
   }
 
-  # transform output
-  if (output == "cdf") {
-    res = 1 - res
-  } else if (output == "cumhaz") {
-    # avoid -Inf for zero survival probabilities
-    res = -log(pmax(res, eps))
-  }
-
-   # attach time labels
-  if (add_times) {
-    if (is_mat) {
-      colnames(res) = as.character(eval_times)
-    } else {
-      names(res) = as.character(eval_times)
-    }
-  }
-
-  res
+  # transform output if needed and attach time labels
+  transform_result(
+    res = res,
+    times = eval_times,
+    output = output,
+    add_times = add_times,
+    eps = eps
+  )
 }
 
 #' Interpolate CIF matrix
