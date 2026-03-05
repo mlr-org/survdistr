@@ -66,7 +66,7 @@ interp = function(x,
   }
 
   # Case: no interpolation requested
-  # Return original matrix, possibly transformed, with optional time labels
+  # Return original matrix, possibly transformed, with optional times (anchors) attached
   if (is.null(eval_times)) {
     return(
       transform_result(
