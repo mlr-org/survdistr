@@ -9,6 +9,7 @@ test_that("new() works", {
   expect_equal(obj$data(add_times = FALSE), x)
   expect_equal(obj$times, c(12, 34, 42))
   expect_equal(obj$interp_meth, "const_surv")
+  expect_silent(survDistr$new(x, times = times, check = FALSE)) # skip checks, should still work
 
   # Invalid inputs
   expect_error(survDistr$new(x = NULL), "Must be of type")
@@ -31,6 +32,9 @@ test_that("filter() works", {
   expect_error(obj2$filter(rows = c(FALSE, TRUE)), "Must have length 3")
   expect_error(obj2$filter(rows = c(1, 1)), "duplicated values")
   expect_error(obj2$filter(rows = c(2, 1)), "be sorted")
+
+  # no filtering => same data
+  expect_equal(obj2$filter()$data(), obj2$data())
 
   # filter to 2 observations
   expect_invisible(obj2$filter(rows = c(1, 3)))
