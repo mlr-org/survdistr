@@ -20,6 +20,7 @@ reference:
 - title: Survival Prediction Class
   contents:
     - survDistr
+    - as_survDistr
 - title: Interpolation Functions
   contents:
     - contains("interp")
