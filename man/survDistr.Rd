@@ -134,7 +134,7 @@ Integer indices must be positive and within range.
 If \code{NULL}, no filtering is applied.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE}, attach \code{eval_times} as names/colnames.}
+If \code{TRUE}, attach \code{eval_times} to the output.}
 }
 \if{html}{\out{</div>}}
 }
@@ -146,7 +146,7 @@ If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 \if{html}{\out{<a id="method-survDistr-filter"></a>}}
 \if{latex}{\out{\hypertarget{method-survDistr-filter}{}}}
 \subsection{Method \code{filter()}}{
-Filters observations \textbf{in-place} by subsetting rows of the stored matrix.
+Filters observations \strong{in-place} by subsetting rows of the stored matrix.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$filter(rows = NULL)}\if{html}{\out{</div>}}
 }
@@ -163,7 +163,7 @@ If \code{NULL}, no filtering is applied.}
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Invisibly returns \code{self}.
+Invisibly returns the \code{survDistr} object itself.
 }
 }
 \if{html}{\out{<hr>}}
@@ -191,7 +191,7 @@ Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE}, attach \code{eval_times} as names/colnames.}
+If \code{TRUE}, attach \code{eval_times} to the output.}
 }
 \if{html}{\out{</div>}}
 }
@@ -224,7 +224,7 @@ Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE}, attach \code{eval_times} as names/colnames.}
+If \code{TRUE}, attach \code{eval_times} to the output.}
 }
 \if{html}{\out{</div>}}
 }
@@ -257,7 +257,7 @@ Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE}, attach \code{eval_times} as names/colnames.}
+If \code{TRUE}, attach \code{eval_times} to the output.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
 Very small number to substitute zero values in order to prevent errors

@@ -134,9 +134,9 @@ survDistr = R6Class(
     },
 
     #' @description
-    #' Filters observations \textbf{in-place} by subsetting rows of the stored matrix.
+    #' Filters observations **in-place** by subsetting rows of the stored matrix.
     #'
-    #' @return Invisibly returns `self`.
+    #' @return Invisibly returns the `survDistr` object itself.
     filter = function(rows = NULL) {
       if (is.null(rows)) {
         return(invisible(self))
