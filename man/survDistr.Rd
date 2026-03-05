@@ -62,6 +62,7 @@ Interpolation method; one of \code{"const_surv"}, \code{"linear_surv"}, or \code
 \item \href{#method-survDistr-new}{\code{survDistr$new()}}
 \item \href{#method-survDistr-print}{\code{survDistr$print()}}
 \item \href{#method-survDistr-data}{\code{survDistr$data()}}
+\item \href{#method-survDistr-filter}{\code{survDistr$filter()}}
 \item \href{#method-survDistr-survival}{\code{survDistr$survival()}}
 \item \href{#method-survDistr-cdf}{\code{survDistr$cdf()}}
 \item \href{#method-survDistr-cumhazard}{\code{survDistr$cumhazard()}}
@@ -133,6 +134,30 @@ If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 }
 \subsection{Returns}{
 (\code{matrix})
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-survDistr-filter"></a>}}
+\if{latex}{\out{\hypertarget{method-survDistr-filter}{}}}
+\subsection{Method \code{filter()}}{
+Filters observations in-place by subsetting rows of the stored matrix.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$filter(rows = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to retain observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Invisibly returns \code{self}.
 }
 }
 \if{html}{\out{<hr>}}

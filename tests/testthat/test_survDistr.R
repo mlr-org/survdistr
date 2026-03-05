@@ -9,7 +9,7 @@ x = gen_random_mat(nrows = 2, ncols = 3, type = "surv")
 times = c(12, 34, 42)
 obj = survDistr$new(x, times)
 
-test_that("constructor", {
+test_that("constructor works", {
   # Valid input
   checkmate::expect_r6(obj, "survDistr")
   expect_equal(obj$data(add_times = FALSE), x)
@@ -22,6 +22,29 @@ test_that("constructor", {
   expect_error(survDistr$new(x = x[, 0, drop = FALSE]), "Must have at least 1 cols")
   expect_error(survDistr$new(x = matrix()), "Contains missing values")
   expect_error(survDistr$new(x = matrix(dimnames = list(NULL, 1))), "Contains missing values")
+})
+
+test_that("filter() works", {
+  obj2 = obj$clone(deep = TRUE)
+
+  # can't filter out of bounds (2 observations only)
+  expect_error(obj2$filter(rows = c(0, 2)), ">= 1")
+  expect_error(obj2$filter(rows = c(1, 4)), "<= 2")
+  expect_error(obj2$filter(rows = c(FALSE, TRUE, FALSE)), "Must have length 2")
+  expect_error(obj2$filter(rows = c(1, 1)), "duplicated values")
+  expect_error(obj2$filter(rows = c(2, 1)), "be sorted")
+
+  # filter to 1 observation
+  expect_invisible(obj2$filter(rows = 1))
+  expect_equal(obj2$data(add_times = FALSE), x[1, , drop = FALSE])
+  # no change (keep the only observation)
+  obj2$filter(rows = TRUE)
+  expect_equal(obj2$data(add_times = FALSE), x[1, , drop = FALSE])
+  # remove last observation
+  obj2$filter(rows = FALSE)
+  expect_equal(dim(obj2$data(add_times = FALSE)), c(0, 3))
+  # obj remains unchanged
+  expect_equal(obj$data(add_times = FALSE), x)
 })
 
 test_that("constant survival", {

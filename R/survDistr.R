@@ -133,6 +133,33 @@ survDistr = R6Class(
     },
 
     #' @description
+    #' Filters observations in-place by subsetting rows of the stored matrix.
+    #'
+    #' @param rows (`integer()` | `logical()` | `NULL`)\cr
+    #'  Row indices or a logical vector used to retain observations.
+    #'  Logical vectors must have length equal to the number of observations.
+    #'  Integer indices must be positive and within range.
+    #'  If `NULL`, no filtering is applied.
+    #'
+    #' @return Invisibly returns `self`.
+    filter = function(rows = NULL) {
+      if (is.null(rows)) {
+        return(invisible(self))
+      }
+
+      n = nrow(private$.mat)
+
+      if (is.logical(rows)) {
+        rows = assert_logical(rows, any.missing = FALSE, len = n)
+      } else {
+        rows = assert_integerish(rows, lower = 1L, upper = n, unique = TRUE, sorted = TRUE, any.missing = FALSE)
+      }
+
+      private$.mat = private$.mat[rows, , drop = FALSE]
+      invisible(self)
+    },
+
+    #' @description
     #' Computes survival probabilities \eqn{S(t)} at the specified time points.
     #' Uses [interp()].
     #'
