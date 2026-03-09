@@ -19,7 +19,7 @@
 #' @details
 #' The input matrix (survival probabilities \eqn{S(t)} is stored internally and accessed by the `$data` field.
 #' The interpolation type needed for the public methods is stored in the `$method` slot.
-#' During construction, the function [assert_prob_matrix()] is used to validate the input data matrix if `check` is TRUE.
+#' During construction, the function [assert_prob()] is used to validate the input data matrix if `check` is `TRUE`.
 #' Interpolation is performed using the [interp()] function.
 #'
 #' @examples

@@ -15,7 +15,7 @@ The main prediction data type is survival matrix, where
 \details{
 The input matrix (survival probabilities \eqn{S(t)} is stored internally and accessed by the \verb{$data} field.
 The interpolation type needed for the public methods is stored in the \verb{$method} slot.
-During construction, the function \code{\link[=assert_prob_matrix]{assert_prob_matrix()}} is used to validate the input data matrix if \code{check} is TRUE.
+During construction, the function \code{\link[=assert_prob]{assert_prob()}} is used to validate the input data matrix if \code{check} is \code{TRUE}.
 Interpolation is performed using the \code{\link[=interp]{interp()}} function.
 }
 \examples{
