@@ -13,11 +13,19 @@ c_interp_surv_mat <- function(x, times, eval_times, method = "const_surv") {
     .Call(`_survdistr_c_interp_surv_mat`, x, times, eval_times, method)
 }
 
-rcpp_wcumsum_mat <- function(x, times) {
-    .Call(`_survdistr_rcpp_wcumsum_mat`, x, times)
+c_disc_dens_to_surv_mat <- function(x) {
+    .Call(`_survdistr_c_disc_dens_to_surv_mat`, x)
 }
 
-rcpp_wcumsum_mat_interp <- function(x, times, new_times) {
-    .Call(`_survdistr_rcpp_wcumsum_mat_interp`, x, times, new_times)
+c_disc_haz_to_surv_mat <- function(x) {
+    .Call(`_survdistr_c_disc_haz_to_surv_mat`, x)
+}
+
+c_cont_dens_to_surv_mat <- function(x, times) {
+    .Call(`_survdistr_c_cont_dens_to_surv_mat`, x, times)
+}
+
+c_cont_haz_to_surv_mat <- function(x, times) {
+    .Call(`_survdistr_c_cont_haz_to_surv_mat`, x, times)
 }
 
