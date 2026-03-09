@@ -16,13 +16,13 @@ as_survDistr = function(x, ...) {
 #' @param times (`numeric`)
 #'   Numeric vector of time points corresponding to columns of `x`.
 #'   If `NULL`, column names of `x` are used.
-#' @param interp_meth (`character(1)`)\cr
+#' @param method (`character(1)`)\cr
 #'   Interpolation method passed to [survDistr] constructor.
 #' @param check (`logical(1)`)\cr
 #'   Whether to validate `x` and `times`.
 #' @export
-as_survDistr.matrix = function(x, times = NULL, interp_meth = "const_surv", check = TRUE, ...) {
-  survDistr$new(x = x, times = times, interp_meth = interp_meth, check = check)
+as_survDistr.matrix = function(x, times = NULL, method = "const_surv", check = TRUE, ...) {
+  survDistr$new(x = x, times = times, method = method, check = check)
 }
 
 #' @rdname as_survDistr
