@@ -77,3 +77,24 @@ transform_result = function(res, times, output, add_times, eps) {
 
   res
 }
+
+#' Map interpolation method to internal implementation
+#'
+#' Maps a user-specified interpolation method to the corresponding internal method.
+#' Some methods are aliases for others.
+#'
+#' @template param_method
+#' @return (`character(1)`) Internal method name.
+#'
+#' @noRd
+#' @keywords internal
+map_interp_method = function(method) {
+  method = assert_choice(method, c("const_surv", "const_dens", "linear_surv", "const_haz", "exp_surv"))
+  if (method == "const_haz" || method == "exp_surv") {
+    stop("Constant hazard interpolation not yet implemented.")
+  }
+  # keep only the constant aliases
+  if (method == "linear_surv") return("const_dens")
+  if (method == "exp_surv") return("const_haz")
+  method
+}
