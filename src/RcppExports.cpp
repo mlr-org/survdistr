@@ -22,6 +22,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_clamp_surv
+NumericMatrix c_clamp_surv(NumericMatrix surv, const double eps, const double tol);
+RcppExport SEXP _survdistr_c_clamp_surv(SEXP survSEXP, SEXP epsSEXP, SEXP tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type surv(survSEXP);
+    Rcpp::traits::input_parameter< const double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_clamp_surv(surv, eps, tol));
+    return rcpp_result_gen;
+END_RCPP
+}
 // c_interp_cif_mat
 NumericMatrix c_interp_cif_mat(const NumericMatrix& x, const NumericVector& times, const NumericVector& eval_times);
 RcppExport SEXP _survdistr_c_interp_cif_mat(SEXP xSEXP, SEXP timesSEXP, SEXP eval_timesSEXP) {
@@ -98,6 +111,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_survdistr_c_assert_prob_matrix", (DL_FUNC) &_survdistr_c_assert_prob_matrix, 2},
+    {"_survdistr_c_clamp_surv", (DL_FUNC) &_survdistr_c_clamp_surv, 3},
     {"_survdistr_c_interp_cif_mat", (DL_FUNC) &_survdistr_c_interp_cif_mat, 3},
     {"_survdistr_c_interp_surv_mat", (DL_FUNC) &_survdistr_c_interp_surv_mat, 4},
     {"_survdistr_c_disc_dens_to_surv_mat", (DL_FUNC) &_survdistr_c_disc_dens_to_surv_mat, 1},
