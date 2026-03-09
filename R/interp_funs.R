@@ -11,13 +11,12 @@
 #'   Survival vector or matrix (rows = observations, columns = time points).
 #' @param times (`numeric()` | `NULL`)\cr
 #'   Anchor time points. If `NULL`, extracted from names/colnames.
-#' @param method (`character(1)`)\cr
-#'   Interpolation method: `"const_surv"` or `"linear_surv"`.
 #' @param output (`character(1)`)\cr
 #'   Output type: `"surv"`, `"cdf"`, or `"cumhaz"`.
 #' @param add_times (`logical(1)`)\cr
 #'   If `TRUE`, attach `eval_times` as names/colnames.
-#'
+#' 
+#' @template param_method
 #' @template param_eval_times
 #' @template param_check
 #' @template param_eps
@@ -48,7 +47,7 @@ interp = function(x,
                   check = TRUE,
                   eps = 1e-6) {
   # quick assertions
-  method = assert_choice(method, c("const_surv", "linear_surv"))
+  method = map_interp_method(method) # const_* aliases
   output = assert_choice(output, c("surv", "cdf", "cumhaz"))
   assert_flag(add_times)
   assert_flag(check)
