@@ -17,7 +17,7 @@ bool c_assert_prob_matrix(
     check_dec = true;
   } else if (type == "cdf" || type == "cif") {
     check_inc = true;
-  } else if (type == "prob") {
+  } else if (type == "prob" || type == "haz" || type == "dens") {
     // only range check, i.e. probabilities in [0, 1]
   } else {
     stop("Unknown type.");
