@@ -9,7 +9,7 @@ gen_random_mat = function(nrows, ncols, type = "surv") {
   } else if (type == "cdf" || type == "cif") {
     # CDF/CIF => increasing values
     t(apply(x, 1, function(row) sort(row, decreasing = FALSE)))
-  } else if (type = "prob" || type == "haz" || type == "dens") {
+  } else if (type == "prob" || type == "haz" || type == "dens") {
     # no monotonicity requirement, just probabilities
     x
   } else {
