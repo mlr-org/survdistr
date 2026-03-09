@@ -82,19 +82,19 @@ assert_prob_matrix = function(x, times = NULL, type = "surv") {
 }
 
 #' @title Assert probability vector
-#' 
+#'
 #' @description
 #' Validates that the input is a proper probability vector representing either
 #' a survival function (`"surv"`), cumulative distribution function (`"cdf"`),
 #' or cumulative incidence function (`"cif"`).
-#' 
+#'
 #' @param x (`numeric()`)\cr
 #'  Probability vector.
 #' @param times (`numeric()`|`NULL`)\cr
 #'  Optional time points corresponding to `x`. If `NULL`, extracted from `names(x)`.
 #' @param type (`character(1)`)\cr
 #'  Type of probability function: `"surv"` (default), `"cdf"`, or `"cif"`.
-#' 
+#'
 #' @return Invisibly returns the validated numeric time points.
 #' @export
 assert_prob_vec = function(x, times = NULL, type = "surv") {
@@ -144,19 +144,18 @@ assert_prob_vec = function(x, times = NULL, type = "surv") {
 }
 
 #' @title Assert probability matrix or vector
-#' 
-#' @description 
-#' Dispatches to `assert_prob_matrix()` or `assert_prob_vec()` based on the input type.
+#'
+#' @description
+#' Dispatches to [assert_prob_matrix()] or [assert_prob_vec()] based on the input type.
 #' @param x (`numeric()` | `matrix()`)\cr
 #'   Survival vector or matrix (rows = observations, columns = time points).
 #' @param times (`numeric()` | `NULL`)\cr
 #'   Original time points. If `NULL`, extracted from names/colnames.
 #' @param type (`character(1)`)\cr
 #'  Type of probability function: `"surv"` (default), `"cdf"`, or `"cif"`.
-#' 
+#'
 #' @return Invisibly returns the validated numeric time points.
-#' 
-#' @noRd
+#' @export
 assert_prob = function(x, times = NULL, type = "surv") {
   if (is.matrix(x)) {
     assert_prob_matrix(x, times, type = type)
@@ -182,15 +181,13 @@ assert_prob = function(x, times = NULL, type = "surv") {
 #'
 #' @examples
 #' x = matrix(data = c(0, 0.2, 0.1, 0.5, 0.05, 0.7), nrow = 2, ncol = 3, byrow = TRUE)
-#' colnames(x) = c(12, 34, 42)
-#' x
-#' assert_nonneg_matrix(x)
+#' assert_nonneg_matrix(x, times = c(12, 34, 42))
 #'
 #' @noRd
 assert_nonneg_matrix = function(x, times = NULL) {
   assert_matrix(x, mode = "numeric", any.missing = FALSE,
-                min.rows = 1, min.cols = 1, col.names = "named")
-  
+                min.rows = 1, min.cols = 1)
+
   # extract and check times
   times = extract_times(x, times)
 

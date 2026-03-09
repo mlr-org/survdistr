@@ -107,12 +107,12 @@ test_that("assert_nonneg_matrix works", {
   colnames(x_neg) = c(5, 10)
   expect_error(assert_nonneg_matrix(x_neg), "All entries must be non negative")
 
-  # fails for invalid column names
+  # fails for non-existent times
   x = matrix(1:6, nrow = 2)
   # Missing column names
-  expect_error(assert_nonneg_matrix(x), "Must have colnames")
+  expect_error(assert_nonneg_matrix(x), "Time points must be provided")
 
-  # Column names not increasing
+  # Column names, ie times not increasing
   colnames(x) = c(10, 5, 7)
   expect_error(assert_nonneg_matrix(x), "Must be sorted")
 })
