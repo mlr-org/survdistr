@@ -8,8 +8,13 @@ test_that("new() works", {
   checkmate::expect_r6(obj, "survDistr")
   expect_equal(obj$data(add_times = FALSE), x)
   expect_equal(obj$times, c(12, 34, 42))
-  expect_equal(obj$interp_meth, "const_surv")
+  expect_equal(obj$method, "const_surv")
   expect_silent(survDistr$new(x, times = times, check = FALSE)) # skip checks, should still work
+
+  # can't overwrite times
+  expect_error({obj$times = c(1, 2, 3)}, "is read-only")
+  # method can be overwritten but must be valid
+  expect_error({obj$method = "meth_doesnt_exist"}, "Must be element of set")
 
   # Invalid inputs
   expect_error(survDistr$new(x = NULL), "Must be of type")
@@ -87,7 +92,7 @@ test_that("survival() works", {
   expect_equal(res2, obj2$data()) # Returns original matrix
 
   # linear survival interpolation
-  obj2$interp_meth = "linear_surv"
+  obj2$method = "linear_surv"
   res3 = obj2$survival(times = t)
   time_cols = as.character("0", "12", "34", "42")
   expect_equal(res3[, time_cols], res[, time_cols]) # no interpolation at original time points
@@ -105,7 +110,7 @@ test_that("cdf() works", {
 
 test_that("cumhazard() works", {
   obj2 = obj$clone(deep = TRUE)
-  obj2$interp_meth = "linear_surv" # H(t) grows
+  obj2$method = "linear_surv" # H(t) increases non-linearly
 
   t = c(0, 7, 12, 22, 34, 40, 42, 50)
   res = obj2$cumhazard(times = t)
