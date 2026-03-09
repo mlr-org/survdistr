@@ -68,7 +68,7 @@ survDistr = R6Class(
       method = map_interp_method(method) # const_* aliases
       private$.method = method
 
-      if (isTRUE(check)) {
+      if (check) {
         times = assert_prob_matrix(x, times, type = "surv")
       } else {
         times = extract_times(x, times)
