@@ -1,4 +1,5 @@
 #include <Rcpp.h>
+#include <cmath>
 using namespace Rcpp;
 // Map row-wise h(t) or f(t), discrete or continuous, to S(t) at given anchor time points
 
