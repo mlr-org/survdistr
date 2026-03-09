@@ -3,14 +3,14 @@ using namespace Rcpp;
 
 enum InterpMethod {
   CONST_SURV,
-  LINEAR_SURV,
+  CONST_DENS,
   CONST_HAZ
 };
 
 InterpMethod parse_method(const std::string& method) {
-  if (method == "const_surv")  return CONST_SURV;
-  if (method == "linear_surv") return LINEAR_SURV;
-  if (method == "const_haz")   return CONST_HAZ;
+  if (method == "const_surv") return CONST_SURV;
+  if (method == "const_dens") return CONST_DENS; // linear survival
+  if (method == "const_haz")  return CONST_HAZ; // exponential survival
   stop("Unknown interpolation method.");
 }
 
@@ -58,7 +58,7 @@ NumericMatrix c_interp_surv_mat(
       if (j == B - 1) {
         if (m == CONST_SURV) {
           result(i, k) = x(i, B - 1);
-        } else if (m == LINEAR_SURV) {
+        } else if (m == CONST_DENS) {
           // choose last interval; if only one anchor use (0, times[0])
           double t_left, t_right, S_left, S_right;
 
@@ -98,7 +98,7 @@ NumericMatrix c_interp_surv_mat(
 
       if (m == CONST_SURV) {
         result(i, k) = S_left;
-      } else if (m == LINEAR_SURV) {
+      } else if (m == CONST_DENS) {
         double val = S_left + (t - t_left) * (S_right - S_left) / (t_right - t_left);
         result(i, k) = std::max(0.0, std::min(1.0, val));
       } else { // CONST_HAZ placeholder
