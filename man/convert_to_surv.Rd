@@ -4,7 +4,14 @@
 \alias{convert_to_surv}
 \title{Convert density/hazard to survival}
 \usage{
-convert_to_surv(x, times = NULL, input = "cont_haz", check = FALSE)
+convert_to_surv(
+  x,
+  times = NULL,
+  input = "cont_haz",
+  check = TRUE,
+  clamp_surv = FALSE,
+  eps = 1e-06
+)
 }
 \arguments{
 \item{x}{(\code{numeric()} | \code{matrix()})\cr
@@ -17,8 +24,14 @@ Anchor time points. If \code{NULL}, extracted from names/colnames of \code{x}.}
 Input type. One of \code{"disc_haz"}, \code{"disc_dens"}, \code{"cont_haz"} or \code{"cont_dens"}.}
 
 \item{check}{(\code{logical(1)})\cr
-If \code{TRUE}, run input matrix validation checks (not for applicable to continuous hazards/densities).
-Default is \code{FALSE} since these checks can be expensive for very large matrices.}
+If \code{TRUE} (default), run \emph{input} validation checks.
+Disable only if you know the input is valid and want to skip checks for speed.}
+
+\item{clamp_surv}{(\code{logical(1)})\cr
+If \code{TRUE}, clamp survival probabilities to \verb{[eps, 1]} to avoid numerical issues.}
+
+\item{eps}{(\code{numeric(1)})\cr
+Small value used to clamp near-zero survival probabilities if \code{clamp_surv = TRUE}.}
 }
 \value{
 A numeric vector or matrix of survival probabilities with the same
@@ -39,17 +52,13 @@ of \code{input}:
 \item \code{"cont_dens"}: \eqn{S_j = 1 - \sum_{k=1}^j f_k \Delta_k}
 \item \code{"cont_haz"}: \eqn{S_j = \exp\!\left(-\sum_{k=1}^j \lambda_k \Delta_k\right)}
 }
-
-These formulas correspond to the anchor survival values implied by the
-respective prediction types.
-
-If an anchor time equals 0 (only possible for non-discrete inputs), the returned survival at
-that anchor is set to 1.
 }
 \section{Validation}{
 
-Note that no checks are performed on the input continuous hazards/densities as these can be >1.
-To further validate that the output is a proper survival function, use \code{\link[=assert_prob]{assert_prob()}}.
+If \code{check = TRUE}, we validate that the input is a proper discrete density/hazard matrix
+or vector using \code{\link[=assert_prob]{assert_prob()}}.
+For continuous hazards/densities, we only check that the input is a non-negative numeric
+matrix/vector.
 }
 
 \examples{

@@ -29,7 +29,7 @@ The following conditions must hold:
 \enumerate{
 \item The input \code{x} is a numeric matrix with no missing values.
 \item Time points (\code{times}) are numeric, non-negative, unique, and increasing.
-If not supplied, they are derived from \code{colnames(x)} (coerced to \code{numeric}).
+If not supplied, they are derived from \verb{(col)names(x)} (coerced to \code{numeric}).
 \item All values are valid probabilities, i.e. lie in \eqn{[0,1]}.
 \item Each row is monotone:
 \itemize{
