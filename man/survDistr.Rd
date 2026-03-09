@@ -14,7 +14,7 @@ The main prediction data type is survival matrix, where
 }
 \details{
 The input matrix (survival probabilities \eqn{S(t)} is stored internally and accessed by the \verb{$data} field.
-The interpolation type needed for the public methods is stored in the \verb{$interp_meth} slot.
+The interpolation type needed for the public methods is stored in the \verb{$method} slot.
 During construction, the function \code{\link[=assert_prob_matrix]{assert_prob_matrix()}} is used to validate the input data matrix if \code{check} is TRUE.
 Interpolation is performed using the \code{\link[=interp]{interp()}} function.
 }
@@ -30,7 +30,7 @@ x
 x$data()
 
 # interpolation method
-x$interp_meth
+x$method
 
 # time points
 x$times
@@ -38,21 +38,22 @@ x$times
 # S(t) at given time points (constant interpolation)
 x$survival(times = c(10, 30, 42, 50))
 # same but with linear interpolation
-x$interp_meth = "linear_surv"
+x$method = "linear_surv"
 x$survival(times = c(10, 30, 42, 50))
 
 # Cumulative hazard
 x$cumhazard()
 
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{times}}{(\code{numeric}])\cr
-Numeric vector of time points corresponding to columns of \code{data}.}
+\item{\code{times}}{(\code{numeric})\cr
+Numeric vector of time points corresponding to columns of \code{data}. Read-only.}
 
-\item{\code{interp_meth}}{(\code{character(1)})\cr
-Interpolation method; one of \code{"const_surv"}, \code{"linear_surv"}, or \code{"const_haz"}.}
+\item{\code{method}}{(\code{character(1)})\cr
+Interpolation method; one of \code{"const_surv"} (default), \code{"const_dens"} (alias: \code{"linear_surv"})
+and \code{"const_haz"} (alias: \code{"exp_surv"}).}
 }
 \if{html}{\out{</div>}}
 }
@@ -77,25 +78,22 @@ Interpolation method; one of \code{"const_surv"}, \code{"linear_surv"}, or \code
 \subsection{Method \code{new()}}{
 Creates a new instance of this \link[R6:R6Class]{R6} class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(x, times = NULL, interp_meth = "const_surv", check = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(x, times = NULL, method = "const_surv", check = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{x}}{(\code{matrix})\cr
-A numeric matrix of either survival probabilities (values between 0 and 1) or
-hazard values (non-negative values).
+A numeric matrix of survival probabilities (values between 0 and 1).
 Column names must correspond to time points if \code{times} is \code{NULL}.}
 
 \item{\code{times}}{(\code{numeric(1)})\cr Numeric vector of time points for matrix \code{x},
 must match the number of columns.}
 
-\item{\code{interp_meth}}{(\code{character(1)})\cr
-Interpolation method to use when requesting the quantity of interest at time
-points different than the ones in the stored object (accessible via the \code{times} method).
-Currently supported interpolation methods include \code{"const_surv"} (default),
-\code{"linear_surv"} and \code{"const_haz"}. See details.}
+\item{\code{method}}{(\code{character(1)})\cr
+Interpolation method; one of \code{"const_surv"} (default), \code{"const_dens"} (alias: \code{"linear_surv"})
+and \code{"const_haz"} (alias: \code{"exp_surv"}).}
 
 \item{\code{check}}{(\code{logical(1)})\cr
 If \code{TRUE}, run input matrix validation checks;

@@ -28,7 +28,8 @@ Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, \code{x} is returned unchanged.}
 
 \item{method}{(\code{character(1)})\cr
-Interpolation method: \code{"const_surv"} or \code{"linear_surv"}.}
+Interpolation method; one of \code{"const_surv"} (default), \code{"const_dens"} (alias: \code{"linear_surv"})
+and \code{"const_haz"} (alias: \code{"exp_surv"}).}
 
 \item{output}{(\code{character(1)})\cr
 Output type: \code{"surv"}, \code{"cdf"}, or \code{"cumhaz"}.}

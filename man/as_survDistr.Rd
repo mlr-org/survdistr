@@ -9,7 +9,7 @@
 \usage{
 as_survDistr(x, ...)
 
-\method{as_survDistr}{matrix}(x, times = NULL, interp_meth = "const_surv", check = TRUE, ...)
+\method{as_survDistr}{matrix}(x, times = NULL, method = "const_surv", check = TRUE, ...)
 
 \method{as_survDistr}{survDistr}(x, ...)
 
@@ -24,7 +24,7 @@ as_survDistr(x, ...)
 Numeric vector of time points corresponding to columns of \code{x}.
 If \code{NULL}, column names of \code{x} are used.}
 
-\item{interp_meth}{(\code{character(1)})\cr
+\item{method}{(\code{character(1)})\cr
 Interpolation method passed to \link{survDistr} constructor.}
 
 \item{check}{(\code{logical(1)})\cr
