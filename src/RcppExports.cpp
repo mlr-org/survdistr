@@ -11,14 +11,14 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // c_assert_prob_matrix
-bool c_assert_prob_matrix(const NumericMatrix& x, const std::string& type);
-RcppExport SEXP _survdistr_c_assert_prob_matrix(SEXP xSEXP, SEXP typeSEXP) {
+bool c_assert_prob_matrix(const NumericMatrix& x, const std::string& mode);
+RcppExport SEXP _survdistr_c_assert_prob_matrix(SEXP xSEXP, SEXP modeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type type(typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(c_assert_prob_matrix(x, type));
+    Rcpp::traits::input_parameter< const std::string& >::type mode(modeSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_assert_prob_matrix(x, mode));
     return rcpp_result_gen;
 END_RCPP
 }

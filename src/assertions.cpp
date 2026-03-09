@@ -1,30 +1,39 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// Per-row validation of survival / CDF / CIF matrices
-// `x`: non-empty, numeric matrix [obs x times]
-// `type`: "surv", "cdf", or "cif"
+// Validation (rowwise) of survival, hazard, density, CDF and CIF probaiblity matrices
 // [[Rcpp::export]]
-bool c_assert_prob_matrix(const NumericMatrix& x, const std::string& type = "surv") {
-  int nrows = x.nrow();
-  int ncols = x.ncol();
+bool c_assert_prob_matrix(
+  const NumericMatrix& x,
+  const std::string& type = "surv"
+) {
+  const int nrows = x.nrow();
+  const int ncols = x.ncol();
 
-  for (int i = 0; i < nrows; i++) {
-    for (int j = 0; j < ncols; j++) {
-      double value = x(i, j);
+  bool check_inc = false;
+  bool check_dec = false;
 
-      // Probabilities must be in [0, 1]
-      if (value < 0.0 || value > 1.0) {
-        return false;
-      }
+  if (type == "surv") {
+    check_dec = true;
+  } else if (type == "cdf" || type == "cif") {
+    check_inc = true;
+  } else if (type == "prob") {
+    // only range check, i.e. probabilities in [0, 1]
+  } else {
+    stop("Unknown type.");
+  }
 
-      if (type == "surv") {
-        // survival should be non-increasing
-        if (j > 0 && value > x(i, j - 1)) return false;
-      } else {
-        // CDF / CIF should be non-decreasing
-        if (j > 0 && value < x(i, j - 1)) return false;
-      }
+  for (int i = 0; i < nrows; ++i) {
+    double prev = x(i, 0);
+    if (prev < 0.0 || prev > 1.0) return false;
+
+    for (int j = 1; j < ncols; ++j) {
+      double val = x(i, j);
+
+      if (val < 0.0 || val > 1.0) return false;
+      if (check_dec && val > prev) return false;
+      if (check_inc && val < prev) return false;
+      prev = val;
     }
   }
 
