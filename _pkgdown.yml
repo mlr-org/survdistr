@@ -21,9 +21,12 @@ reference:
   contents:
     - survDistr
     - as_survDistr
-- title: Interpolation Functions
+- title: Interpolation
   contents:
     - contains("interp")
-- title: Assertion Functions
+- title: Assertions Function
   contents:
     - starts_with("assert")
+- title: Transformations
+  contents:
+    - starts_with("convert_to")
