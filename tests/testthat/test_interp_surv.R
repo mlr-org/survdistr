@@ -14,6 +14,19 @@ test_that("interp() checks", {
   x = c(1, 0.9, 0.95) # increasing S(t)!
   times = c(0, 1, 2)
   expect_error(interp(x, times, eval_times = 1.5))
+
+  expect_error(interp(x, times, eval_times = 1, method = "NA"), "Must be element of set")
+})
+
+test_that("interp() method aliases work", {
+  expect_equal(
+    interp(x = c(0.9, 0.8), times = c(1, 2), eval_times = 1.5, method = "exp_surv", add_times = FALSE),
+    interp(x = c(0.9, 0.8), times = c(1, 2), eval_times = 1.5, method = "const_haz", add_times = FALSE)
+  )
+  expect_equal(
+    interp(x = c(0.9, 0.8), times = c(1, 2), eval_times = 1.5, method = "linear_surv", add_times = FALSE),
+    interp(x = c(0.9, 0.8), times = c(1, 2), eval_times = 1.5, method = "const_dens", add_times = FALSE)
+  )
 })
 
 test_that("interp() S(t) works", {
@@ -36,6 +49,8 @@ test_that("interp() S(t) works", {
   expect_equal(out_cdf, 1 - out)
   out_cumhaz = interp(x, times, eval_times, method = "linear_surv", output = "cumhaz", add_times = FALSE)
   expect_equal(out_cumhaz, -log(pmax(out, 1e-6)))
+  out_cdf2 = interp(x, times, eval_times, method = "exp_surv", output = "cdf", add_times = FALSE)
+  expect_equal(out_cdf2, 1 - out2)
   out_cumhaz2 = interp(x, times, eval_times, method = "exp_surv", output = "cumhaz", add_times = FALSE)
   expect_equal(out_cumhaz2, -log(pmax(out2, 1e-6)))
 
@@ -96,4 +111,38 @@ test_that("interp() S(t) works", {
       0.8 * 0.8 ^ ((4 - 1)/1), # t = 4
       0.8 * 0.8 ^ ((5 - 1)/1) # t = 5
     ))
+
+  # S(t) with tied values
+  x = c(1, 0.8, 0.8, 0.6)
+  times = 1:4
+  eval_times = c(0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6)
+  out = interp(x, times, eval_times, method = "const_surv", add_times = FALSE)
+  expect_equal(out, c(1.0, 1.0, 1.0, 1.0, 0.8, 0.8, 0.8, 0.8, 0.6, 0.6, 0.6))
+  out = interp(x, times, eval_times, method = "linear_surv", add_times = FALSE)
+  expect_equal(out, c(1.0, 1.0, 1.0, 0.9, 0.8, 0.8, 0.8, 0.7, 0.6, 0.4, 0.2))
+  out = interp(x, times, eval_times, method = "exp_surv", add_times = FALSE)
+  expect_equal(out, c(1.0, 1.0, 1.0, 0.8944, 0.8, 0.8, 0.8, 0.6928, 0.6, 0.45, 0.3375), tolerance = 1e-3)
+
+  # S(t) = c for all time points
+  x = c(0.8, 0.8, 0.8)
+  times = 1:3
+  eval_times = c(0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5)
+  out = interp(x, times, eval_times, method = "const_surv", add_times = FALSE)
+  expect_equal(out, c(1.0, 1.0, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8))
+  out = interp(x, times, eval_times, method = "linear_surv", add_times = FALSE)
+  expect_equal(out, c(1.0, 0.9, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8))
+  out = interp(x, times, eval_times, method = "exp_surv", add_times = FALSE)
+  expect_equal(out, c(1.0, 0.8944, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8), tolerance = 1e-3)
+
+  # edge case: S(t) = 0 for some time points
+  x = c(1, 0.8, 0.8, 0, 0)
+  times = 0:4
+  eval_times = c(0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5)
+  out = interp(x, times, eval_times, method = "const_surv", add_times = FALSE)
+  expect_equal(out, c(1.0, 1.0, 0.8, 0.8, 0.8, 0.8, 0.0, 0.0, 0.0, 0.0))
+  out = interp(x, times, eval_times, method = "linear_surv", add_times = FALSE)
+  expect_equal(out, c(1.0, 0.9, 0.8, 0.8, 0.8, 0.4, 0.0, 0.0, 0.0, 0.0))
+  out = interp(x, times, eval_times, method = "exp_surv", add_times = FALSE)
+  # note that for t = 3.5 we have S(t) = 0 for exp_surv since formula has (S_right/S_left) = 0
+  expect_equal(out, c(1.0, 0.8944, 0.8, 0.8, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0), tolerance = 1e-3)
 })

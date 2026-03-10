@@ -134,9 +134,14 @@ NumericMatrix c_interp_surv_mat(
         double val = S_left + alpha * (S_right - S_left);
         result(i, k) = std::max(0.0, std::min(1.0, val));
       } else { // CONST_HAZ
-        double ratio = S_right / S_left;
-        double val = S_left * std::pow(ratio, alpha);
-        result(i, k) = std::max(0.0, std::min(1.0, val));
+        // avoid unnessary division by zero
+        if (S_left == 0.0) {
+          result(i, k) = 0.0;
+        } else {
+          double ratio = S_right / S_left;
+          double val = S_left * std::pow(ratio, alpha);
+          result(i, k) = std::max(0.0, std::min(1.0, val));
+        }
       }
     }
   }
