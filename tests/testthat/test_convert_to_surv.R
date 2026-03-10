@@ -49,6 +49,7 @@ test_that("convert_to_surv() works", {
                "Hazard probabilities must be in [0,1].", fixed = TRUE)
   expect_equal(convert_to_surv(c(0.8, 0.6, 0.8, 0.8), times = 1:4, input = 'disc_haz',
                clamp_surv = TRUE, eps = 0.01), c(0.2, 0.08, 0.016, 0.01))
+  expect_error(convert_to_surv(c(4, -3), times = c(1, 2), input = "cont_haz"), "must be non-negative", fixed = TRUE)
 
   # S(0) = 1 for discrete inputs errors
   expect_silent(convert_to_surv(c(0.1, 0.2), times = c(0, 1), input = "disc_dens", check = FALSE))
