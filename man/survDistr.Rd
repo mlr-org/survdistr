@@ -78,7 +78,13 @@ and \code{"const_haz"} (alias: \code{"exp_surv"}).}
 \subsection{Method \code{new()}}{
 Creates a new instance of this \link[R6:R6Class]{R6} class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(x, times = NULL, method = "const_surv", check = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(
+  x,
+  times = NULL,
+  method = "const_surv",
+  check = TRUE,
+  trim_duplicates = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -98,6 +104,11 @@ and \code{"const_haz"} (alias: \code{"exp_surv"}).}
 \item{\code{check}}{(\code{logical(1)})\cr
 If \code{TRUE}, run input matrix validation checks using \code{\link[=assert_prob]{assert_prob()}};
 set to \code{FALSE} to skip checks (NOT recommended for external use).}
+
+\item{\code{trim_duplicates}}{(\code{logical(1)})\cr
+If \code{TRUE}, removes adjacent duplicate values from the input using \code{\link[=trim_duplicates]{trim_duplicates()}}.
+This eliminates flat segments in survival curves and improves interpolation efficiency.
+Default is \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -237,7 +248,7 @@ a cdf \code{matrix}.
 Computes the cumulative hazard at the specified time points as:
 \eqn{H(t) = -log(S(t))}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(rows = NULL, times = NULL, add_times = TRUE, eps = 1e-06)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(rows = NULL, times = NULL, add_times = TRUE, eps = 1e-12)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -258,9 +269,8 @@ If \code{NULL}, the object's stored time points are used.}
 If \code{TRUE}, attach \code{eval_times} to the output.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
-Very small number to substitute zero values in order to prevent errors
-in e.g. log(0) and/or division-by-zero calculations.
-Default value is 1e-06.}
+Small positive value used to replace extremely low survival probabilities when computing cumulative hazard,
+preventing numerical instability in \eqn{-\log S(t)} calculations.}
 }
 \if{html}{\out{</div>}}
 }
@@ -274,7 +284,7 @@ a \code{matrix} of cumulative hazards.
 \subsection{Method \code{hazard()}}{
 Computes the hazard \eqn{h(t)} at the specified time points.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$hazard(rows = NULL, times = NULL, eps = 1e-06)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$hazard(rows = NULL, times = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -290,11 +300,6 @@ If \code{NULL}, no filtering is applied.}
 New time points at which to interpolate.
 Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
-
-\item{\code{eps}}{(\code{numeric(1)})\cr
-Very small number to substitute zero values in order to prevent errors
-in e.g. log(0) and/or division-by-zero calculations.
-Default value is 1e-06.}
 }
 \if{html}{\out{</div>}}
 }

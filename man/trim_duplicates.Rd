@@ -35,6 +35,6 @@ Only the earliest time point in each run of (near-)equal values is kept.
 \examples{
 # remove adjacent duplicates from a survival probability vector
 surv = c(1, 1, 0.8, 0.8, 0.5, 0.5, 0.2)
-trim_duplicates(probs, times = 1:7)
+trim_duplicates(surv, times = 1:7)
 
 }

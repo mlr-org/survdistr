@@ -12,7 +12,8 @@ interp(
   output = "surv",
   add_times = TRUE,
   check = TRUE,
-  eps = 1e-06
+  eps = 1e-12,
+  trim_duplicates = FALSE
 )
 }
 \arguments{
@@ -42,9 +43,13 @@ If \code{TRUE}, run input matrix validation checks using \code{\link[=assert_pro
 set to \code{FALSE} to skip checks (NOT recommended for external use).}
 
 \item{eps}{(\code{numeric(1)})\cr
-Very small number to substitute zero values in order to prevent errors
-in e.g. log(0) and/or division-by-zero calculations.
-Default value is 1e-06.}
+Small positive value used to replace extremely low survival probabilities when computing cumulative hazard,
+preventing numerical instability in \eqn{-\log S(t)} calculations.}
+
+\item{trim_duplicates}{(\code{logical(1)})\cr
+If \code{TRUE}, removes adjacent duplicate values from the input using \code{\link[=trim_duplicates]{trim_duplicates()}}.
+This eliminates flat segments in survival curves and improves interpolation efficiency.
+Default is \code{FALSE}.}
 }
 \value{
 A numeric vector or matrix of interpolated values.
