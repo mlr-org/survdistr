@@ -22,7 +22,7 @@ If \code{NULL}, \code{x} is returned unchanged.}
 If \code{TRUE}, attach \code{eval_times} as colnames in the output matrix.}
 
 \item{check}{(\code{logical(1)})\cr
-If \code{TRUE}, run input matrix validation checks;
+If \code{TRUE}, run input matrix validation checks using \code{\link[=assert_prob]{assert_prob()}};
 set to \code{FALSE} to skip checks (NOT recommended for external use).}
 }
 \value{

@@ -38,7 +38,7 @@ Output type: \code{"surv"}, \code{"cdf"}, or \code{"cumhaz"}.}
 If \code{TRUE}, attach \code{eval_times} as names/colnames.}
 
 \item{check}{(\code{logical(1)})\cr
-If \code{TRUE}, run input matrix validation checks;
+If \code{TRUE}, run input matrix validation checks using \code{\link[=assert_prob]{assert_prob()}};
 set to \code{FALSE} to skip checks (NOT recommended for external use).}
 
 \item{eps}{(\code{numeric(1)})\cr
@@ -51,10 +51,10 @@ A numeric vector or matrix of interpolated values.
 }
 \description{
 Interpolates survival curves (vector or matrix) at new time points using
-internal C interpolation functions.
+internal C++ interpolation functions.
+Input must always be \emph{survival probabilities}.
 Output can be the survival, cumulative distribution, or density functions, as well as
 the hazard or cumulative hazard functions.
-Input must always be survival probabilities.
 }
 \examples{
 x = matrix(c(1, 0.8, 0.6,

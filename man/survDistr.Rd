@@ -96,7 +96,7 @@ Interpolation method; one of \code{"const_surv"} (default), \code{"const_dens"} 
 and \code{"const_haz"} (alias: \code{"exp_surv"}).}
 
 \item{\code{check}}{(\code{logical(1)})\cr
-If \code{TRUE}, run input matrix validation checks;
+If \code{TRUE}, run input matrix validation checks using \code{\link[=assert_prob]{assert_prob()}};
 set to \code{FALSE} to skip checks (NOT recommended for external use).}
 }
 \if{html}{\out{</div>}}
