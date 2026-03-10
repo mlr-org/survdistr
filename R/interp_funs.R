@@ -2,10 +2,10 @@
 #'
 #' @description
 #' Interpolates survival curves (vector or matrix) at new time points using
-#' internal C interpolation functions.
+#' internal C++ interpolation functions.
+#' Input must always be \emph{survival probabilities}.
 #' Output can be the survival, cumulative distribution, or density functions, as well as
 #' the hazard or cumulative hazard functions.
-#' Input must always be survival probabilities.
 #'
 #' @param x (`numeric()` | `matrix()`)\cr
 #'   Survival vector or matrix (rows = observations, columns = time points).
@@ -15,7 +15,7 @@
 #'   Output type: `"surv"`, `"cdf"`, or `"cumhaz"`.
 #' @param add_times (`logical(1)`)\cr
 #'   If `TRUE`, attach `eval_times` as names/colnames.
-#' 
+#'
 #' @template param_method
 #' @template param_eval_times
 #' @template param_check
@@ -23,7 +23,7 @@
 #' @templateVar eps 1e-6
 #'
 #' @return A numeric vector or matrix of interpolated values.
-#' 
+#'
 #' @examples
 #' x = matrix(c(1, 0.8, 0.6,
 #'              1, 0.7, 0.4),

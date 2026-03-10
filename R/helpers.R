@@ -1,5 +1,5 @@
 #' Extract time points from a probability matrix or vector
-#' 
+#'
 #' Internal helper to consistently obtain the time points associated with
 #' a probability matrix or vector.
 #'
@@ -90,11 +90,10 @@ transform_result = function(res, times, output, add_times, eps) {
 #' @keywords internal
 map_interp_method = function(method) {
   method = assert_choice(method, c("const_surv", "const_dens", "linear_surv", "const_haz", "exp_surv"))
-  if (method == "const_haz" || method == "exp_surv") {
-    stop("Constant hazard interpolation not yet implemented.")
-  }
+
   # keep only the constant aliases
   if (method == "linear_surv") return("const_dens")
   if (method == "exp_surv") return("const_haz")
+
   method
 }
