@@ -26,12 +26,14 @@ reference:
     - contains("interp")
 - title: Helper Functions
   contents:
-    title: Transformations
-    contents:
-      - starts_with("convert_to")
-    title: Assertions
-    contents:
-      - starts_with("assert")
-    title: Remove Adjacent Duplicates
-    contents:
-      - trim_duplicates
+    - title: Transformations
+      contents:
+        - starts_with("convert_to")
+
+    - title: Assertions
+      contents:
+        - starts_with("assert")
+
+    - title: Remove Adjacent Duplicates
+      contents:
+        - trim_duplicates
