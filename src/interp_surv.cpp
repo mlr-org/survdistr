@@ -56,28 +56,56 @@ NumericMatrix c_interp_surv_mat(
 
       // after last anchor: t > times[B-1] (extrapolation)
       if (j == B - 1) {
-        if (m == CONST_SURV) {
-          result(i, k) = x(i, B - 1);
-        } else if (m == CONST_DENS) {
-          // choose last interval; if only one anchor use (0, times[0])
-          double t_left, t_right, S_left, S_right;
+        // choose last interval; if only one anchor use (0, times[0])
+        double t_left, t_right, S_left, S_right;
 
-          if (B == 1) {
-            t_left = 0.0;
-            t_right = times[0];
-            S_left = 1.0;
-            S_right = x(i, 0);
+        if (B == 1) {
+          t_left = 0.0;
+          t_right = times[0];
+          S_left = 1.0;
+          S_right = x(i, 0);
+        } else {
+          t_left = times[B - 2];
+          t_right = times[B - 1];
+          S_left = x(i, B - 2);
+          S_right = x(i, B - 1);
+        }
+
+        // no need to extrapolate if survival is already 0 at last anchor
+        if (S_right <= 0.0) {
+          result(i, k) = 0.0;
+          continue;
+        }
+
+        // handle constant survival extrapolation early on for speed
+        if (m == CONST_SURV) {
+          result(i, k) = S_right;
+          continue;
+        }
+
+        double delta = t_right - t_left;
+
+        // degenerate interval (e.g. single anchor at t = 0)
+        if (delta == 0.0) {
+          result(i, k) = S_right;
+          continue;
+        }
+
+        if (m == CONST_DENS) {
+          double fB = (S_left - S_right) / delta;
+          double t_star = t_right + S_right / fB;
+
+          if (t >= t_star) {
+            result(i, k) = 0.0;
           } else {
-            t_left = times[B - 2];
-            t_right = times[B - 1];
-            S_left = x(i, B - 2);
-            S_right = x(i, B - 1);
+            result(i, k) = S_right - fB * (t - t_right);
           }
-          double slope = (S_right - S_left) / (t_right - t_left);
-          double val = S_right + slope * (t - t_right);
+        } else { // CONST_HAZ
+          double alpha = (t - t_right) / delta;
+          double ratio = S_right / S_left;
+          double val = S_right * std::pow(ratio, alpha);
+
           result(i, k) = std::max(0.0, std::min(1.0, val));
-        } else { // CONST_HAZ placeholder
-          result(i, k) = x(i, B - 1);
         }
         continue;
       }
@@ -96,13 +124,19 @@ NumericMatrix c_interp_surv_mat(
         S_right = x(i, j + 1);
       }
 
+      // useful for CONST_DENS and CONST_HAZ interpolation
+      double delta = t_right - t_left;
+      double alpha = (t - t_left) / delta;
+
       if (m == CONST_SURV) {
         result(i, k) = S_left;
       } else if (m == CONST_DENS) {
-        double val = S_left + (t - t_left) * (S_right - S_left) / (t_right - t_left);
+        double val = S_left + alpha * (S_right - S_left);
         result(i, k) = std::max(0.0, std::min(1.0, val));
-      } else { // CONST_HAZ placeholder
-        result(i, k) = S_left;
+      } else { // CONST_HAZ
+        double ratio = S_right / S_left;
+        double val = S_left * std::pow(ratio, alpha);
+        result(i, k) = std::max(0.0, std::min(1.0, val));
       }
     }
   }
