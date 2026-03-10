@@ -62,10 +62,20 @@ survDistr = R6Class(
     #'  must match the number of columns.
     #' @template param_method
     #' @template param_check
-    initialize = function(x, times = NULL, method = "const_surv", check = TRUE) {
+    #' @template param_trim_duplicates
+    initialize = function(x, times = NULL, method = "const_surv", check = TRUE,
+                          trim_duplicates = FALSE) {
       assert_flag(check)
+      assert_flag(trim_duplicates)
       method = map_interp_method(method) # const_* aliases
       private$.method = method
+
+      # remove flat S(t) segments
+      if (trim_duplicates) {
+        trimmed = trim_duplicates(x, times = times)
+        x = trimmed$x
+        times = trimmed$times
+      }
 
       if (check) {
         times = assert_prob_matrix(x, times, type = "surv")
