@@ -45,7 +45,7 @@ bool c_assert_prob_matrix(
 NumericMatrix c_clamp_surv(
   NumericMatrix surv,
   const double eps = 1e-12,
-  const double tol = 1e-8
+  const double tol = 1e-10
 ) {
   const int n = surv.size();
   bool warn_flag = false;

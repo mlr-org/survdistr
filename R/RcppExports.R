@@ -5,7 +5,7 @@ c_assert_prob_matrix <- function(x, type = "surv") {
     .Call(`_survdistr_c_assert_prob_matrix`, x, type)
 }
 
-c_clamp_surv <- function(surv, eps = 1e-12, tol = 1e-8) {
+c_clamp_surv <- function(surv, eps = 1e-12, tol = 1e-10) {
     .Call(`_survdistr_c_clamp_surv`, surv, eps, tol)
 }
 
