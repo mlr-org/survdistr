@@ -26,14 +26,6 @@ reference:
     - contains("interp")
 - title: Helper Functions
   contents:
-    - title: Transformations
-      contents:
-        - starts_with("convert_to")
-
-    - title: Assertions
-      contents:
-        - starts_with("assert")
-
-    - title: Remove Adjacent Duplicates
-      contents:
-        - trim_duplicates
+    - convert_to_surv
+    - trim_duplicates
+    - assert_prob
