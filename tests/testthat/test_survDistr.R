@@ -22,6 +22,13 @@ test_that("new() works", {
   expect_error(survDistr$new(x = x[, 0, drop = FALSE]), "Must have at least 1 cols")
   expect_error(survDistr$new(x = matrix()), "Contains missing values")
   expect_error(survDistr$new(x = matrix(dimnames = list(NULL, 1))), "Contains missing values")
+
+  # trim_duplicates works and removes flat segments
+  mat = matrix(c(1, 1, 0.8, 0.7, 0.7, 0.5), nrow = 2, byrow = TRUE)
+  times = 1:3
+  obj2 = survDistr$new(mat, times, trim_duplicates = TRUE)
+  expect_equal(dim(obj2$data(add_times = FALSE)), c(2, 2))
+  expect_equal(obj2$times, c(1, 3))
 })
 
 test_that("print() works", {
