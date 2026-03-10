@@ -48,11 +48,11 @@ test_that("interp() S(t) works", {
   out_cdf = interp(x, times, eval_times, method = "linear_surv", output = "cdf", add_times = FALSE)
   expect_equal(out_cdf, 1 - out)
   out_cumhaz = interp(x, times, eval_times, method = "linear_surv", output = "cumhaz", add_times = FALSE)
-  expect_equal(out_cumhaz, -log(pmax(out, 1e-6)))
+  expect_equal(out_cumhaz, -log(pmax(out, 1e-12)))
   out_cdf2 = interp(x, times, eval_times, method = "exp_surv", output = "cdf", add_times = FALSE)
   expect_equal(out_cdf2, 1 - out2)
   out_cumhaz2 = interp(x, times, eval_times, method = "exp_surv", output = "cumhaz", add_times = FALSE)
-  expect_equal(out_cumhaz2, -log(pmax(out2, 1e-6)))
+  expect_equal(out_cumhaz2, -log(pmax(out2, 1e-12)))
 
   # S(t) all different, 3 time points, t1 > 0
   x = c(0.9, 0.7, 0.5) # slope = 0.2

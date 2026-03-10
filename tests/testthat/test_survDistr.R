@@ -122,6 +122,6 @@ test_that("cumhazard() works", {
 
   # large times so that eps kicks in
   res2 = obj2$cumhazard(times = 1000)
-  res3 = obj2$cumhazard(times = 1000, eps = 1e-10) # lower eps => lower S(t) => higher H(t)
+  res3 = obj2$cumhazard(times = 1000, eps = 1e-20) # lower eps => lower S(t) => higher H(t)
   expect_all_true(res2[,1] < res3[,1])
 })
