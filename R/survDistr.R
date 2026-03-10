@@ -14,7 +14,6 @@
 #' @template param_add_times
 #' @template param_rows
 #' @template param_eps
-#' @templateVar eps 1e-6
 #'
 #' @details
 #' The input matrix (survival probabilities \eqn{S(t)} is stored internally and accessed by the `$data` field.
@@ -165,7 +164,7 @@ survDistr = R6Class(
     #' \eqn{H(t) = -log(S(t))}.
     #'
     #' @return a `matrix` of cumulative hazards.
-    cumhazard = function(rows = NULL, times = NULL, add_times = TRUE, eps = 1e-6) {
+    cumhazard = function(rows = NULL, times = NULL, add_times = TRUE, eps = 1e-12) {
      interp(
         x = private$.filter_mat(rows),
         times = self$times,
@@ -182,7 +181,7 @@ survDistr = R6Class(
     #' Computes the hazard \eqn{h(t)} at the specified time points.
     #'
     #' @return a hazard `matrix`.
-    hazard = function(rows = NULL, times = NULL, eps = 1e-6) {
+    hazard = function(rows = NULL, times = NULL) {
       stop("Hazard method not yet implemented.")
     },
 

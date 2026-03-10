@@ -20,7 +20,6 @@
 #' @template param_eval_times
 #' @template param_check
 #' @template param_eps
-#' @templateVar eps 1e-6
 #'
 #' @return A numeric vector or matrix of interpolated values.
 #'
@@ -45,7 +44,7 @@ interp = function(x,
                   output = "surv",
                   add_times = TRUE,
                   check = TRUE,
-                  eps = 1e-6) {
+                  eps = 1e-12) {
   # quick assertions
   method = map_interp_method(method) # const_* aliases
   output = assert_choice(output, c("surv", "cdf", "cumhaz"))
