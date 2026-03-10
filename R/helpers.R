@@ -97,3 +97,80 @@ map_interp_method = function(method) {
 
   method
 }
+
+#' @title Remove adjacent duplicate values
+#'
+#' @description
+#' Removes adjacent duplicate values over the time axis, possibly from a
+#' probability vector or matrix (e.g. survival curves).
+#' Equality is determined with a numeric tolerance.
+#'
+#' For matrices, duplicate detection is done column-wise across all rows.
+#' Only the earliest time point in each run of (near-)equal values is kept.
+#'
+#' @param x (`numeric()` | `matrix()`)
+#'  Vector (length = time points) or matrix (rows = observations, columns = time points).
+#' @param times (`numeric()` | `NULL`)
+#'  Optional time points corresponding to `x`.
+#'  If `NULL`, extracted from names/colnames.
+#' @param tol (`numeric(1)`)
+#'  Absolute tolerance used to detect equality between adjacent time points.
+#'
+#' @return A named list with:
+#'  * `x`: numeric vector or matrix with duplicate adjacent time points removed.
+#'  * `times`: numeric vector of retained time points.
+#' @examples
+#' # remove adjacent duplicates from a survival probability vector
+#' surv = c(1, 1, 0.8, 0.8, 0.5, 0.5, 0.2)
+#' trim_duplicates(probs, times = 1:7)
+#'
+#' @export
+trim_duplicates = function(x, times = NULL, tol = 1e-10) {
+  is_mat = is.matrix(x)
+  if (is_mat) {
+    assert_matrix(x, mode = "numeric", any.missing = FALSE, min.rows = 1, min.cols = 1)
+  } else {
+    x = assert_numeric(x, any.missing = FALSE, min.len = 1)
+  }
+
+  tol = assert_numeric(tol, lower = 0, finite = TRUE, len = 1)
+  times = extract_times(x, times)
+
+  # remove times
+  if (is_mat) {
+    colnames(x) = NULL
+  } else {
+    names(x) = NULL
+  }
+
+  n_times = length(times)
+  if (n_times == 1L) {
+    return(list(x = x, times = times))
+  }
+
+  keep = rep(FALSE, n_times)
+  keep[1] = TRUE
+  ref_idx = 1L
+
+  for (j in 2:n_times) {
+    is_dup = if (is_mat) {
+      all(abs(x[, j] - x[, ref_idx]) <= tol)
+    } else {
+      abs(x[j] - x[ref_idx]) <= tol
+    }
+
+    if (!is_dup) {
+      keep[j] = TRUE
+      ref_idx = j
+    }
+  }
+
+  if (is_mat) {
+    x = x[, keep, drop = FALSE]
+  } else {
+    x = x[keep]
+  }
+  times = times[keep]
+
+  list(x = x, times = times)
+}
