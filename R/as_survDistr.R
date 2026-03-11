@@ -20,9 +20,12 @@ as_survDistr = function(x, ...) {
 #'   Interpolation method passed to [survDistr] constructor.
 #' @param check (`logical(1)`)\cr
 #'   Whether to validate `x` and `times`.
+#' @param trim_duplicates (`logical(1)`)\cr
+#'  Whether to remove duplicate S(t) values and corresponding time points.
 #' @export
-as_survDistr.matrix = function(x, times = NULL, method = "const_surv", check = TRUE, ...) {
-  survDistr$new(x = x, times = times, method = method, check = check)
+as_survDistr.matrix = function(x, times = NULL, method = "const_surv", check = TRUE,
+                               trim_duplicates = FALSE) {
+  survDistr$new(x = x, times = times, method = method, check = check, trim_duplicates = trim_duplicates)
 }
 
 #' @rdname as_survDistr
