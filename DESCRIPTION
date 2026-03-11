@@ -1,25 +1,25 @@
 Package: survdistr
 Title: Survival Distribution Containers
-Version: 0.0.1
-Authors@R: 
+Version: 0.0.2
+Authors@R:
     person("John", "Zobolas", , "bblodfon@gmail.com", role = c("aut", "cre"))
 Description: Efficient containers for storing and managing prediction
     outputs from survival models, including Cox proportional hazards,
     random survival forests, and modern machine learning estimators.
     Provides fast methods to evaluate survival probabilities, hazards,
-    probability densities, and related quantities at arbitrary time points,
-    with support for multiple interpolation methods.
+    probability densities, and related quantities at arbitrary time
+    points, with support for multiple interpolation methods.
 License: MIT + file LICENSE
-Imports: 
+URL: https://survdistr.mlr-org.com
+Imports:
     checkmate,
     R6,
     Rcpp
-Suggests: 
+Suggests:
     testthat (>= 3.0.0)
-LinkingTo: 
+LinkingTo:
     Rcpp
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE, r6 = TRUE)
 RoxygenNote: 7.3.3
-URL: https://survdistr.mlr-org.com
