@@ -29,3 +29,4 @@ reference:
     - convert_to_surv
     - trim_duplicates
     - assert_prob
+    - extract_times

@@ -1,17 +1,17 @@
-#' Extract time points from a probability matrix or vector
+#' @title Extract time points from a probability matrix or vector
 #'
-#' Internal helper to consistently obtain the time points associated with
-#' a probability matrix or vector.
+#' @description
+#' Helper function to consistently obtain and validate the time points
+#' associated with a probability matrix or vector.
 #'
 #' @param x (`numeric()` | `matrix()`)\cr
-#'  Probability vector (length = time points) or matrix (rows = observations, columns = time points).
+#'  Probability vector (length = time points) or matrix
+#'  (rows = observations, columns = time points).
 #' @param times (`numeric()` | `NULL`)\cr
 #'  Optional vector of time points corresponding to `x`.
 #'
 #' @return A validated numeric vector of time points.
-#'
-#' @noRd
-#' @keywords internal
+#' @export
 extract_times = function(x, times = NULL) {
   is_mat = is.matrix(x)
 
