@@ -24,7 +24,7 @@ as_survDistr = function(x, ...) {
 #'  Whether to remove duplicate S(t) values and corresponding time points.
 #' @export
 as_survDistr.matrix = function(x, times = NULL, method = "const_surv", check = TRUE,
-                               trim_duplicates = FALSE) {
+                               trim_duplicates = FALSE, ...) {
   survDistr$new(x = x, times = times, method = method, check = check, trim_duplicates = trim_duplicates)
 }
 

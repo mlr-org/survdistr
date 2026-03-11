@@ -14,7 +14,8 @@ as_survDistr(x, ...)
   times = NULL,
   method = "const_surv",
   check = TRUE,
-  trim_duplicates = FALSE
+  trim_duplicates = FALSE,
+  ...
 )
 
 \method{as_survDistr}{survDistr}(x, ...)
