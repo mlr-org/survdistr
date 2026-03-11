@@ -9,7 +9,13 @@
 \usage{
 as_survDistr(x, ...)
 
-\method{as_survDistr}{matrix}(x, times = NULL, method = "const_surv", check = TRUE, ...)
+\method{as_survDistr}{matrix}(
+  x,
+  times = NULL,
+  method = "const_surv",
+  check = TRUE,
+  trim_duplicates = FALSE
+)
 
 \method{as_survDistr}{survDistr}(x, ...)
 
@@ -29,6 +35,9 @@ Interpolation method passed to \link{survDistr} constructor.}
 
 \item{check}{(\code{logical(1)})\cr
 Whether to validate \code{x} and \code{times}.}
+
+\item{trim_duplicates}{(\code{logical(1)})\cr
+Whether to remove duplicate S(t) values and corresponding time points.}
 }
 \value{
 A \link{survDistr} object.
