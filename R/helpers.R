@@ -63,6 +63,7 @@ transform_result = function(res, times, output, add_times, eps) {
   if (output == "cdf") {
     res = 1 - res
   } else if (output == "cumhaz") {
+    # H(t) = -log(S(t)), floored at eps to avoid -log(0) = Inf
     res = -log(pmax(res, eps))
   }
 
