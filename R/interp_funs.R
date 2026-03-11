@@ -31,12 +31,19 @@
 #' times = c(0, 10, 20)
 #' eval_times = c(5, 15, 25)
 #'
-#' # S(t) with constant interpolation
+#' # constant S(t) interpolation
 #' interp(x, times, eval_times)
-#' # S(t) with linear interpolation
+#' # linear S(t) interpolation
 #' interp(x, times, eval_times, method = "linear_surv")
+#' # exponential S(t) interpolation (same as `method = "const_haz"`)
+#' interp(x, times, eval_times, method = "exp_surv")
+#'
+#' # cumulative distribution with linear S(t) interpolation
+#' interp(x, times, eval_times, method = "linear_surv", output = "cdf")
+#'
 #' # H(t) with linear interpolation
 #' interp(x, times, eval_times, method = "linear_surv", output = "cumhaz")
+#'
 #' @export
 interp = function(x,
                   times = NULL,
