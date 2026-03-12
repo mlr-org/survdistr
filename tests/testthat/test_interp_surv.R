@@ -113,7 +113,7 @@ test_that("interp() S(t) works", {
   out = interp(x = 1, times = 0, eval_times = c(0, 1), method = "exp_surv", add_times = FALSE)
   expect_equal(out, c(1, 1))
 
-  # 1 time point only, at t != 0
+  # 1 time point > 0, with S > 0
   out = interp(x = 0.8, times = 1, eval_times = c(0, 0.5, 1, 1.5, 2),
                method = "const_surv", add_times = FALSE)
   expect_equal(out, c(1, 1, 0.8, 0.8, 0.8))
@@ -132,6 +132,18 @@ test_that("interp() S(t) works", {
       0.8 * 0.8 ^ ((4 - 1)/1), # t = 4
       0.8 * 0.8 ^ ((5 - 1)/1) # t = 5
     ))
+
+  # 1 time point > 0, with S = 0 (super edge case)
+  out = interp(x = 0, times = 1, eval_times = c(0, 0.5, 1, 1.5),
+               method = "const_surv", add_times = FALSE)
+  expect_equal(out, c(1, 1, 0.0, 0.0))
+  out = interp(x = 0, times = 1, eval_times = c(0, 0.5, 1, 1.5),
+               method = "linear_surv", add_times = FALSE)
+  expect_equal(out, c(1, 0.5, 0.0, 0.0))
+  out = interp(x = 0, times = 1, eval_times = c(0, 0.5, 1, 1.5),
+               method = "exp_surv", add_times = FALSE)
+  # note that for t = 0.5 we have S(t) = 0 for exp_surv since formula has (S_right/S_left) = 0
+  expect_equal(out, c(1, 0.0, 0.0, 0.0))
 
   # S(t) with tied values
   x = c(1, 0.8, 0.8, 0.6)
