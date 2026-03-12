@@ -12,7 +12,7 @@
 #' @param times (`numeric()` | `NULL`)\cr
 #'   Anchor time points. If `NULL`, extracted from names/colnames.
 #' @param output (`character(1)`)\cr
-#'   Output type: `"surv"`, `"cdf"`, or `"cumhaz"`.
+#'   Output type: `"surv"`, `"cdf"`, `"cumhaz"`, `"density"` or `"hazard"`.
 #' @param add_times (`logical(1)`)\cr
 #'   If `TRUE`, attach `eval_times` as names/colnames.
 #'
@@ -56,7 +56,7 @@ interp = function(x,
                   trim_duplicates = FALSE) {
   # quick assertions
   method = map_interp_method(method) # const_* aliases
-  output = assert_choice(output, c("surv", "cdf", "cumhaz"))
+  output = assert_choice(output, c("surv", "cdf", "cumhaz", "density", "hazard"))
   assert_flag(add_times)
   assert_flag(check)
   assert_flag(trim_duplicates)
@@ -80,35 +80,29 @@ interp = function(x,
     times = extract_times(x, times)
   }
 
-  # Case: no interpolation requested
-  # Return original matrix, possibly transformed, with optional times (anchors) attached
+  # Case: no interpolation requested => use anchor times
   if (is.null(eval_times)) {
-    return(
-      transform_result(
-        res = x,
-        times = times,
-        output = output,
-        add_times = add_times,
-        eps = eps
-      )
-    )
+    eval_times = times
+  }
+  x_mat = if (is_mat) x else matrix(x, nrow = 1)
+
+  if (output %in% c("surv", "cdf", "cumhaz")) {
+    res = if (identical(eval_times, times)) {
+      x_mat # we have S(t) at the anchors already
+    } else {
+      c_interp_surv_mat(x_mat, times, eval_times, method)
+    }
+  } else if (output == "density") {
+    res = c_interp_density_mat(x_mat, times, eval_times, method)
+  } else if (output == "hazard") {
+    res = c_interp_hazard_mat(x_mat, times, eval_times, method)
   }
 
-  # call C++ interpolation: interpolate S(t)
-  if (is_mat) {
-    res = c_interp_surv_mat(x, times, eval_times, method)
-  } else {
-    res = c_interp_surv_mat(matrix(x, nrow = 1), times, eval_times, method)[1, ]
-  }
+  # if input was a vector, return a vector
+  if (!is_mat) res = res[1, ]
 
-  # transform output if needed and attach time labels
-  transform_result(
-    res = res,
-    times = eval_times,
-    output = output,
-    add_times = add_times,
-    eps = eps
-  )
+  # transform S(t) => F(t) or H(t) if needed and attach time labels
+  process_output(res, eval_times, output, add_times, eps)
 }
 
 #' Interpolate CIF matrix

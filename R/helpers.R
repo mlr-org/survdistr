@@ -43,23 +43,30 @@ extract_times = function(x, times = NULL) {
   times
 }
 
-#' Transform interpolation output
+#' Post-process (interpolated) output
 #'
-#' Applies the requested output transformation from survival S(t) to other functions
-#' (eg. F(t) or H(t)) and optionally attaches time labels to the result.
+#' Applies the requested output transformation from survival S(t) to either
+#' F(t) or H(t) and optionally attaches time labels to the result.
+#' Input hazards and densities are not transformed.
 #'
-#' @param res (`numeric` | `matrix`) Interpolated survival values.
-#' @param times (`numeric`) Time points corresponding to columns / elements.
-#' @param output (`character(1)`) Output type: `"surv"`, `"cdf"`, or `"cumhaz"`.
-#' @param add_times (`logical(1)`) Whether to attach time labels.
-#' @param eps (`numeric(1)`) Small value used to avoid `-Inf` in `cumhaz`.
+#' @param res (`numeric` | `matrix`)\cr
+#'  Interpolated values.
+#' @param times (`numeric`)\cr
+#'  Time points corresponding to columns / elements.
+#' @param output (`character(1)`)\cr
+#'  Output type: `"surv"`, `"cdf"`, `"cumhaz"`, `"density"` or `"hazard"`.
+#' @param add_times (`logical(1)`)\cr
+#'  Whether to attach time labels.
+#' @param eps (`numeric(1)`)\cr
+#'  Small value used to avoid `-Inf` in `cumhaz`.
 #'
-#' @return Transformed object with optional time labels.
+#' @return Possibly transformed object with optional time labels.
 #'
 #' @noRd
 #' @keywords internal
-transform_result = function(res, times, output, add_times, eps) {
-  # transform S(t) output
+process_output = function(res, times, output, add_times, eps) {
+  # transform S(t) => F(t) or H(t)
+  # S(t), h(t) or f(t) we don't transform
   if (output == "cdf") {
     res = 1 - res
   } else if (output == "cumhaz") {

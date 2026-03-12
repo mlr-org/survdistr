@@ -16,7 +16,7 @@ Anchor time points. If \code{NULL}, extracted from \code{colnames(x)}.}
 \item{eval_times}{(\code{numeric()} | \code{NULL})\cr
 New time points at which to interpolate.
 Values need to be unique, increasing non-negative numbers.
-If \code{NULL}, \code{x} is returned unchanged.}
+If \code{NULL}, the anchor \code{times} are used.}
 
 \item{add_times}{(\code{logical(1)})\cr
 If \code{TRUE}, attach \code{eval_times} as colnames in the output matrix.}

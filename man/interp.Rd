@@ -26,14 +26,14 @@ Anchor time points. If \code{NULL}, extracted from names/colnames.}
 \item{eval_times}{(\code{numeric()} | \code{NULL})\cr
 New time points at which to interpolate.
 Values need to be unique, increasing non-negative numbers.
-If \code{NULL}, \code{x} is returned unchanged.}
+If \code{NULL}, the anchor \code{times} are used.}
 
 \item{method}{(\code{character(1)})\cr
 Interpolation method; one of \code{"const_surv"} (default), \code{"const_dens"} (alias: \code{"linear_surv"})
 and \code{"const_haz"} (alias: \code{"exp_surv"}).}
 
 \item{output}{(\code{character(1)})\cr
-Output type: \code{"surv"}, \code{"cdf"}, or \code{"cumhaz"}.}
+Output type: \code{"surv"}, \code{"cdf"}, \code{"cumhaz"}, \code{"density"} or \code{"hazard"}.}
 
 \item{add_times}{(\code{logical(1)})\cr
 If \code{TRUE}, attach \code{eval_times} as names/colnames.}
