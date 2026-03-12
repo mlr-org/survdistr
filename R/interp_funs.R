@@ -95,7 +95,7 @@ interp = function(x,
   } else if (output == "density") {
     res = c_interp_density_mat(x_mat, times, eval_times, method)
   } else if (output == "hazard") {
-    res = c_interp_hazard_mat(x_mat, times, eval_times, method)
+    #res = c_interp_hazard_mat(x_mat, times, eval_times, method)
   }
 
   # if input was a vector, return a vector

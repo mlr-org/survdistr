@@ -13,6 +13,10 @@ c_interp_cif_mat <- function(x, times, eval_times) {
     .Call(`_survdistr_c_interp_cif_mat`, x, times, eval_times)
 }
 
+c_interp_density_mat <- function(x, times, eval_times, method = "const_surv") {
+    .Call(`_survdistr_c_interp_density_mat`, x, times, eval_times, method)
+}
+
 c_interp_surv_mat <- function(x, times, eval_times, method = "const_surv") {
     .Call(`_survdistr_c_interp_surv_mat`, x, times, eval_times, method)
 }
