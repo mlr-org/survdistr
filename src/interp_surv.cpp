@@ -1,18 +1,6 @@
 #include <Rcpp.h>
+#include "interp_helpers.h"
 using namespace Rcpp;
-
-enum InterpMethod {
-  CONST_SURV,
-  CONST_DENS,
-  CONST_HAZ
-};
-
-InterpMethod parse_method(const std::string& method) {
-  if (method == "const_surv") return CONST_SURV;
-  if (method == "const_dens") return CONST_DENS; // linear survival
-  if (method == "const_haz")  return CONST_HAZ; // exponential survival
-  stop("Unknown interpolation method.");
-}
 
 // [[Rcpp::export]]
 NumericMatrix c_interp_surv_mat(
