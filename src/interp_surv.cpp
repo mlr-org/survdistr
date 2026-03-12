@@ -25,6 +25,7 @@ NumericMatrix c_interp_surv_mat(
     for (int k = 0; k < n_eval; k++) {
       double t = eval_times[k];
 
+      // ----- t = 0 -----
       // t = 0 => S(0) = 1
       if (t == 0.0) {
         result(i, k) = 1.0;
@@ -36,13 +37,13 @@ NumericMatrix c_interp_surv_mat(
         ++j;
       }
 
-      // Exact anchor
+      // ----- Exact anchor (t > 0) -----
       if (j >= 0 && times[j] == t) {
         result(i, k) = x(i, j);
         continue;
       }
 
-      // after last anchor: t > times[B-1] (extrapolation)
+      // ----- Extrapolation => after last anchor: t > times[B-1] -----
       if (j == B - 1) {
         // choose last interval; if only one anchor use (0, times[0])
         double t_left, t_right, S_left, S_right;
@@ -83,12 +84,14 @@ NumericMatrix c_interp_surv_mat(
           double fB = (S_left - S_right) / delta;
           double t_star = t_right + S_right / fB;
 
+          // If S_left == S_right > 0 (last interval is flat) then fB = 0 and t_star = +Inf => S(t) = S_right
           if (t >= t_star) {
             result(i, k) = 0.0;
           } else {
             result(i, k) = S_right - fB * (t - t_right);
           }
         } else { // CONST_HAZ
+          // definitely here S_left > 0 since it's been handled above with the S_right = 0 case
           double alpha = (t - t_right) / delta;
           double ratio = S_right / S_left;
           double val = S_right * std::pow(ratio, alpha);
@@ -98,7 +101,7 @@ NumericMatrix c_interp_surv_mat(
         continue;
       }
 
-      // t in (t_j, t_{j+1}) where j = -1 means we are at (0, times[0])
+      // ----- Interpolation => t in (t_j, t_{j+1}) where j = -1 means we are at (0, times[0] > 0) -----
       double t_left, t_right, S_left, S_right;
       if (j == -1) {
         t_left = 0.0;
@@ -111,8 +114,6 @@ NumericMatrix c_interp_surv_mat(
         S_left = x(i, j);
         S_right = x(i, j + 1);
       }
-
-      // useful for CONST_DENS and CONST_HAZ interpolation
       double delta = t_right - t_left;
       double alpha = (t - t_left) / delta;
 
