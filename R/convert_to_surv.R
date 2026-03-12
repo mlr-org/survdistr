@@ -53,7 +53,7 @@
 #'
 #' @export
 convert_to_surv = function(x, times = NULL, input = "cont_haz", check = TRUE,
-                           clamp_surv = FALSE, eps = 1e-6) {
+                           clamp_surv = FALSE, eps = 1e-12) {
   check = assert_flag(check)
   clamp_surv = assert_flag(clamp_surv)
   input = assert_choice(input, c("disc_dens", "disc_haz", "cont_dens", "cont_haz"))

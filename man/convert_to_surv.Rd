@@ -10,7 +10,7 @@ convert_to_surv(
   input = "cont_haz",
   check = TRUE,
   clamp_surv = FALSE,
-  eps = 1e-06
+  eps = 1e-12
 )
 }
 \arguments{
