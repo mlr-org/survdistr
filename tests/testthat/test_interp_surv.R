@@ -1,23 +1,4 @@
-# we only test the vector input here since it uses the C matrix version internally
-test_that("interp() returns x unchanged when eval_times = NULL", {
-  x = c(1, 0.8, 0.5)
-  times = c(0, 1, 2)
-  expect_equal(interp(x, times = times, eval_times = NULL, add_times = FALSE), x)
-  expect_named(interp(x, times = times, eval_times = NULL, add_times = TRUE))
-})
-
-test_that("interp() checks", {
-  x = c(1, 1.1) # out of [0,1]
-  times = c(0, 1)
-  expect_error(interp(x, times, eval_times = 0.5))
-
-  x = c(1, 0.9, 0.95) # increasing S(t)!
-  times = c(0, 1, 2)
-  expect_error(interp(x, times, eval_times = 1.5))
-
-  expect_error(interp(x, times, eval_times = 1, method = "NA"), "Must be element of set")
-})
-
+# general tests
 test_that("interp() method aliases work", {
   expect_equal(
     interp(x = c(0.9, 0.8), times = c(1, 2), eval_times = 1.5, method = "exp_surv", add_times = FALSE),
@@ -29,7 +10,26 @@ test_that("interp() method aliases work", {
   )
 })
 
-test_that("interp() can trim duplicate S values", {
+# we only test the vector input here since it uses the C matrix version internally
+test_that("interp() returns S(t) unchanged when eval_times = NULL", {
+  x = c(1, 0.8, 0.5)
+  times = c(0, 1, 2)
+  expect_equal(interp(x, times = times, eval_times = NULL, add_times = FALSE), x)
+  expect_named(interp(x, times = times, eval_times = NULL, add_times = TRUE))
+})
+
+test_that("interp() S(t) input checks", {
+  x = c(1, 1.1) # out of [0,1]
+  times = c(0, 1)
+  expect_error(interp(x, times, eval_times = 0.5))
+
+  x = c(1, 0.9, 0.95) # increasing S(t)!
+  times = c(0, 1, 2)
+  expect_error(interp(x, times, eval_times = 1.5))
+  expect_error(interp(x, times, eval_times = 1, method = "NA"), "Must be element of set")
+})
+
+test_that("interp() can trim duplicate S(t) values", {
   x = c(1, 1, 1, 0.6, 0, 0)
   t = c(0, 1, 2, 3,   4, 5)
   expect_lt(
