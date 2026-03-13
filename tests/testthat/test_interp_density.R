@@ -123,7 +123,7 @@ test_that("interp() density works", {
   out = interp(x = 0, times = 1, eval_times = c(0, 0.5, 1, 1.5),
                method = "const_haz", output = "density", add_times = FALSE)
   # S(t) = 0 is replaced by eps for the constant hazard interpolation
-  eps = 1e-10
+  eps = 1e-12
   lambda_1 = -log(eps) # delta_1 = 1
   expect_equal(out, c(lambda_1, lambda_1 * 1 * (eps/1)^0.5, lambda_1 * 0.0, 0.0))
 

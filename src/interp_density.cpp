@@ -12,7 +12,7 @@ NumericMatrix c_interp_density_mat(
   const int n_obs = x.nrow(); // observations
   const int B = times.size(); // number of anchor points (t_1,...,t_B) - (must equal x.ncol())
   const int n_eval = eval_times.size(); // requested time points
-  const double eps = 1e-10; // small constant to avoid division by zero for constant hazard interpolation
+  const double eps = 1e-12; // small constant to avoid division by zero for constant hazard interpolation
 
   InterpMethod m = parse_method(method);
   NumericMatrix result(n_obs, n_eval);
