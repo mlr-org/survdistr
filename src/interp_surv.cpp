@@ -102,24 +102,26 @@ NumericMatrix c_interp_surv_mat(
       }
 
       // ----- Interpolation => t in (t_j, t_{j+1}) where j = -1 means we are at (0, times[0] > 0) -----
-      double t_left, t_right, S_left, S_right;
+      // handle constant survival interpolation early on for speed
+      double S_left = (j == -1) ? 1.0 : x(i, j);
+      if (m == CONST_SURV) {
+        result(i, k) = S_left;
+        continue;
+      }
+      double t_left, t_right, S_right;
       if (j == -1) {
         t_left = 0.0;
         t_right = times[0];
-        S_left = 1.0;
         S_right = x(i, 0);
       } else {
         t_left = times[j];
         t_right = times[j + 1];
-        S_left = x(i, j);
         S_right = x(i, j + 1);
       }
       double delta = t_right - t_left;
       double alpha = (t - t_left) / delta;
 
-      if (m == CONST_SURV) {
-        result(i, k) = S_left;
-      } else if (m == CONST_DENS) {
+      if (m == CONST_DENS) {
         double val = S_left + alpha * (S_right - S_left);
         result(i, k) = std::max(0.0, std::min(1.0, val));
       } else { // CONST_HAZ
