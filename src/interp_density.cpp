@@ -12,6 +12,7 @@ NumericMatrix c_interp_density_mat(
   const int n_obs = x.nrow(); // observations
   const int B = times.size(); // number of anchor points (t_1,...,t_B) - (must equal x.ncol())
   const int n_eval = eval_times.size(); // requested time points
+  const double eps = 1e-10; // small constant to avoid division by zero for constant hazard interpolation
 
   InterpMethod m = parse_method(method);
   NumericMatrix result(n_obs, n_eval);
@@ -28,21 +29,40 @@ NumericMatrix c_interp_density_mat(
       // ----- t = 0 -----
       // t = 0 => f(0) = 0 if only one anchor at 0, else the value from the first interval (0, times[0])
       if (t == 0.0) {
+        // density is zero except at anchors >0
         if (m == CONST_SURV) {
           result(i, k) = 0.0;
+          continue;
+        }
+
+        double t_left, t_right, S_left, S_right;
+
+        if (times[0] > 0.0) {
+          // first interval is (0, t1)
+          t_left = 0.0;
+          t_right = times[0];
+          S_left = 1.0;
+          S_right = x(i,0);
+        } else if (B > 1) {
+          // first interval is (t1 = 0, t2), i.e first anchor is at 0
+          t_left = times[0]; // this is essentially 0
+          t_right = times[1];
+          S_left = x(i,0); // this is essentially 1
+          S_right = x(i,1);
         } else {
-          if (times[0] > 0.0) {
-            double delta = times[0];
-            double S_left = x(i, 0);
-            if (m == CONST_DENS) {
-              result(i, k) = (1.0 - S_left) / delta;
-            } else { // CONST_HAZ
-              result(i, k) = -std::log(S_left) / delta;
-            }
-          } else {
-            // f(0) = 0 if first anchor at 0 (since S(0) = 1 implies f(0) = 0)
-            result(i, k) = 0.0;
-          }
+          // only anchor at t = 0 => no interval information
+          result(i, k) = 0.0;
+          continue;
+        }
+
+        double delta = t_right - t_left;
+
+        if (m == CONST_DENS) {
+          result(i, k) = (S_left - S_right) / delta;
+        } else { // CONST_HAZ
+          double ratio = S_right == 0.0 ? eps / S_left : S_right / S_left;
+          double haz = -std::log(ratio) / delta;
+          result(i, k) = haz * S_left;  // S(0) = S_left
         }
         continue;
       }
@@ -75,9 +95,14 @@ NumericMatrix c_interp_density_mat(
         } else if (m == CONST_DENS) {
           result(i, k) = (S_left - S_right) / delta;
         } else { // CONST_HAZ
-          double ratio = S_right / S_left;
-          double haz = - std::log(ratio) / delta;
-          result(i, k) = haz * S_right;
+          // avoid unnessary division by zero
+          if (S_left == 0.0) {
+            result(i, k) = 0.0;
+          } else {
+            double ratio = S_right == 0.0 ? eps / S_left : S_right / S_left;
+            double haz = -std::log(ratio) / delta;
+            result(i, k) = haz * S_right;
+          }
         }
         continue;
       }
@@ -137,7 +162,7 @@ NumericMatrix c_interp_density_mat(
       }
 
       // ----- Interpolation => t in (t_j, t_{j+1}) where j = -1 means we are at (0, times[0] > 0) -----
-      // handle constant survival interpolation early on for speed since f(t) = 0 for all non-anchor t
+      // handle constant survival interpolation early on for speed
       if (m == CONST_SURV) {
         result(i, k) = 0.0;
         continue;
@@ -165,7 +190,7 @@ NumericMatrix c_interp_density_mat(
           result(i, k) = 0.0;
         } else {
           double alpha = (t - t_left) / delta;
-          double ratio = S_right / S_left;
+          double ratio = S_right == 0.0 ? eps / S_left : S_right / S_left;
           double surv = S_left * std::pow(ratio, alpha);
           double haz = -std::log(ratio) / delta;
           result(i, k) = haz * surv;
