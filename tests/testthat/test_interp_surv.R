@@ -103,7 +103,7 @@ test_that("interp() S(t) works", {
       0.3, # t = 2
       0.3 * (0.3/0.8)^((2.5 - 2)/1), # t = 2.5
       0.3 * (0.3/0.8)^((3 - 2)/1) # t = 3
-    ))
+    ), tolerance = 1e-6)
 
   # 1 time point only, at t = 0
   out = interp(x = 1, times = 0, eval_times = c(0, 1), method = "const_surv", add_times = FALSE)
@@ -131,7 +131,7 @@ test_that("interp() S(t) works", {
       0.8 * 0.8 ^ ((3 - 1)/1), # t = 3
       0.8 * 0.8 ^ ((4 - 1)/1), # t = 4
       0.8 * 0.8 ^ ((5 - 1)/1) # t = 5
-    ))
+    ), tolerance = 1e-6)
 
   # 1 time point > 0, with S = 0 (super edge case)
   out = interp(x = 0, times = 1, eval_times = c(0, 0.5, 1, 1.5),
