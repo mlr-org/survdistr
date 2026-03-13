@@ -1,9 +1,9 @@
 
 # survdistr
 
-⚠️ **Under Development**  
-This package is experimental and not yet intended for general use.  
-APIs may change without notice, and functionality is incomplete.  
+⚠️ **Under Development**
+This package is experimental and not yet intended for general use.
+APIs may change without notice, and functionality is incomplete.
 Please use only for testing and development purposes.
 
 Survival distribution containers for efficient storage, management, and
@@ -92,7 +92,7 @@ tab
     ##   3:     3 0.970802920
     ##   4:     4 0.963503650
     ##   5:     7 0.941605839
-    ##  ---                  
+    ##  ---
     ##  97:   467 0.036018043
     ##  98:   553 0.027013532
     ##  99:   587 0.018009021
@@ -108,7 +108,7 @@ interp(
 )
 ```
 
-    ##           0         3.5         995        1000 
+    ##           0         3.5         995        1000
     ## 1.000000000 0.970802920 0.009004511 0.000000000
 
 ``` r
@@ -121,7 +121,7 @@ interp(
 )
 ```
 
-    ##           0         3.5         995        1000 
+    ##           0         3.5         995        1000
     ## 1.000000000 0.967153285 0.004502255 0.000000000
 
 ## Code of Conduct
