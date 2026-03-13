@@ -66,7 +66,7 @@ test_that("subsetting using 'rows' works", {
 
   expect_equal(obj3$data(rows = 1, add_times = FALSE), x[1, , drop = FALSE])
   expect_equal(obj3$survival(rows = c(1, 3), add_times = FALSE), x[c(1, 3), , drop = FALSE])
-  expect_equal(obj3$cdf(rows = c(1, 3), add_times = FALSE), 1 - x[c(1, 3), , drop = FALSE])
+  expect_equal(obj3$distribution(rows = c(1, 3), add_times = FALSE), 1 - x[c(1, 3), , drop = FALSE])
   # obj3 remains unchanged
   expect_equal(obj3$data(add_times = FALSE), x)
 })
@@ -105,13 +105,13 @@ test_that("survival() works", {
   expect_equal(res3[, time_cols], res[, time_cols]) # no interpolation at original time points
 })
 
-test_that("cdf() works", {
+test_that("distribution() works", {
   t = c(0, 7, 12, 22, 34, 40, 42, 50)
-  res = obj$cdf(times = t)
+  res = obj$distribution(times = t)
   expect_matrix(res, nrows = 3, ncols = length(t), col.names = "named")
 
   # Returns original matrix transformed to CDF
-  res2 = obj$cdf()
+  res2 = obj$distribution()
   expect_equal(res2, 1 - obj$data())
 })
 
@@ -131,4 +131,28 @@ test_that("cumhazard() works", {
   res2 = obj2$cumhazard(times = 1000)
   res3 = obj2$cumhazard(times = 1000, eps = 1e-20) # lower eps => lower S(t) => higher H(t)
   expect_all_true(res2[,1] < res3[,1])
+})
+
+test_that("density() works", {
+  obj2 = obj$clone(deep = TRUE)
+  obj2$method = "const_dens"
+
+  anchors = obj$times
+  res = obj$density(times = anchors) # constant survival interpolation
+  res2 = obj2$density(times = anchors) # linear survival interpolation
+  expect_matrix(res, nrows = 3, ncols = length(anchors), col.names = "named")
+  expect_matrix(res2, nrows = 3, ncols = length(anchors), col.names = "named")
+  # f(0) > 0 at anchors, regardless of interpolation method
+  expect_all_true(as.vector(res > 0))
+  expect_all_true(as.vector(res2 > 0))
+
+  # non-anchor time points
+  t = c(0, 7, 22, 40, 50)
+  res = obj$density(times = t) # constant survival interpolation
+  res2 = obj2$density(times = t) # linear survival interpolation
+  expect_matrix(res, nrows = 3, ncols = length(t), col.names = "named")
+  expect_matrix(res2, nrows = 3, ncols = length(t), col.names = "named")
+  # f(0) > 0 at anchors, regardless of interpolation method
+  expect_all_true(as.vector(res == 0))
+  expect_all_true(as.vector(res2 >= 0))
 })
