@@ -100,9 +100,9 @@ survDistr = R6Class(
       cat("Number of time points: ", ncols, "\n", sep = "")
       method = switch(
         self$method,
-        "const_surv" = "Piece-wise Constant Survival",
-        "const_dens" = "Piece-wise Linear Survival (Constant Density)",
-        "const_haz"  = "Piece-wise Constant Hazard (Exponential Survival)"
+        "const_surv" = "Piecewise Constant Survival",
+        "const_dens" = "Piecewise Constant Density (Linear Survival)",
+        "const_haz"  = "Piecewise Constant Hazard (Exponential Survival)"
       )
       cat("Interpolation method:", method, "\n")
       invisible(self)
@@ -139,7 +139,7 @@ survDistr = R6Class(
     #' Computes survival probabilities \eqn{S(t)} at the specified time points.
     #' Uses [interp()].
     #'
-    #' @return a `matrix` of survival probabilities
+    #' @return a `matrix` of survival probabilities (rows = observations, columns = time points).
     survival = function(rows = NULL, times = NULL, add_times = TRUE) {
       interp(
         x = private$.filter_mat(rows),
@@ -153,11 +153,11 @@ survDistr = R6Class(
     },
 
     #' @description
-    #' Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the specified time points.
+    #' Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} or CDF at the specified time points.
     #' \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
     #'
-    #' @return a cdf `matrix`.
-    cdf = function(rows = NULL, times = NULL, add_times = TRUE) {
+    #' @return a `matrix` of CDF values (rows = observations, columns = time points).
+    distribution = function(rows = NULL, times = NULL, add_times = TRUE) {
       interp(
         x = private$.filter_mat(rows),
         times = self$times,
@@ -170,10 +170,27 @@ survDistr = R6Class(
     },
 
     #' @description
+    #' Computes the probability density function \eqn{f(t)} or PDF at the specified time points.
+    #' \eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
+    #'
+    #' @return a `matrix` of PDF values (rows = observations, columns = time points).
+    density = function(rows = NULL, times = NULL, add_times = TRUE) {
+      interp(
+        x = private$.filter_mat(rows),
+        times = self$times,
+        eval_times = times,
+        method = self$method,
+        output = "density",
+        add_times = add_times,
+        check = FALSE # input `x` is already checked in initialize()
+      )
+    },
+
+    #' @description
     #' Computes the cumulative hazard at the specified time points as:
     #' \eqn{H(t) = -log(S(t))}.
     #'
-    #' @return a `matrix` of cumulative hazards.
+    #' @return a `matrix` of cumulative hazards (rows = observations, columns = time points).
     cumhazard = function(rows = NULL, times = NULL, add_times = TRUE, eps = 1e-12) {
      interp(
         x = private$.filter_mat(rows),
@@ -189,19 +206,12 @@ survDistr = R6Class(
 
     #' @description
     #' Computes the hazard \eqn{h(t)} at the specified time points.
+    #' Hazard is the conditional instantaneous event rate at time \eqn{t} given
+    #' survival up to time \eqn{t}.
     #'
-    #' @return a hazard `matrix`.
+    #' @return a `matrix` of hazard values (rows = observations, columns = time points).
     hazard = function(rows = NULL, times = NULL) {
       stop("Hazard method not yet implemented.")
-    },
-
-    #' @description
-    #' Computes the probability density function \eqn{f(t)} at the specified time points.
-    #' \eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
-    #'
-    #' @return a pdf `matrix`.
-    pdf = function(rows = NULL, times = NULL) {
-      stop("PDF method not yet implemented.")
     }
   ),
 

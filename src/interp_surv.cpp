@@ -108,6 +108,7 @@ NumericMatrix c_interp_surv_mat(
         result(i, k) = S_left;
         continue;
       }
+
       double t_left, t_right, S_right;
       if (j == -1) {
         t_left = 0.0;
