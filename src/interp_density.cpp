@@ -137,6 +137,7 @@ NumericMatrix c_interp_density_mat(
       }
 
       // ----- Interpolation => t in (t_j, t_{j+1}) where j = -1 means we are at (0, times[0] > 0) -----
+      // handle constant survival interpolation early on for speed since f(t) = 0 for all non-anchor t
       if (m == CONST_SURV) {
         result(i, k) = 0.0;
         continue;
