@@ -3,9 +3,21 @@
 #' @description
 #' Interpolates survival curves (vector or matrix) at new time points using
 #' internal C++ interpolation functions.
+#' Output can be the survival, cumulative distribution, or density functions,
+#' as well as the hazard or cumulative hazard functions.
+#'
+#' @details
 #' Input must always be \emph{survival probabilities}.
-#' Output can be the survival, cumulative distribution, or density functions, as well as
-#' the hazard or cumulative hazard functions.
+#' We currently provide three interpolation options for S(t):
+#' - `"const_surv"`: left-continuous constant interpolation of S(t) (default).
+#' - `"const_dens"`/`"linear_surv"`: linear interpolation of S(t) (equivalent to
+#' piecewise constant interpolation of the density).
+#' - `"const_haz"`/`"exp_surv"`: exponential interpolation of S(t) (equivalent to
+#' piecewise constant interpolation of the hazard).
+#'
+#' For constant hazard interpolation (`"const_haz"`), any S(t) values equal to 0
+#' are replaced with a small constant (`eps = 1e-12`) to prevent `Inf` hazard
+#' values and `NaN` densities.
 #'
 #' @param x (`numeric()` | `matrix()`)\cr
 #'   Survival vector or matrix (rows = observations, columns = time points).
@@ -28,8 +40,8 @@
 #' x = matrix(c(1, 0.8, 0.6,
 #'              1, 0.7, 0.4),
 #'            nrow = 2, byrow = TRUE)
-#' times = c(0, 10, 20)
-#' eval_times = c(5, 15, 25)
+#' times = c(0, 8, 13)
+#' eval_times = c(5, 10, 14)
 #'
 #' # constant S(t) interpolation
 #' interp(x, times, eval_times)
@@ -38,11 +50,14 @@
 #' # exponential S(t) interpolation (same as `method = "const_haz"`)
 #' interp(x, times, eval_times, method = "exp_surv")
 #'
-#' # cumulative distribution with linear S(t) interpolation
+#' # Cumulative distribution with linear S(t) interpolation
 #' interp(x, times, eval_times, method = "linear_surv", output = "cdf")
 #'
 #' # H(t) with linear interpolation
 #' interp(x, times, eval_times, method = "linear_surv", output = "cumhaz")
+#'
+#' # f(t) with linear interpolation
+#' interp(x, times, eval_times, method = "linear_surv", output = "density")
 #'
 #' @export
 interp = function(x,
@@ -107,8 +122,8 @@ interp = function(x,
 
 #' Interpolate CIF matrix
 #'
-#' Interpolates cumulative incidence (CIF) functions (corresponding to one competing event only)
-#' using left-continuous constant interpolation.
+#' Interpolates cumulative incidence (CIF) functions (corresponding to one
+#' competing event only) using left-continuous constant interpolation.
 #'
 #' @param x (`matrix()`)\cr
 #'   CIF matrix (rows = observations, columns = time points).

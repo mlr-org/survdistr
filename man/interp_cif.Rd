@@ -29,6 +29,6 @@ set to \code{FALSE} to skip checks (NOT recommended for external use).}
 Interpolated CIF matrix.
 }
 \description{
-Interpolates cumulative incidence (CIF) functions (corresponding to one competing event only)
-using left-continuous constant interpolation.
+Interpolates cumulative incidence (CIF) functions (corresponding to one
+competing event only) using left-continuous constant interpolation.
 }

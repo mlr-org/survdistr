@@ -15,11 +15,21 @@
 #' @template param_rows
 #' @template param_eps
 #'
+
 #' @details
-#' The input matrix (survival probabilities \eqn{S(t)} is stored internally and accessed by the `$data` field.
-#' The interpolation type needed for the public methods is stored in the `$method` slot.
-#' During construction, the function [assert_prob()] is used to validate the input data matrix if `check` is `TRUE`.
-#' Interpolation is performed using the [interp()] function.
+#' Key design features:
+#' - The survival matrix is stored internally and can be accessed using the `$data()` method.
+#' - The `$times` active field provides the time points corresponding to the matrix columns.
+#' - The interpolation method is controlled via the `$method` active field.
+#' - Survival-related quantities (e.g., CDF, density, hazard) are interpolated using the
+#' [interp()] function.
+#' - The [assert_prob()] function validates the input data matrix during construction if
+#' `check` is set to `TRUE`.
+#' - Use the `$filter()` method to subset observations in-place by filtering rows of the
+#' stored matrix.
+#' - Use `trim_duplicates = TRUE` in the constructor to remove flat S(t) segments (repeated
+#' values across time points) with a pre-specified tolerance (for a more controlled
+#' pre-processing, see [trim_duplicates()]).
 #'
 #' @examples
 #' # generate survival matrix
@@ -38,14 +48,18 @@
 #' # time points
 #' x$times
 #'
+#' eval_times = c(10, 30, 42, 50)
 #' # S(t) at given time points (constant interpolation)
-#' x$survival(times = c(10, 30, 42, 50))
+#' x$survival(times = eval_times)
 #' # same but with linear interpolation
 #' x$method = "linear_surv"
-#' x$survival(times = c(10, 30, 42, 50))
+#' x$survival(times = eval_times)
 #'
 #' # Cumulative hazard
-#' x$cumhazard()
+#' x$cumhazard(times = eval_times)
+#'
+#' # Density
+#' x$density(times = eval_times)
 #'
 #' @export
 survDistr = R6Class(
@@ -137,7 +151,6 @@ survDistr = R6Class(
 
     #' @description
     #' Computes survival probabilities \eqn{S(t)} at the specified time points.
-    #' Uses [interp()].
     #'
     #' @return a `matrix` of survival probabilities (rows = observations, columns = time points).
     survival = function(rows = NULL, times = NULL, add_times = TRUE) {
@@ -171,7 +184,8 @@ survDistr = R6Class(
 
     #' @description
     #' Computes the probability density function \eqn{f(t)} or PDF at the specified time points.
-    #' \eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
+    #' \eqn{f(t) = \frac{d}{dt} F(t)} is the probability of the event occurring at the specific
+    #' time \eqn{t}.
     #'
     #' @return a `matrix` of PDF values (rows = observations, columns = time points).
     density = function(rows = NULL, times = NULL, add_times = TRUE) {
@@ -187,8 +201,8 @@ survDistr = R6Class(
     },
 
     #' @description
-    #' Computes the cumulative hazard at the specified time points as:
-    #' \eqn{H(t) = -log(S(t))}.
+    #' Computes the cumulative hazard (accumulated risk up to time \eqn{t}) at the specified time
+    #' points as \eqn{H(t) = -log(S(t))}.
     #'
     #' @return a `matrix` of cumulative hazards (rows = observations, columns = time points).
     cumhazard = function(rows = NULL, times = NULL, add_times = TRUE, eps = 1e-12) {
@@ -205,7 +219,7 @@ survDistr = R6Class(
     },
 
     #' @description
-    #' Computes the hazard \eqn{h(t)} at the specified time points.
+    #' Computes the hazard \eqn{h(t) = \frac{f(t)}{S(t)}} at the specified time points.
     #' Hazard is the conditional instantaneous event rate at time \eqn{t} given
     #' survival up to time \eqn{t}.
     #'

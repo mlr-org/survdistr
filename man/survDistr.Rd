@@ -13,10 +13,21 @@ The main prediction data type is survival matrix, where
 \strong{rows represent observations and columns represent time points}.
 }
 \details{
-The input matrix (survival probabilities \eqn{S(t)} is stored internally and accessed by the \verb{$data} field.
-The interpolation type needed for the public methods is stored in the \verb{$method} slot.
-During construction, the function \code{\link[=assert_prob]{assert_prob()}} is used to validate the input data matrix if \code{check} is \code{TRUE}.
-Interpolation is performed using the \code{\link[=interp]{interp()}} function.
+Key design features:
+\itemize{
+\item The survival matrix is stored internally and can be accessed using the \verb{$data()} method.
+\item The \verb{$times} active field provides the time points corresponding to the matrix columns.
+\item The interpolation method is controlled via the \verb{$method} active field.
+\item Survival-related quantities (e.g., CDF, density, hazard) are interpolated using the
+\code{\link[=interp]{interp()}} function.
+\item The \code{\link[=assert_prob]{assert_prob()}} function validates the input data matrix during construction if
+\code{check} is set to \code{TRUE}.
+\item Use the \verb{$filter()} method to subset observations in-place by filtering rows of the
+stored matrix.
+\item Use \code{trim_duplicates = TRUE} in the constructor to remove flat S(t) segments (repeated
+values across time points) with a pre-specified tolerance (for a more controlled
+pre-processing, see \code{\link[=trim_duplicates]{trim_duplicates()}}).
+}
 }
 \examples{
 # generate survival matrix
@@ -35,14 +46,18 @@ x$method
 # time points
 x$times
 
+eval_times = c(10, 30, 42, 50)
 # S(t) at given time points (constant interpolation)
-x$survival(times = c(10, 30, 42, 50))
+x$survival(times = eval_times)
 # same but with linear interpolation
 x$method = "linear_surv"
-x$survival(times = c(10, 30, 42, 50))
+x$survival(times = eval_times)
 
 # Cumulative hazard
-x$cumhazard()
+x$cumhazard(times = eval_times)
+
+# Density
+x$density(times = eval_times)
 
 }
 \section{Active bindings}{
@@ -180,7 +195,6 @@ Invisibly returns the \code{survDistr} object itself.
 \if{latex}{\out{\hypertarget{method-survDistr-survival}{}}}
 \subsection{Method \code{survival()}}{
 Computes survival probabilities \eqn{S(t)} at the specified time points.
-Uses \code{\link[=interp]{interp()}}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(rows = NULL, times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
@@ -246,7 +260,8 @@ a \code{matrix} of CDF values (rows = observations, columns = time points).
 \if{latex}{\out{\hypertarget{method-survDistr-density}{}}}
 \subsection{Method \code{density()}}{
 Computes the probability density function \eqn{f(t)} or PDF at the specified time points.
-\eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
+\eqn{f(t) = \frac{d}{dt} F(t)} is the probability of the event occurring at the specific
+time \eqn{t}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$density(rows = NULL, times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
@@ -278,8 +293,8 @@ a \code{matrix} of PDF values (rows = observations, columns = time points).
 \if{html}{\out{<a id="method-survDistr-cumhazard"></a>}}
 \if{latex}{\out{\hypertarget{method-survDistr-cumhazard}{}}}
 \subsection{Method \code{cumhazard()}}{
-Computes the cumulative hazard at the specified time points as:
-\eqn{H(t) = -log(S(t))}.
+Computes the cumulative hazard (accumulated risk up to time \eqn{t}) at the specified time
+points as \eqn{H(t) = -log(S(t))}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(rows = NULL, times = NULL, add_times = TRUE, eps = 1e-12)}\if{html}{\out{</div>}}
 }
@@ -315,7 +330,7 @@ a \code{matrix} of cumulative hazards (rows = observations, columns = time point
 \if{html}{\out{<a id="method-survDistr-hazard"></a>}}
 \if{latex}{\out{\hypertarget{method-survDistr-hazard}{}}}
 \subsection{Method \code{hazard()}}{
-Computes the hazard \eqn{h(t)} at the specified time points.
+Computes the hazard \eqn{h(t) = \frac{f(t)}{S(t)}} at the specified time points.
 Hazard is the conditional instantaneous event rate at time \eqn{t} given
 survival up to time \eqn{t}.
 \subsection{Usage}{
