@@ -146,7 +146,7 @@ NumericMatrix c_interp_density_mat(
           // If S_left == S_right > 0 (last interval is flat) then fB = 0 and t_star = +Inf => f(t) = fB = 0
           density(i,k) = (t < t_star) ? fB : 0.0;
         } else { // CONST_HAZ
-          // definitely here S_left > 0 and S_right > 0 since we handle the S_right = 0 case above
+          // definitely here S_left > 0 and S_right > 0 since we handle the S_right == 0 case above
           double alpha = (t - t_right) / delta;
           double ratio = S_right / S_left;
           double surv = S_right * std::pow(ratio, alpha);
@@ -185,7 +185,7 @@ NumericMatrix c_interp_density_mat(
           density(i, k) = 0.0;
         } else {
           double alpha = (t - t_left) / delta;
-          double ratio = S_right == 0.0 ? eps / S_left : S_right / S_left;
+          double ratio = S_right <= 0.0 ? std::min(eps, S_left) / S_left : S_right / S_left;
           double surv = S_left * std::pow(ratio, alpha);
           double haz = -std::log(ratio) / delta;
           density(i, k) = haz * surv;
