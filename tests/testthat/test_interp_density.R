@@ -201,4 +201,11 @@ test_that("interp() density works", {
       0.0, # t = 4
       0.0 # t = 5
     ), tolerance = 1e-6)
+
+  # extreme cases where S at anchor is lower than internal eps: density >= 0
+  x = c(0.9, 0.1, 1e-13, 1e-14, 0)
+  times = 1:5
+  eval_times = sort(c(0.5, times, times + 0.01))
+  out = interp(x, times, eval_times, method = "const_haz", output = "density", add_times = FALSE)
+  expect_all_true(out >= 0)
 })
