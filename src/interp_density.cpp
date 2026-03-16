@@ -12,7 +12,7 @@ NumericMatrix c_interp_density_mat(
   const int n_obs = x.nrow(); // observations
   const int B = times.size(); // number of anchor points (t_1,...,t_B) - (must equal x.ncol())
   const int n_eval = eval_times.size(); // requested time points
-  const double eps = 1e-12; // small constant to avoid division by zero for constant hazard interpolation
+  const double eps = 1e-12; // lower value for zero survival values under constant hazard interpolation
 
   InterpMethod m = parse_method(method);
   NumericMatrix density(n_obs, n_eval);
@@ -35,20 +35,16 @@ NumericMatrix c_interp_density_mat(
           continue;
         }
 
-        // S_left should be always 1 here
-        double t_left, t_right, S_left, S_right;
+        // Pre-initialize t_left and S_left
+        double t_left = 0.0, S_left = 1.0, t_right, S_right;
 
         if (times[0] > 0.0) {
           // first interval is (0, t1)
-          t_left = 0.0;
           t_right = times[0];
-          S_left = 1.0;
           S_right = x(i,0);
         } else if (B > 1) {
           // first interval is (t1 = 0, t2), i.e first anchor is at 0
-          t_left = times[0]; // this is essentially 0
           t_right = times[1];
-          S_left = x(i,0); // this is essentially 1
           S_right = x(i,1);
         } else {
           // only anchor at t = 0 => no interval information
@@ -61,9 +57,7 @@ NumericMatrix c_interp_density_mat(
         if (m == CONST_DENS) {
           density(i, k) = (S_left - S_right) / delta;
         } else { // CONST_HAZ
-          double ratio = S_right == 0.0 ? eps / S_left : S_right / S_left;
-          double haz = -std::log(ratio) / delta;
-          result(i, k) = haz * S_left;  // S(0) = S_left
+          density(i, k) = -std::log(S_right > 0.0 ? S_right : eps) / delta;
         }
         continue;
       }
