@@ -71,9 +71,9 @@ piecewise constant interpolation of the density).
 piecewise constant interpolation of the hazard).
 }
 
-For constant hazard interpolation (\code{"const_haz"}), any S(t) values equal to 0
-are replaced with a small constant (\code{eps = 1e-12}) to prevent \code{Inf} hazard
-values and \code{NaN} densities.
+For constant hazard interpolation (\code{"const_haz"}), any right-anchor S(t) values
+equal to 0 are internally floored at \code{min(1e-12, S_left)} within each interval.
+This keeps hazards/densities finite without allowing a local increase in S(t).
 }
 \examples{
 x = matrix(c(1, 0.8, 0.6,

@@ -62,6 +62,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_interp_hazard_mat
+NumericMatrix c_interp_hazard_mat(const NumericMatrix& x, const NumericVector& times, const NumericVector& eval_times, const std::string& method);
+RcppExport SEXP _survdistr_c_interp_hazard_mat(SEXP xSEXP, SEXP timesSEXP, SEXP eval_timesSEXP, SEXP methodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type times(timesSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type eval_times(eval_timesSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_interp_hazard_mat(x, times, eval_times, method));
+    return rcpp_result_gen;
+END_RCPP
+}
 // c_interp_surv_mat
 NumericMatrix c_interp_surv_mat(const NumericMatrix& x, const NumericVector& times, const NumericVector& eval_times, const std::string& method);
 RcppExport SEXP _survdistr_c_interp_surv_mat(SEXP xSEXP, SEXP timesSEXP, SEXP eval_timesSEXP, SEXP methodSEXP) {
@@ -128,6 +142,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_survdistr_c_clamp_surv", (DL_FUNC) &_survdistr_c_clamp_surv, 3},
     {"_survdistr_c_interp_cif_mat", (DL_FUNC) &_survdistr_c_interp_cif_mat, 3},
     {"_survdistr_c_interp_density_mat", (DL_FUNC) &_survdistr_c_interp_density_mat, 4},
+    {"_survdistr_c_interp_hazard_mat", (DL_FUNC) &_survdistr_c_interp_hazard_mat, 4},
     {"_survdistr_c_interp_surv_mat", (DL_FUNC) &_survdistr_c_interp_surv_mat, 4},
     {"_survdistr_c_disc_dens_to_surv_mat", (DL_FUNC) &_survdistr_c_disc_dens_to_surv_mat, 1},
     {"_survdistr_c_disc_haz_to_surv_mat", (DL_FUNC) &_survdistr_c_disc_haz_to_surv_mat, 1},

@@ -15,9 +15,9 @@
 #' - `"const_haz"`/`"exp_surv"`: exponential interpolation of S(t) (equivalent to
 #' piecewise constant interpolation of the hazard).
 #'
-#' For constant hazard interpolation (`"const_haz"`), any S(t) values equal to 0
-#' are replaced with a small constant (`eps = 1e-12`) to prevent `Inf` hazard
-#' values and `NaN` densities.
+#' For constant hazard interpolation (`"const_haz"`), any right-anchor S(t) values
+#' equal to 0 are internally floored at `min(1e-12, S_left)` within each interval.
+#' This keeps hazards/densities finite without allowing a local increase in S(t).
 #'
 #' @param x (`numeric()` | `matrix()`)\cr
 #'   Survival vector or matrix (rows = observations, columns = time points).
@@ -110,7 +110,7 @@ interp = function(x,
   } else if (output == "density") {
     res = c_interp_density_mat(x_mat, times, eval_times, method)
   } else if (output == "hazard") {
-    #res = c_interp_hazard_mat(x_mat, times, eval_times, method)
+    res = c_interp_hazard_mat(x_mat, times, eval_times, method)
   }
 
   # if input was a vector, return a vector
