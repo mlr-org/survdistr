@@ -59,6 +59,9 @@ x$cumhazard(times = eval_times)
 # Density
 x$density(times = eval_times)
 
+# Hazard
+x$hazard(times = eval_times)
+
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -334,7 +337,7 @@ Computes the hazard \eqn{h(t) = \frac{f(t)}{S(t)}} at the specified time points.
 Hazard is the conditional instantaneous event rate at time \eqn{t} given
 survival up to time \eqn{t}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$hazard(rows = NULL, times = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$hazard(rows = NULL, times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -350,6 +353,9 @@ If \code{NULL}, no filtering is applied.}
 New time points at which to interpolate.
 Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
+
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE}, attach \code{eval_times} to the output.}
 }
 \if{html}{\out{</div>}}
 }

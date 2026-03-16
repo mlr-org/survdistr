@@ -61,6 +61,9 @@
 #' # Density
 #' x$density(times = eval_times)
 #'
+#' # Hazard
+#' x$hazard(times = eval_times)
+#'
 #' @export
 survDistr = R6Class(
   "survDistr",
@@ -124,6 +127,7 @@ survDistr = R6Class(
 
     #' @description
     #' Return the stored data matrix.
+    #'
     #' @return (`matrix`)
     data = function(rows = NULL, add_times = TRUE) {
       assert_flag(add_times)
@@ -224,8 +228,16 @@ survDistr = R6Class(
     #' survival up to time \eqn{t}.
     #'
     #' @return a `matrix` of hazard values (rows = observations, columns = time points).
-    hazard = function(rows = NULL, times = NULL) {
-      stop("Hazard method not yet implemented.")
+    hazard = function(rows = NULL, times = NULL, add_times = TRUE) {
+      interp(
+        x = private$.filter_mat(rows),
+        times = self$times,
+        eval_times = times,
+        method = self$method,
+        output = "hazard",
+        add_times = add_times,
+        check = FALSE # input `x` is already checked in initialize()
+      )
     }
   ),
 

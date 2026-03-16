@@ -152,7 +152,29 @@ test_that("density() works", {
   res2 = obj2$density(times = t) # linear survival interpolation
   expect_matrix(res, nrows = 3, ncols = length(t), col.names = "named")
   expect_matrix(res2, nrows = 3, ncols = length(t), col.names = "named")
-  # f(0) > 0 at anchors, regardless of interpolation method
-  expect_all_true(as.vector(res == 0))
+  expect_all_true(as.vector(res == 0)) # f = 0 for constant survival interpolation
+  expect_all_true(as.vector(res2 >= 0))
+})
+
+test_that("hazard() works", {
+  obj2 = obj$clone(deep = TRUE)
+  obj2$method = "const_haz"
+
+  anchors = obj$times
+  res = obj$hazard(times = anchors)
+  res2 = obj2$hazard(times = anchors)
+  expect_matrix(res, nrows = 3, ncols = length(anchors), col.names = "named")
+  expect_matrix(res2, nrows = 3, ncols = length(anchors), col.names = "named")
+  # h(0) > 0 at anchors, regardless of interpolation method
+  expect_all_true(as.vector(res > 0))
+  expect_all_true(as.vector(res2 > 0))
+
+  # non-anchor time points
+  t = c(0, 7, 22, 40, 50)
+  res = obj$hazard(times = t) # constant survival interpolation
+  res2 = obj2$hazard(times = t) # exp survival interpolation
+  expect_matrix(res, nrows = 3, ncols = length(t), col.names = "named")
+  expect_matrix(res2, nrows = 3, ncols = length(t), col.names = "named")
+  expect_all_true(as.vector(res == 0)) # h = 0 for constant survival interpolation
   expect_all_true(as.vector(res2 >= 0))
 })
