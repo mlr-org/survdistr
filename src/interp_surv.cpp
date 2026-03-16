@@ -14,7 +14,7 @@ NumericMatrix c_interp_surv_mat(
   const int n_eval = eval_times.size(); // requested time points
 
   InterpMethod m = parse_method(method);
-  NumericMatrix result(n_obs, n_eval);
+  NumericMatrix survival(n_obs, n_eval);
 
   // Iterate over observations
   for (int i = 0; i < n_obs; i++) {
@@ -28,7 +28,7 @@ NumericMatrix c_interp_surv_mat(
       // ----- t = 0 -----
       // t = 0 => S(0) = 1
       if (t == 0.0) {
-        result(i, k) = 1.0;
+        survival(i, k) = 1.0;
         continue;
       }
 
@@ -39,7 +39,7 @@ NumericMatrix c_interp_surv_mat(
 
       // ----- Exact anchor (t > 0) -----
       if (j >= 0 && times[j] == t) {
-        result(i, k) = x(i, j);
+        survival(i, k) = x(i, j);
         continue;
       }
 
@@ -62,13 +62,13 @@ NumericMatrix c_interp_surv_mat(
 
         // no need to extrapolate if survival is already 0 at last anchor
         if (S_right <= 0.0) {
-          result(i, k) = 0.0;
+          survival(i, k) = 0.0;
           continue;
         }
 
         // handle constant survival extrapolation early on for speed
         if (m == CONST_SURV) {
-          result(i, k) = S_right;
+          survival(i, k) = S_right;
           continue;
         }
 
@@ -76,7 +76,7 @@ NumericMatrix c_interp_surv_mat(
 
         // degenerate interval (e.g. single anchor at t = 0)
         if (delta == 0.0) {
-          result(i, k) = S_right;
+          survival(i, k) = S_right;
           continue;
         }
 
@@ -86,9 +86,9 @@ NumericMatrix c_interp_surv_mat(
 
           // If S_left == S_right > 0 (last interval is flat) then fB = 0 and t_star = +Inf => S(t) = S_right
           if (t >= t_star) {
-            result(i, k) = 0.0;
+            survival(i, k) = 0.0;
           } else {
-            result(i, k) = S_right - fB * (t - t_right);
+            survival(i, k) = S_right - fB * (t - t_right);
           }
         } else { // CONST_HAZ
           // definitely here S_left > 0 since it's been handled above with the S_right = 0 case
@@ -96,7 +96,7 @@ NumericMatrix c_interp_surv_mat(
           double ratio = S_right / S_left;
           double val = S_right * std::pow(ratio, alpha);
 
-          result(i, k) = std::max(0.0, std::min(1.0, val));
+          survival(i, k) = std::max(0.0, std::min(1.0, val));
         }
         continue;
       }
@@ -105,7 +105,7 @@ NumericMatrix c_interp_surv_mat(
       // handle constant survival interpolation early on for speed
       double S_left = (j == -1) ? 1.0 : x(i, j);
       if (m == CONST_SURV) {
-        result(i, k) = S_left;
+        survival(i, k) = S_left;
         continue;
       }
 
@@ -124,19 +124,19 @@ NumericMatrix c_interp_surv_mat(
 
       if (m == CONST_DENS) {
         double val = S_left + alpha * (S_right - S_left);
-        result(i, k) = std::max(0.0, std::min(1.0, val));
+        survival(i, k) = std::max(0.0, std::min(1.0, val));
       } else { // CONST_HAZ
         // avoid unnessary division by zero
         if (S_left == 0.0) {
-          result(i, k) = 0.0;
+          survival(i, k) = 0.0;
         } else {
           double ratio = S_right / S_left;
           double val = S_left * std::pow(ratio, alpha);
-          result(i, k) = std::max(0.0, std::min(1.0, val));
+          survival(i, k) = std::max(0.0, std::min(1.0, val));
         }
       }
     }
   }
 
-  return result;
+  return survival;
 }
