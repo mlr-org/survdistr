@@ -1,4 +1,4 @@
-# we only test the vector input here since it uses the C matrix version internally
+# we only test the vector input here since it uses the C++ matrix version internally
 test_that("interp() density works", {
   # S(t) all different, 3 time points, t1 == 0
   x = c(1, 0.8, 0.5)
