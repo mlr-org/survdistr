@@ -10,7 +10,7 @@
   - Added aliases for the three interpolation options (e.g., `const_haz` is equivalent to `exp_surv`).
   - Implemented S(t) interpolation in C++ for all 3 options (`output = "surv"`); H(t) and F(t) follow similarly.
   - Implemented f(t) interpolation in C++ for all 3 options (`output = "density"`)
-  - Implemented f(t) interpolation in C++ for all 3 options (`output = "hazard"`)
+  - Implemented h(t) interpolation in C++ for all 3 options (`output = "hazard"`)
   - Requires unique and ordered `eval_times`, resulting in significant C++ speed-up.
   - Allows passing `times` separately to preserve precision.
 - Improved `survDistr`:
