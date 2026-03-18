@@ -180,7 +180,7 @@ NumericMatrix c_interp_hazard_mat(
 
       if (m == CONST_DENS) {
         double f = (S_left - S_right) / delta;
-        hazard(i, k) = f / (S_left - f * (t - t_left));
+        hazard(i, k) = S_left > 0 ? f / (S_left - f * (t - t_left)) : 0.0;
       } else { // CONST_HAZ
         // avoid unnessary division by zero
         if (S_left == 0.0) {
