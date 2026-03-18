@@ -21,7 +21,7 @@ Install the development version from GitHub:
 pak::pak("mlr-org/survdistr")
 ```
 
-## Example
+## Examples
 
 Linear interpolation of a survival matrix using the `survDistr` R6 class:
 ```{r}
@@ -44,9 +44,12 @@ x$cumhazard(times = c(5, 42))
 
 # Probability density f(t)
 x$density(times = c(5, 30, 42))
+
+# Hazard h(t)
+x$hazard(times = c(5, 30, 42))
 ```
 
-Interpolation of a Kaplan-Meier survival curve using exported R function that calls C code:
+Interpolation of a Kaplan-Meier survival curve using exported R function that calls C++ code:
 ```{r}
 library(survival)
 
@@ -68,6 +71,14 @@ interp(
   times = tab$time,
   eval_times = c(0, 3.5, 995),
   method = "linear_surv"
+)
+
+# exponential S(t) interpolation
+interp(
+  x = tab$surv,
+  times = tab$time,
+  eval_times = c(0, 3.5, 995),
+  method = "exp_surv"
 )
 ```
 
