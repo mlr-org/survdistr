@@ -6,13 +6,14 @@
 
 ## Citation
 
-Zobolas J (2026). *survdistr: Survival Distribution Containers*. R
-package version 0.0.2, <https://survdistr.mlr-org.com>.
+Zobolas J (2026). *survdistr: Survival Distribution Container with
+Flexible Interpolation Methods*. R package version 0.0.2.9000,
+<https://survdistr.mlr-org.com>.
 
     @Manual{,
-      title = {survdistr: Survival Distribution Containers},
+      title = {survdistr: Survival Distribution Container with Flexible Interpolation Methods},
       author = {John Zobolas},
       year = {2026},
-      note = {R package version 0.0.2},
+      note = {R package version 0.0.2.9000},
       url = {https://survdistr.mlr-org.com},
     }
