@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">survdistr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,14 +45,43 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.0.2" id="survdistr-002">survdistr 0.0.2<a class="anchor" aria-label="anchor" href="#survdistr-002"></a></h2>
+<ul><li>Added <code><a href="../reference/convert_to_surv.html">convert_to_surv()</a></code> for efficient transformation of hazard/density functions to survival at anchor time points (uses C++ internally).</li>
+<li>Introduced <code><a href="../reference/trim_duplicates.html">trim_duplicates()</a></code> to remove repeated S(t) values across the time axis, with tolerance.</li>
+<li>Added <code><a href="../reference/interp_cif.html">interp_cif()</a></code> for constant interpolation of CIF (uses C++ internally).</li>
+<li>Added <code><a href="../reference/extract_times.html">extract_times()</a></code> to consistently obtain and validate time points from vectors or matrices.</li>
+<li>Unified assertion function to one: <code><a href="../reference/assert_prob.html">assert_prob()</a></code>.</li>
+<li>Unified <code>mat_interp()</code> and <code>vec_interp()</code> into a single <code><a href="../reference/interp.html">interp()</a></code> function.</li>
+<li>Enhanced <code><a href="../reference/interp.html">interp()</a></code>:
+<ul><li>Added aliases for the three interpolation options (e.g., <code>const_haz</code> is equivalent to <code>exp_surv</code>).</li>
+<li>Implemented S(t) interpolation in C++ for all 3 options (<code>output = "surv"</code>); H(t) and F(t) follow similarly.</li>
+<li>Implemented f(t) interpolation in C++ for all 3 options (<code>output = "density"</code>)</li>
+<li>Implemented h(t) interpolation in C++ for all 3 options (<code>output = "hazard"</code>)</li>
+<li>Requires unique and ordered <code>eval_times</code>, resulting in significant C++ speed-up.</li>
+<li>Allows passing <code>times</code> separately to preserve precision.</li>
+</ul></li>
+<li>Improved <code>survDistr</code>:
+<ul><li>Removed <code>data_type</code> argument; input now only S(t).</li>
+<li>Added aliases for the three interpolation options.</li>
+<li>Allows passing <code>times</code> during construction separately for precision.</li>
+<li>Introduced <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code> method for in-place object filtering.</li>
+<li>Added <code>rows</code> argument to filter input matrix before interpolation without altering the object.</li>
+<li>
+<code>method</code> and <code>times</code> are now active fields, not public members.</li>
+<li>Added S3 conversion via <code>as_survDistr(x)</code>.</li>
+</ul></li>
+<li>Added unit tests for all features.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.1" id="survdistr-001">survdistr 0.0.1<a class="anchor" aria-label="anchor" href="#survdistr-001"></a></h2>
 <ul><li>Base <code>survDistr</code> class.</li>
 <li>
-<code><a href="../reference/assert_prob_matrix.html">assert_prob_matrix()</a></code> for asserting survival, CDF and CIF matrices.</li>
+<code>assert_prob_matrix()</code> for asserting survival, CDF and CIF matrices.</li>
 <li>
-<code><a href="../reference/mat_interp.html">mat_interp()</a></code> and <code><a href="../reference/vec_interp.html">vec_interp()</a></code> for constant and linear interpolation of survival, CDF and CIF matrices/vectors (using internal <code>Rcpp</code> methods).</li>
+<code>mat_interp()</code> and <code>vec_interp()</code> for constant and linear interpolation of survival, CDF and CIF matrices/vectors (using internal <code>Rcpp</code> methods).</li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
@@ -60,7 +89,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

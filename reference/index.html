@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">survdistr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,7 @@
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
@@ -60,46 +59,73 @@
 
         </dt>
         <dd>Survival Distribution Container</dd>
+
+        <dt>
+
+          <code><a href="as_survDistr.html">as_survDistr()</a></code>
+
+        </dt>
+        <dd>Coerce Object to survDistr</dd>
       </dl></div><div class="section level2">
-      <h2 id="interpolation-functions">Interpolation Functions<a class="anchor" aria-label="anchor" href="#interpolation-functions"></a></h2>
+      <h2 id="interpolation">Interpolation<a class="anchor" aria-label="anchor" href="#interpolation"></a></h2>
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
 
       <dl><dt>
 
-          <code><a href="mat_interp.html">mat_interp()</a></code>
+          <code><a href="interp.html">interp()</a></code>
 
         </dt>
-        <dd>Interpolate Survival / CDF / CIF Matrices</dd>
-      </dl><dl><dt>
+        <dd>Interpolate Survival Curves</dd>
 
-          <code><a href="vec_interp.html">vec_interp()</a></code>
+        <dt>
+
+          <code><a href="interp_cif.html">interp_cif()</a></code>
 
         </dt>
-        <dd>Interpolate a Survival / CDF / CIF Vector</dd>
+        <dd>Interpolate CIF matrix</dd>
       </dl></div><div class="section level2">
-      <h2 id="assertion-functions">Assertion Functions<a class="anchor" aria-label="anchor" href="#assertion-functions"></a></h2>
+      <h2 id="helper-functions">Helper Functions<a class="anchor" aria-label="anchor" href="#helper-functions"></a></h2>
 
 
 
-
-    </div><div class="section level2">
+      <dl></dl></div><div class="section level2">
 
 
 
 
       <dl><dt>
 
-          <code><a href="assert_prob_matrix.html">assert_prob_matrix()</a></code>
+          <code><a href="convert_to_surv.html">convert_to_surv()</a></code>
 
         </dt>
-        <dd>Assert probability matrix</dd>
+        <dd>Convert density/hazard to survival</dd>
+
+        <dt>
+
+          <code><a href="trim_duplicates.html">trim_duplicates()</a></code>
+
+        </dt>
+        <dd>Remove adjacent duplicate values</dd>
+
+        <dt>
+
+          <code><a href="assert_prob.html">assert_prob()</a></code>
+
+        </dt>
+        <dd>Assert probability matrix or vector</dd>
+
+        <dt>
+
+          <code><a href="extract_times.html">extract_times()</a></code>
+
+        </dt>
+        <dd>Extract time points from a probability matrix or vector</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
@@ -110,7 +136,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

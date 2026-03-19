@@ -9,12 +9,12 @@
 and managing prediction outputs from survival models in single-event settings.
 This includes models such as Cox proportional hazards, random survival forests,
 and other classical or machine learning-based survival estimators.
-The main prediction data type can be a survival or a hazard matrix, where
+The main prediction data type is survival matrix, where
 rows represent observations and columns represent time points."><meta property="og:description" content="survDistr is an R6 specialized container designed for storing
 and managing prediction outputs from survival models in single-event settings.
 This includes models such as Cox proportional hazards, random survival forests,
 and other classical or machine learning-based survival estimators.
-The main prediction data type can be a survival or a hazard matrix, where
+The main prediction data type is survival matrix, where
 rows represent observations and columns represent time points."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -23,7 +23,7 @@ rows represent observations and columns represent time points."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">survdistr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,35 +60,37 @@ rows represent observations and columns represent time points."></head><body>
 and managing prediction outputs from survival models in single-event settings.
 This includes models such as Cox proportional hazards, random survival forests,
 and other classical or machine learning-based survival estimators.</p>
-<p>The main prediction data type can be a survival or a hazard matrix, where
+<p>The main prediction data type is survival matrix, where
 <strong>rows represent observations and columns represent time points</strong>.</p>
     </div>
 
 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The input matrix (survival probabilities \(S(t)\) or hazard \(h(t)\))
-is stored internally and accessed by the <code>$data</code> field.
-the interpolation type needed for the
-public methods is stored in the <code>$interp_meth</code> slot.</p>
-<p>During construction, the function <code><a href="assert_prob_matrix.html">assert_prob_matrix()</a></code> is used to validate
-the input data matrix according to the given <code>data_type</code>.</p>
-    </div>
+    <p>Key design features:</p><ul><li><p>The survival matrix is stored internally and can be accessed using the <code>$data()</code> method.</p></li>
+<li><p>The <code>$times</code> active field provides the time points corresponding to the matrix columns.</p></li>
+<li><p>The interpolation method is controlled via the <code>$method</code> active field.</p></li>
+<li><p>Survival-related quantities (e.g., distribution, density, hazard functions) are
+interpolated using the <code><a href="interp.html">interp()</a></code> function.</p></li>
+<li><p>The <code><a href="assert_prob.html">assert_prob()</a></code> function validates the input data matrix during construction if
+<code>check</code> is set to <code>TRUE</code>.</p></li>
+<li><p>Use the <code>$filter()</code> method to subset observations in-place by filtering rows of the
+stored matrix.</p></li>
+<li><p>Use <code>trim_duplicates = TRUE</code> in the constructor to remove flat survival segments (repeated
+values across time points) with a pre-specified tolerance (for a more controlled
+pre-processing, see <code><a href="trim_duplicates.html">trim_duplicates()</a></code>).</p></li>
+</ul></div>
     <div class="section level2">
-    <h2 id="public-fields">Public fields<a class="anchor" aria-label="anchor" href="#public-fields"></a></h2>
-    <p></p><div class="r6-fields"><dl><dt><code>times</code></dt>
-<dd><p>(<code>numeric</code>])<br>
-Numeric vector of time points corresponding to columns of <code>data</code>.</p></dd>
+    <h2 id="active-bindings">Active bindings<a class="anchor" aria-label="anchor" href="#active-bindings"></a></h2>
+    <p></p><div class="r6-active-bindings"><dl><dt><code>times</code></dt>
+<dd><p>(<code>numeric</code>)<br>
+Numeric vector of time points corresponding to columns of <code>data</code>. Read-only.</p></dd>
 
 
-<dt><code>data_type</code></dt>
+<dt><code>method</code></dt>
 <dd><p>(<code>character(1)</code>)<br>
-Either <code>"surv"</code> for survival or <code>"haz"</code> for hazard matrices.</p></dd>
-
-
-<dt><code>interp_meth</code></dt>
-<dd><p>(<code>character(1)</code>)<br>
-Interpolation method; one of <code>"const_surv"</code>, <code>"linear_surv"</code>, or <code>"const_haz"</code>.</p></dd>
+Interpolation method; one of <code>"const_surv"</code> (default), <code>"const_dens"</code> (alias: <code>"linear_surv"</code>)
+and <code>"const_haz"</code> (alias: <code>"exp_surv"</code>).</p></dd>
 
 
 </dl><p></p></div>
@@ -102,25 +104,31 @@ Interpolation method; one of <code>"const_surv"</code>, <code>"linear_surv"</cod
 <ul><li><p><a href="#method-survDistr-new"><code>survDistr$new()</code></a></p></li>
 <li><p><a href="#method-survDistr-print"><code>survDistr$print()</code></a></p></li>
 <li><p><a href="#method-survDistr-data"><code>survDistr$data()</code></a></p></li>
+<li><p><a href="#method-survDistr-filter"><code>survDistr$filter()</code></a></p></li>
 <li><p><a href="#method-survDistr-survival"><code>survDistr$survival()</code></a></p></li>
-<li><p><a href="#method-survDistr-cdf"><code>survDistr$cdf()</code></a></p></li>
+<li><p><a href="#method-survDistr-distribution"><code>survDistr$distribution()</code></a></p></li>
+<li><p><a href="#method-survDistr-density"><code>survDistr$density()</code></a></p></li>
 <li><p><a href="#method-survDistr-cumhazard"><code>survDistr$cumhazard()</code></a></p></li>
 <li><p><a href="#method-survDistr-hazard"><code>survDistr$hazard()</code></a></p></li>
-<li><p><a href="#method-survDistr-pdf"><code>survDistr$pdf()</code></a></p></li>
 <li><p><a href="#method-survDistr-clone"><code>survDistr$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-survDistr-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Creates a new instance of this <a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6</a> class.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/survDistr.html">survDistr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">x</span>, times <span class="op">=</span> <span class="cn">NULL</span>, data_type <span class="op">=</span> <span class="st">"surv"</span>, interp_meth <span class="op">=</span> <span class="st">"const_surv"</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/survDistr.html">survDistr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  times <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"const_surv"</span>,</span>
+<span>  check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  trim_duplicates <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>x</code></dt>
 <dd><p>(<code>matrix</code>)<br>
-A numeric matrix of either survival probabilities (values between 0 and 1) or
-hazard values (non-negative values).
+A numeric matrix of survival probabilities (values between 0 and 1).
 Column names must correspond to time points if <code>times</code> is <code>NULL</code>.</p></dd>
 
 
@@ -129,18 +137,23 @@ Column names must correspond to time points if <code>times</code> is <code>NULL<
 must match the number of columns.</p></dd>
 
 
-<dt><code>data_type</code></dt>
+<dt><code>method</code></dt>
 <dd><p>(<code>character(1)</code>)<br>
-The type of input data.
-Either a survival matrix (<code>"survival"</code>, default) or a hazard (<code>"hazard"</code>) matrix.</p></dd>
+Interpolation method; one of <code>"const_surv"</code> (default), <code>"const_dens"</code> (alias: <code>"linear_surv"</code>)
+and <code>"const_haz"</code> (alias: <code>"exp_surv"</code>).</p></dd>
 
 
-<dt><code>interp_meth</code></dt>
-<dd><p>(<code>character(1)</code>)<br>
-Interpolation method to use when requesting the quantity of interest at time
-points different than the ones in the stored object (accessible via the <code>times</code> method).
-Currently supported interpolation methods include <code>"const_surv"</code> (default),
-<code>"linear_surv"</code> and <code>"const_haz"</code>. See details.</p></dd>
+<dt><code>check</code></dt>
+<dd><p>(<code>logical(1)</code>)<br>
+If <code>TRUE</code>, run input matrix validation checks using <code><a href="assert_prob.html">assert_prob()</a></code>;
+set to <code>FALSE</code> to skip checks (NOT recommended for external use).</p></dd>
+
+
+<dt><code>trim_duplicates</code></dt>
+<dd><p>(<code>logical(1)</code>)<br>
+If <code>TRUE</code>, removes adjacent duplicate values from the input using <code><a href="trim_duplicates.html">trim_duplicates()</a></code>.
+This eliminates flat segments in survival curves and improves interpolation efficiency.
+Default is <code>FALSE</code>.</p></dd>
 
 
 </dl><p></p></div>
@@ -159,14 +172,22 @@ the number of observations and time points.</p><div class="section">
 <h3 id="method-data-">Method <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data()</a></code><a class="anchor" aria-label="anchor" href="#method-data-"></a></h3>
 <p>Return the stored data matrix.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">data</span><span class="op">(</span>add_times <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">data</span><span class="op">(</span>rows <span class="op">=</span> <span class="cn">NULL</span>, add_times <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-1">Arguments<a class="anchor" aria-label="anchor" href="#arguments-1"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>add_times</code></dt>
+<p></p><div class="arguments"><dl><dt><code>rows</code></dt>
+<dd><p>(<code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> | <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical()</a></code> | <code>NULL</code>)<br>
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If <code>NULL</code>, no filtering is applied.</p></dd>
+
+
+<dt><code>add_times</code></dt>
 <dd><p>(<code>logical(1)</code>)<br>
-If <code>TRUE</code> (default), column names are set to the relevant time points.</p></dd>
+If <code>TRUE</code>, attach <code>eval_times</code> to the output.</p></dd>
 
 
 </dl><p></p></div>
@@ -176,166 +197,231 @@ If <code>TRUE</code> (default), column names are set to the relevant time points
 <p>(<code>matrix</code>)</p>
 </div>
 
-</div><p></p><hr><a id="method-survDistr-survival"></a><div class="section">
-<h3 id="method-survival-">Method <code>survival()</code><a class="anchor" aria-label="anchor" href="#method-survival-"></a></h3>
-<p>Computes survival probabilities \(S(t)\) at the specified time points.
-Uses <code><a href="mat_interp.html">mat_interp()</a></code>.</p><div class="section">
+</div><p></p><hr><a id="method-survDistr-filter"></a><div class="section">
+<h3 id="method-filter-">Method <code><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter()</a></code><a class="anchor" aria-label="anchor" href="#method-filter-"></a></h3>
+<p>Filters observations <strong>in-place</strong> by subsetting rows of the stored matrix.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">survival</span><span class="op">(</span>times <span class="op">=</span> <span class="cn">NULL</span>, add_times <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">filter</span><span class="op">(</span>rows <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>times</code></dt>
-<dd><p>(<code>numeric</code>)<br>
-New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
-If <code>NULL</code>, the object's stored time points are used.</p></dd>
-
-
-<dt><code>add_times</code></dt>
-<dd><p>(<code>logical(1)</code>)<br>
-If <code>TRUE</code> (default), column names are set to the relevant time points.</p></dd>
+<p></p><div class="arguments"><dl><dt><code>rows</code></dt>
+<dd><p>(<code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> | <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical()</a></code> | <code>NULL</code>)<br>
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If <code>NULL</code>, no filtering is applied.</p></dd>
 
 
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-1">Returns<a class="anchor" aria-label="anchor" href="#returns-1"></a></h4>
-<p>a <code>matrix</code> of survival probabilities</p>
+<p>Invisibly returns the <code>survDistr</code> object itself.</p>
 </div>
 
-</div><p></p><hr><a id="method-survDistr-cdf"></a><div class="section">
-<h3 id="method-cdf-">Method <code>cdf()</code><a class="anchor" aria-label="anchor" href="#method-cdf-"></a></h3>
-<p>Computes the cumulative distribution function \(F(t) = 1 - S(t)\) at the specified time points.
-\(F(t)\) is the probability that the event has occurred up until time \(t\).
-Uses <code><a href="mat_interp.html">mat_interp()</a></code>.</p><div class="section">
+</div><p></p><hr><a id="method-survDistr-survival"></a><div class="section">
+<h3 id="method-survival-">Method <code>survival()</code><a class="anchor" aria-label="anchor" href="#method-survival-"></a></h3>
+<p>Computes survival probabilities \(S(t)\) at the specified time points.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">cdf</span><span class="op">(</span>times <span class="op">=</span> <span class="cn">NULL</span>, add_times <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">survival</span><span class="op">(</span>rows <span class="op">=</span> <span class="cn">NULL</span>, times <span class="op">=</span> <span class="cn">NULL</span>, add_times <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>times</code></dt>
+<p></p><div class="arguments"><dl><dt><code>rows</code></dt>
+<dd><p>(<code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> | <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical()</a></code> | <code>NULL</code>)<br>
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If <code>NULL</code>, no filtering is applied.</p></dd>
+
+
+<dt><code>times</code></dt>
 <dd><p>(<code>numeric</code>)<br>
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If <code>NULL</code>, the object's stored time points are used.</p></dd>
 
 
 <dt><code>add_times</code></dt>
 <dd><p>(<code>logical(1)</code>)<br>
-If <code>TRUE</code> (default), column names are set to the relevant time points.</p></dd>
+If <code>TRUE</code>, attach <code>eval_times</code> to the output.</p></dd>
 
 
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-2">Returns<a class="anchor" aria-label="anchor" href="#returns-2"></a></h4>
-<p>a cdf <code>matrix</code>.</p>
+<p>a <code>matrix</code> of survival probabilities (rows = observations, columns = time points).</p>
 </div>
 
-</div><p></p><hr><a id="method-survDistr-cumhazard"></a><div class="section">
-<h3 id="method-cumhazard-">Method <code>cumhazard()</code><a class="anchor" aria-label="anchor" href="#method-cumhazard-"></a></h3>
-<p>Computes the cumulative hazard at the specified time points as:
-\(H(t) = -log(S(t))\).</p><div class="section">
+</div><p></p><hr><a id="method-survDistr-distribution"></a><div class="section">
+<h3 id="method-distribution-">Method <code>distribution()</code><a class="anchor" aria-label="anchor" href="#method-distribution-"></a></h3>
+<p>Computes the cumulative distribution function \(F(t) = 1 - S(t)\) or CDF at the specified time points.
+\(F(t)\) is the probability that the event has occurred up until time \(t\).</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">cumhazard</span><span class="op">(</span>times <span class="op">=</span> <span class="cn">NULL</span>, add_times <span class="op">=</span> <span class="cn">TRUE</span>, eps <span class="op">=</span> <span class="fl">1e-06</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">distribution</span><span class="op">(</span>rows <span class="op">=</span> <span class="cn">NULL</span>, times <span class="op">=</span> <span class="cn">NULL</span>, add_times <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>times</code></dt>
+<p></p><div class="arguments"><dl><dt><code>rows</code></dt>
+<dd><p>(<code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> | <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical()</a></code> | <code>NULL</code>)<br>
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If <code>NULL</code>, no filtering is applied.</p></dd>
+
+
+<dt><code>times</code></dt>
 <dd><p>(<code>numeric</code>)<br>
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If <code>NULL</code>, the object's stored time points are used.</p></dd>
 
 
 <dt><code>add_times</code></dt>
 <dd><p>(<code>logical(1)</code>)<br>
-If <code>TRUE</code> (default), column names are set to the relevant time points.</p></dd>
-
-
-<dt><code>eps</code></dt>
-<dd><p>(<code>numeric(1)</code>)<br>
-Very small number to substitute zero values in order to prevent errors
-in e.g. log(0) and/or division-by-zero calculations.
-Default value is 1e-06.</p></dd>
+If <code>TRUE</code>, attach <code>eval_times</code> to the output.</p></dd>
 
 
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-3">Returns<a class="anchor" aria-label="anchor" href="#returns-3"></a></h4>
-<p>a <code>matrix</code> of cumulative hazards.</p>
+<p>a <code>matrix</code> of CDF values (rows = observations, columns = time points).</p>
 </div>
 
-</div><p></p><hr><a id="method-survDistr-hazard"></a><div class="section">
-<h3 id="method-hazard-">Method <code>hazard()</code><a class="anchor" aria-label="anchor" href="#method-hazard-"></a></h3>
-<p>Computes the hazard at the specified time points as: \(h(t) = H(t) - H(t-1)\).</p><div class="section">
+</div><p></p><hr><a id="method-survDistr-density"></a><div class="section">
+<h3 id="method-density-">Method <code><a href="https://rdrr.io/r/stats/density.html" class="external-link">density()</a></code><a class="anchor" aria-label="anchor" href="#method-density-"></a></h3>
+<p>Computes the probability density function \(f(t)\) or PDF at the specified time points.
+\(f(t) = \frac{d}{dt} F(t)\) is the probability of the event occurring at the specific
+time \(t\).</p><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">hazard</span><span class="op">(</span>times <span class="op">=</span> <span class="cn">NULL</span>, eps <span class="op">=</span> <span class="fl">1e-06</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">density</span><span class="op">(</span>rows <span class="op">=</span> <span class="cn">NULL</span>, times <span class="op">=</span> <span class="cn">NULL</span>, add_times <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>times</code></dt>
+<p></p><div class="arguments"><dl><dt><code>rows</code></dt>
+<dd><p>(<code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> | <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical()</a></code> | <code>NULL</code>)<br>
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If <code>NULL</code>, no filtering is applied.</p></dd>
+
+
+<dt><code>times</code></dt>
 <dd><p>(<code>numeric</code>)<br>
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If <code>NULL</code>, the object's stored time points are used.</p></dd>
 
 
-<dt><code>eps</code></dt>
-<dd><p>(<code>numeric(1)</code>)<br>
-Very small number to substitute zero values in order to prevent errors
-in e.g. log(0) and/or division-by-zero calculations.
-Default value is 1e-06.</p></dd>
+<dt><code>add_times</code></dt>
+<dd><p>(<code>logical(1)</code>)<br>
+If <code>TRUE</code>, attach <code>eval_times</code> to the output.</p></dd>
 
 
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-4">Returns<a class="anchor" aria-label="anchor" href="#returns-4"></a></h4>
-<p>a hazard <code>matrix</code>.</p>
+<p>a <code>matrix</code> of PDF values (rows = observations, columns = time points).</p>
 </div>
 
-</div><p></p><hr><a id="method-survDistr-pdf"></a><div class="section">
-<h3 id="method-pdf-">Method <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code><a class="anchor" aria-label="anchor" href="#method-pdf-"></a></h3>
-<p>Computes the probability density function \(f(t)\) at the specified time points.
-\(f(t)\) is the probability of the event occurring at the specific time \(t\).
-For constant survival interpolation, \(f(t) = F(t) - F(t-1)\), where
-\(F(t)\) is the cumulative distribution.</p><div class="section">
+</div><p></p><hr><a id="method-survDistr-cumhazard"></a><div class="section">
+<h3 id="method-cumhazard-">Method <code>cumhazard()</code><a class="anchor" aria-label="anchor" href="#method-cumhazard-"></a></h3>
+<p>Computes the cumulative hazard (accumulated risk up to time \(t\)) at the specified time
+points as \(H(t) = -log(S(t))\).</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">pdf</span><span class="op">(</span>times <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">cumhazard</span><span class="op">(</span>rows <span class="op">=</span> <span class="cn">NULL</span>, times <span class="op">=</span> <span class="cn">NULL</span>, add_times <span class="op">=</span> <span class="cn">TRUE</span>, eps <span class="op">=</span> <span class="fl">1e-12</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
-<p></p><div class="arguments"><dl><dt><code>times</code></dt>
+<p></p><div class="arguments"><dl><dt><code>rows</code></dt>
+<dd><p>(<code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> | <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical()</a></code> | <code>NULL</code>)<br>
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If <code>NULL</code>, no filtering is applied.</p></dd>
+
+
+<dt><code>times</code></dt>
 <dd><p>(<code>numeric</code>)<br>
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If <code>NULL</code>, the object's stored time points are used.</p></dd>
+
+
+<dt><code>add_times</code></dt>
+<dd><p>(<code>logical(1)</code>)<br>
+If <code>TRUE</code>, attach <code>eval_times</code> to the output.</p></dd>
+
+
+<dt><code>eps</code></dt>
+<dd><p>(<code>numeric(1)</code>)<br>
+Small positive value used to replace extremely low survival probabilities when computing cumulative hazard,
+preventing numerical instability in \(-\log S(t)\) calculations.</p></dd>
 
 
 </dl><p></p></div>
 </div>
 <div class="section">
 <h4 id="returns-5">Returns<a class="anchor" aria-label="anchor" href="#returns-5"></a></h4>
-<p>a pdf <code>matrix</code>.</p>
+<p>a <code>matrix</code> of cumulative hazards (rows = observations, columns = time points).</p>
+</div>
+
+</div><p></p><hr><a id="method-survDistr-hazard"></a><div class="section">
+<h3 id="method-hazard-">Method <code>hazard()</code><a class="anchor" aria-label="anchor" href="#method-hazard-"></a></h3>
+<p>Computes the hazard \(h(t) = \frac{f(t)}{S(t)}\) at the specified time points.
+Hazard is the conditional instantaneous event rate at time \(t\) given
+survival up to time \(t\).</p><div class="section">
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">hazard</span><span class="op">(</span>rows <span class="op">=</span> <span class="cn">NULL</span>, times <span class="op">=</span> <span class="cn">NULL</span>, add_times <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>rows</code></dt>
+<dd><p>(<code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> | <code><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical()</a></code> | <code>NULL</code>)<br>
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If <code>NULL</code>, no filtering is applied.</p></dd>
+
+
+<dt><code>times</code></dt>
+<dd><p>(<code>numeric</code>)<br>
+New time points at which to interpolate.
+Values need to be unique, increasing non-negative numbers.
+If <code>NULL</code>, the object's stored time points are used.</p></dd>
+
+
+<dt><code>add_times</code></dt>
+<dd><p>(<code>logical(1)</code>)<br>
+If <code>TRUE</code>, attach <code>eval_times</code> to the output.</p></dd>
+
+
+</dl><p></p></div>
+</div>
+<div class="section">
+<h4 id="returns-6">Returns<a class="anchor" aria-label="anchor" href="#returns-6"></a></h4>
+<p>a <code>matrix</code> of hazard values (rows = observations, columns = time points).</p>
 </div>
 
 </div><p></p><hr><a id="method-survDistr-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">survDistr</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -358,7 +444,7 @@ If <code>NULL</code>, the object's stored time points are used.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A [2 x 3] survival matrix</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of observations: 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of time points: 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Interpolation method: Piece-wise Constant Survival </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Interpolation method: Piecewise Constant Survival </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># stored survival matrix</span></span></span>
 <span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="fu">data</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -367,35 +453,43 @@ If <code>NULL</code>, the object's stored time points are used.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.8 0.8 0.7</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># interpolation method</span></span></span>
-<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">interp_meth</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">method</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "const_surv"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># time points</span></span></span>
 <span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">times</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 12 34 42</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">eval_times</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">30</span>, <span class="fl">42</span>, <span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># S(t) at given time points (constant interpolation)</span></span></span>
-<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="fu">survival</span><span class="op">(</span>times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">30</span>, <span class="fl">42</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="fu">survival</span><span class="op">(</span>times <span class="op">=</span> <span class="va">eval_times</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      10  30  42  50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  1 1.0 0.4 0.4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  1 0.8 0.7 0.7</span>
 <span class="r-in"><span><span class="co"># same but with linear interpolation</span></span></span>
-<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">interp_meth</span> <span class="op">=</span> <span class="st">"linear_surv"</span></span></span>
-<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="fu">survival</span><span class="op">(</span>times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">30</span>, <span class="fl">42</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">method</span> <span class="op">=</span> <span class="st">"linear_surv"</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="fu">survival</span><span class="op">(</span>times <span class="op">=</span> <span class="va">eval_times</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             10        30  42  50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.0000000 0.6727273 0.4 0.2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.8333333 0.8000000 0.7 0.6</span>
-<span class="r-in"><span><span class="co"># time points can be unordered and duplicated</span></span></span>
-<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="fu">survival</span><span class="op">(</span>times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">30</span>, <span class="fl">10</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             10        30        10  50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.0000000 0.6727273 1.0000000 0.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.8333333 0.8000000 0.8333333 0.6</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Cumulative hazard</span></span></span>
-<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="fu">cumhazard</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             12        34        42</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.0000000 0.5108256 0.9162907</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.2231436 0.2231436 0.3566749</span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="fu">cumhazard</span><span class="op">(</span>times <span class="op">=</span> <span class="va">eval_times</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             10        30        42        50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.0000000 0.3964153 0.9162907 1.6094379</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.1823216 0.2231436 0.3566749 0.5108256</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Density</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="fu">density</span><span class="op">(</span>times <span class="op">=</span> <span class="va">eval_times</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              10         30     42     50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.00000000 0.01818182 0.0250 0.0250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.01666667 0.00000000 0.0125 0.0125</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Hazard</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="fu">hazard</span><span class="op">(</span>times <span class="op">=</span> <span class="va">eval_times</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        10         30         42         50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.00 0.02702703 0.06250000 0.12500000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.02 0.00000000 0.01785714 0.02083333</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -408,7 +502,7 @@ If <code>NULL</code>, the object's stored time points are used.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

@@ -7,10 +7,14 @@
 <url><loc>https://survdistr.mlr-org.com/authors.html</loc></url>
 <url><loc>https://survdistr.mlr-org.com/index.html</loc></url>
 <url><loc>https://survdistr.mlr-org.com/news/index.html</loc></url>
-<url><loc>https://survdistr.mlr-org.com/reference/assert_prob_matrix.html</loc></url>
+<url><loc>https://survdistr.mlr-org.com/reference/as_survDistr.html</loc></url>
+<url><loc>https://survdistr.mlr-org.com/reference/assert_prob.html</loc></url>
+<url><loc>https://survdistr.mlr-org.com/reference/convert_to_surv.html</loc></url>
+<url><loc>https://survdistr.mlr-org.com/reference/extract_times.html</loc></url>
 <url><loc>https://survdistr.mlr-org.com/reference/index.html</loc></url>
-<url><loc>https://survdistr.mlr-org.com/reference/mat_interp.html</loc></url>
+<url><loc>https://survdistr.mlr-org.com/reference/interp.html</loc></url>
+<url><loc>https://survdistr.mlr-org.com/reference/interp_cif.html</loc></url>
 <url><loc>https://survdistr.mlr-org.com/reference/survDistr.html</loc></url>
-<url><loc>https://survdistr.mlr-org.com/reference/vec_interp.html</loc></url>
+<url><loc>https://survdistr.mlr-org.com/reference/trim_duplicates.html</loc></url>
 </urlset>
 
