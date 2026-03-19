@@ -4,6 +4,8 @@
 
 - **John Zobolas**. Author, maintainer.
 
+- **Andreas Bender**. Contributor.
+
 ## Citation
 
 Zobolas J (2026). *survdistr: Survival Distribution Container with
