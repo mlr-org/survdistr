@@ -1,3 +1,5 @@
+# survdistr (development version)
+
 # survdistr 0.0.2
 
 - Added `convert_to_surv()` for efficient transformation of hazard/density functions to survival at anchor time points (uses C++ internally).

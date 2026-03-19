@@ -1,6 +1,6 @@
 Package: survdistr
-Title: Survival Distribution Containers
-Version: 0.0.2
+Title: Survival Distribution Container with Flexible Interpolation Methods
+Version: 0.0.2.9000
 Authors@R:
     person("John", "Zobolas", , "bblodfon@gmail.com", role = c("aut", "cre"))
 Description: Efficient containers for storing and managing prediction
@@ -8,7 +8,7 @@ Description: Efficient containers for storing and managing prediction
     random survival forests, and modern machine learning estimators.
     Provides fast methods to evaluate survival probabilities, hazards,
     probability densities, and related quantities at arbitrary time
-    points, with support for multiple interpolation methods.
+    points, with support for multiple interpolation methods via Rcpp.
 License: MIT + file LICENSE
 URL: https://survdistr.mlr-org.com
 Imports:
