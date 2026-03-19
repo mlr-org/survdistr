@@ -5,23 +5,39 @@ c_assert_prob_matrix <- function(x, type = "surv") {
     .Call(`_survdistr_c_assert_prob_matrix`, x, type)
 }
 
-c_mat_interp <- function(x, times, eval_times, constant = TRUE, type = "surv") {
-    .Call(`_survdistr_c_mat_interp`, x, times, eval_times, constant, type)
+c_clamp_surv <- function(surv, eps = 1e-12, tol = 1e-10) {
+    .Call(`_survdistr_c_clamp_surv`, surv, eps, tol)
 }
 
-c_vec_interp <- function(x, times, eval_times, constant = TRUE, type = "surv") {
-    .Call(`_survdistr_c_vec_interp`, x, times, eval_times, constant, type)
+c_interp_cif_mat <- function(x, times, eval_times) {
+    .Call(`_survdistr_c_interp_cif_mat`, x, times, eval_times)
 }
 
-c_mat_interp_pointwise <- function(x, times, eval_times, constant = TRUE, type = "surv") {
-    .Call(`_survdistr_c_mat_interp_pointwise`, x, times, eval_times, constant, type)
+c_interp_density_mat <- function(x, times, eval_times, method = "const_surv") {
+    .Call(`_survdistr_c_interp_density_mat`, x, times, eval_times, method)
 }
 
-rcpp_wcumsum_mat <- function(x, times) {
-    .Call(`_survdistr_rcpp_wcumsum_mat`, x, times)
+c_interp_hazard_mat <- function(x, times, eval_times, method = "const_surv") {
+    .Call(`_survdistr_c_interp_hazard_mat`, x, times, eval_times, method)
 }
 
-rcpp_wcumsum_mat_interp <- function(x, times, new_times) {
-    .Call(`_survdistr_rcpp_wcumsum_mat_interp`, x, times, new_times)
+c_interp_surv_mat <- function(x, times, eval_times, method = "const_surv") {
+    .Call(`_survdistr_c_interp_surv_mat`, x, times, eval_times, method)
+}
+
+c_disc_dens_to_surv_mat <- function(x) {
+    .Call(`_survdistr_c_disc_dens_to_surv_mat`, x)
+}
+
+c_disc_haz_to_surv_mat <- function(x) {
+    .Call(`_survdistr_c_disc_haz_to_surv_mat`, x)
+}
+
+c_cont_dens_to_surv_mat <- function(x, times) {
+    .Call(`_survdistr_c_cont_dens_to_surv_mat`, x, times)
+}
+
+c_cont_haz_to_surv_mat <- function(x, times) {
+    .Call(`_survdistr_c_cont_haz_to_surv_mat`, x, times)
 }
 

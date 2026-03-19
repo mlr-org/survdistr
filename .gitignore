@@ -6,3 +6,6 @@
 .quarto
 attic/*
 docs
+
+/.quarto/
+**/*.quarto_ipynb

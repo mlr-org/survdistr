@@ -9,17 +9,25 @@ and managing prediction outputs from survival models in single-event settings.
 This includes models such as Cox proportional hazards, random survival forests,
 and other classical or machine learning-based survival estimators.
 
-The main prediction data type can be a survival or a hazard matrix, where
+The main prediction data type is survival matrix, where
 \strong{rows represent observations and columns represent time points}.
 }
 \details{
-The input matrix (survival probabilities \eqn{S(t)} or hazard \eqn{h(t)})
-is stored internally and accessed by the \verb{$data} field.
-the interpolation type needed for the
-public methods is stored in the \verb{$interp_meth} slot.
-
-During construction, the function \code{\link[=assert_prob_matrix]{assert_prob_matrix()}} is used to validate
-the input data matrix according to the given \code{data_type}.
+Key design features:
+\itemize{
+\item The survival matrix is stored internally and can be accessed using the \verb{$data()} method.
+\item The \verb{$times} active field provides the time points corresponding to the matrix columns.
+\item The interpolation method is controlled via the \verb{$method} active field.
+\item Survival-related quantities (e.g., distribution, density, hazard functions) are
+interpolated using the \code{\link[=interp]{interp()}} function.
+\item The \code{\link[=assert_prob]{assert_prob()}} function validates the input data matrix during construction if
+\code{check} is set to \code{TRUE}.
+\item Use the \verb{$filter()} method to subset observations in-place by filtering rows of the
+stored matrix.
+\item Use \code{trim_duplicates = TRUE} in the constructor to remove flat survival segments (repeated
+values across time points) with a pre-specified tolerance (for a more controlled
+pre-processing, see \code{\link[=trim_duplicates]{trim_duplicates()}}).
+}
 }
 \examples{
 # generate survival matrix
@@ -33,34 +41,37 @@ x
 x$data()
 
 # interpolation method
-x$interp_meth
+x$method
 
 # time points
 x$times
 
+eval_times = c(10, 30, 42, 50)
 # S(t) at given time points (constant interpolation)
-x$survival(times = c(10, 30, 42, 50))
+x$survival(times = eval_times)
 # same but with linear interpolation
-x$interp_meth = "linear_surv"
-x$survival(times = c(10, 30, 42, 50))
-# time points can be unordered and duplicated
-x$survival(times = c(10, 30, 10, 50))
+x$method = "linear_surv"
+x$survival(times = eval_times)
 
 # Cumulative hazard
-x$cumhazard()
+x$cumhazard(times = eval_times)
+
+# Density
+x$density(times = eval_times)
+
+# Hazard
+x$hazard(times = eval_times)
 
 }
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{times}}{(\code{numeric}])\cr
-Numeric vector of time points corresponding to columns of \code{data}.}
+\item{\code{times}}{(\code{numeric})\cr
+Numeric vector of time points corresponding to columns of \code{data}. Read-only.}
 
-\item{\code{data_type}}{(\code{character(1)})\cr
-Either \code{"surv"} for survival or \code{"haz"} for hazard matrices.}
-
-\item{\code{interp_meth}}{(\code{character(1)})\cr
-Interpolation method; one of \code{"const_surv"}, \code{"linear_surv"}, or \code{"const_haz"}.}
+\item{\code{method}}{(\code{character(1)})\cr
+Interpolation method; one of \code{"const_surv"} (default), \code{"const_dens"} (alias: \code{"linear_surv"})
+and \code{"const_haz"} (alias: \code{"exp_surv"}).}
 }
 \if{html}{\out{</div>}}
 }
@@ -70,11 +81,12 @@ Interpolation method; one of \code{"const_surv"}, \code{"linear_surv"}, or \code
 \item \href{#method-survDistr-new}{\code{survDistr$new()}}
 \item \href{#method-survDistr-print}{\code{survDistr$print()}}
 \item \href{#method-survDistr-data}{\code{survDistr$data()}}
+\item \href{#method-survDistr-filter}{\code{survDistr$filter()}}
 \item \href{#method-survDistr-survival}{\code{survDistr$survival()}}
-\item \href{#method-survDistr-cdf}{\code{survDistr$cdf()}}
+\item \href{#method-survDistr-distribution}{\code{survDistr$distribution()}}
+\item \href{#method-survDistr-density}{\code{survDistr$density()}}
 \item \href{#method-survDistr-cumhazard}{\code{survDistr$cumhazard()}}
 \item \href{#method-survDistr-hazard}{\code{survDistr$hazard()}}
-\item \href{#method-survDistr-pdf}{\code{survDistr$pdf()}}
 \item \href{#method-survDistr-clone}{\code{survDistr$clone()}}
 }
 }
@@ -84,29 +96,37 @@ Interpolation method; one of \code{"const_surv"}, \code{"linear_surv"}, or \code
 \subsection{Method \code{new()}}{
 Creates a new instance of this \link[R6:R6Class]{R6} class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(x, times = NULL, data_type = "surv", interp_meth = "const_surv")}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$new(
+  x,
+  times = NULL,
+  method = "const_surv",
+  check = TRUE,
+  trim_duplicates = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{x}}{(\code{matrix})\cr
-A numeric matrix of either survival probabilities (values between 0 and 1) or
-hazard values (non-negative values).
+A numeric matrix of survival probabilities (values between 0 and 1).
 Column names must correspond to time points if \code{times} is \code{NULL}.}
 
 \item{\code{times}}{(\code{numeric(1)})\cr Numeric vector of time points for matrix \code{x},
 must match the number of columns.}
 
-\item{\code{data_type}}{(\code{character(1)})\cr
-The type of input data.
-Either a survival matrix (\code{"survival"}, default) or a hazard (\code{"hazard"}) matrix.}
+\item{\code{method}}{(\code{character(1)})\cr
+Interpolation method; one of \code{"const_surv"} (default), \code{"const_dens"} (alias: \code{"linear_surv"})
+and \code{"const_haz"} (alias: \code{"exp_surv"}).}
 
-\item{\code{interp_meth}}{(\code{character(1)})\cr
-Interpolation method to use when requesting the quantity of interest at time
-points different than the ones in the stored object (accessible via the \code{times} method).
-Currently supported interpolation methods include \code{"const_surv"} (default),
-\code{"linear_surv"} and \code{"const_haz"}. See details.}
+\item{\code{check}}{(\code{logical(1)})\cr
+If \code{TRUE}, run input matrix validation checks using \code{\link[=assert_prob]{assert_prob()}};
+set to \code{FALSE} to skip checks (NOT recommended for external use).}
+
+\item{\code{trim_duplicates}}{(\code{logical(1)})\cr
+If \code{TRUE}, removes adjacent duplicate values from the input using \code{\link[=trim_duplicates]{trim_duplicates()}}.
+This eliminates flat segments in survival curves and improves interpolation efficiency.
+Default is \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -128,14 +148,20 @@ the number of observations and time points.
 \subsection{Method \code{data()}}{
 Return the stored data matrix.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$data(add_times = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$data(rows = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE} (default), column names are set to the relevant time points.}
+If \code{TRUE}, attach \code{eval_times} to the output.}
 }
 \if{html}{\out{</div>}}
 }
@@ -144,144 +170,197 @@ If \code{TRUE} (default), column names are set to the relevant time points.}
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-survDistr-filter"></a>}}
+\if{latex}{\out{\hypertarget{method-survDistr-filter}{}}}
+\subsection{Method \code{filter()}}{
+Filters observations \strong{in-place} by subsetting rows of the stored matrix.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$filter(rows = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Invisibly returns the \code{survDistr} object itself.
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-survDistr-survival"></a>}}
 \if{latex}{\out{\hypertarget{method-survDistr-survival}{}}}
 \subsection{Method \code{survival()}}{
 Computes survival probabilities \eqn{S(t)} at the specified time points.
-Uses \code{\link[=mat_interp]{mat_interp()}}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$survival(rows = NULL, times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE} (default), column names are set to the relevant time points.}
+If \code{TRUE}, attach \code{eval_times} to the output.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-a \code{matrix} of survival probabilities
+a \code{matrix} of survival probabilities (rows = observations, columns = time points).
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-survDistr-cdf"></a>}}
-\if{latex}{\out{\hypertarget{method-survDistr-cdf}{}}}
-\subsection{Method \code{cdf()}}{
-Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} at the specified time points.
+\if{html}{\out{<a id="method-survDistr-distribution"></a>}}
+\if{latex}{\out{\hypertarget{method-survDistr-distribution}{}}}
+\subsection{Method \code{distribution()}}{
+Computes the cumulative distribution function \eqn{F(t) = 1 - S(t)} or CDF at the specified time points.
 \eqn{F(t)} is the probability that the event has occurred up until time \eqn{t}.
-Uses \code{\link[=mat_interp]{mat_interp()}}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$cdf(times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$distribution(rows = NULL, times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE} (default), column names are set to the relevant time points.}
+If \code{TRUE}, attach \code{eval_times} to the output.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-a cdf \code{matrix}.
+a \code{matrix} of CDF values (rows = observations, columns = time points).
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-survDistr-density"></a>}}
+\if{latex}{\out{\hypertarget{method-survDistr-density}{}}}
+\subsection{Method \code{density()}}{
+Computes the probability density function \eqn{f(t)} or PDF at the specified time points.
+\eqn{f(t) = \frac{d}{dt} F(t)} is the probability of the event occurring at the specific
+time \eqn{t}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$density(rows = NULL, times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
+\item{\code{times}}{(\code{numeric})\cr
+New time points at which to interpolate.
+Values need to be unique, increasing non-negative numbers.
+If \code{NULL}, the object's stored time points are used.}
+
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE}, attach \code{eval_times} to the output.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+a \code{matrix} of PDF values (rows = observations, columns = time points).
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-survDistr-cumhazard"></a>}}
 \if{latex}{\out{\hypertarget{method-survDistr-cumhazard}{}}}
 \subsection{Method \code{cumhazard()}}{
-Computes the cumulative hazard at the specified time points as:
-\eqn{H(t) = -log(S(t))}.
+Computes the cumulative hazard (accumulated risk up to time \eqn{t}) at the specified time
+points as \eqn{H(t) = -log(S(t))}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(times = NULL, add_times = TRUE, eps = 1e-06)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$cumhazard(rows = NULL, times = NULL, add_times = TRUE, eps = 1e-12)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
 \item{\code{add_times}}{(\code{logical(1)})\cr
-If \code{TRUE} (default), column names are set to the relevant time points.}
+If \code{TRUE}, attach \code{eval_times} to the output.}
 
 \item{\code{eps}}{(\code{numeric(1)})\cr
-Very small number to substitute zero values in order to prevent errors
-in e.g. log(0) and/or division-by-zero calculations.
-Default value is 1e-06.}
+Small positive value used to replace extremely low survival probabilities when computing cumulative hazard,
+preventing numerical instability in \eqn{-\log S(t)} calculations.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-a \code{matrix} of cumulative hazards.
+a \code{matrix} of cumulative hazards (rows = observations, columns = time points).
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-survDistr-hazard"></a>}}
 \if{latex}{\out{\hypertarget{method-survDistr-hazard}{}}}
 \subsection{Method \code{hazard()}}{
-Computes the hazard at the specified time points as: \eqn{h(t) = H(t) - H(t-1)}.
+Computes the hazard \eqn{h(t) = \frac{f(t)}{S(t)}} at the specified time points.
+Hazard is the conditional instantaneous event rate at time \eqn{t} given
+survival up to time \eqn{t}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$hazard(times = NULL, eps = 1e-06)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{survDistr$hazard(rows = NULL, times = NULL, add_times = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{rows}}{(\code{integer()} | \code{logical()} | \code{NULL})\cr
+Row indices or a logical vector used to filter observations.
+Logical vectors must have length equal to the number of observations.
+Integer indices must be positive and within range.
+If \code{NULL}, no filtering is applied.}
+
 \item{\code{times}}{(\code{numeric})\cr
 New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
+Values need to be unique, increasing non-negative numbers.
 If \code{NULL}, the object's stored time points are used.}
 
-\item{\code{eps}}{(\code{numeric(1)})\cr
-Very small number to substitute zero values in order to prevent errors
-in e.g. log(0) and/or division-by-zero calculations.
-Default value is 1e-06.}
+\item{\code{add_times}}{(\code{logical(1)})\cr
+If \code{TRUE}, attach \code{eval_times} to the output.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-a hazard \code{matrix}.
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-survDistr-pdf"></a>}}
-\if{latex}{\out{\hypertarget{method-survDistr-pdf}{}}}
-\subsection{Method \code{pdf()}}{
-Computes the probability density function \eqn{f(t)} at the specified time points.
-\eqn{f(t)} is the probability of the event occurring at the specific time \eqn{t}.
-For constant survival interpolation, \eqn{f(t) = F(t) - F(t-1)}, where
-\eqn{F(t)} is the cumulative distribution.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{survDistr$pdf(times = NULL)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{times}}{(\code{numeric})\cr
-New time points at which to interpolate.
-Values do not need to be sorted or unique, just non-negative.
-If \code{NULL}, the object's stored time points are used.}
-}
-\if{html}{\out{</div>}}
-}
-\subsection{Returns}{
-a pdf \code{matrix}.
+a \code{matrix} of hazard values (rows = observations, columns = time points).
 }
 }
 \if{html}{\out{<hr>}}

@@ -1,4 +1,4 @@
 #' @param times (`numeric`)\cr
 #'  New time points at which to interpolate.
-#'  Values do not need to be sorted or unique, just non-negative.
+#'  Values need to be unique, increasing non-negative numbers.
 #'  If `NULL`, the object's stored time points are used.

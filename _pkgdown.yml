@@ -20,9 +20,13 @@ reference:
 - title: Survival Prediction Class
   contents:
     - survDistr
-- title: Interpolation Functions
+    - as_survDistr
+- title: Interpolation
   contents:
     - contains("interp")
-- title: Assertion Functions
+- title: Helper Functions
   contents:
-    - starts_with("assert")
+    - convert_to_surv
+    - trim_duplicates
+    - assert_prob
+    - extract_times

@@ -1,4 +1,4 @@
 #' @param eps (`numeric(1)`)\cr
-#'  Very small number to substitute zero values in order to prevent errors
-#'  in e.g. log(0) and/or division-by-zero calculations.
-#'  Default value is <%= if(exists("eps")) eps %>.
+#'  Small positive value used to replace extremely low survival probabilities when computing cumulative hazard,
+#'  preventing numerical instability in \eqn{-\log S(t)} calculations.
+#'
