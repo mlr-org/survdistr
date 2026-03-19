@@ -57,19 +57,21 @@ A numeric vector or matrix of interpolated values.
 \description{
 Interpolates survival curves (vector or matrix) at new time points using
 internal C++ interpolation functions.
-Output can be the survival, cumulative distribution, or density functions,
-as well as the hazard or cumulative hazard functions.
+Output can be survival, cumulative distribution, density, hazard or cumulative
+hazard functions.
 }
 \details{
 Input must always be \emph{survival probabilities}.
-We currently provide three interpolation options for S(t):
+We currently provide three interpolation options:
 \itemize{
 \item \code{"const_surv"}: left-continuous constant interpolation of S(t) (default).
 \item \code{"const_dens"}/\code{"linear_surv"}: linear interpolation of S(t) (equivalent to
-piecewise constant interpolation of the density).
+piecewise constant interpolation of the density function).
 \item \code{"const_haz"}/\code{"exp_surv"}: exponential interpolation of S(t) (equivalent to
-piecewise constant interpolation of the hazard).
+piecewise constant interpolation of the hazard function).
 }
+
+For formulas for each method, see respective Tables in arxiv preprint (TODO: add link).
 
 For constant hazard interpolation (\code{"const_haz"}), any right-anchor S(t) values
 equal to 0 are internally floored at \code{min(1e-12, S_left)} within each interval.
@@ -77,25 +79,29 @@ This keeps hazards/densities finite without allowing a local increase in S(t).
 }
 \examples{
 x = matrix(c(1, 0.8, 0.6,
-             1, 0.7, 0.4),
-           nrow = 2, byrow = TRUE)
+             1, 0.7, 0.4), nrow = 2, byrow = TRUE)
 times = c(0, 8, 13)
 eval_times = c(5, 10, 14)
 
 # constant S(t) interpolation
 interp(x, times, eval_times)
+
 # linear S(t) interpolation
 interp(x, times, eval_times, method = "linear_surv")
+
 # exponential S(t) interpolation (same as `method = "const_haz"`)
 interp(x, times, eval_times, method = "exp_surv")
 
 # Cumulative distribution with linear S(t) interpolation
 interp(x, times, eval_times, method = "linear_surv", output = "cdf")
 
-# H(t) with linear interpolation
+# H(t) with linear S(t) interpolation
 interp(x, times, eval_times, method = "linear_surv", output = "cumhaz")
 
-# f(t) with linear interpolation
-interp(x, times, eval_times, method = "linear_surv", output = "density")
+# f(t) with constant hazard interpolation
+interp(x, times, eval_times, method = "const_haz", output = "density")
+
+# h(t) with constant hazard interpolation
+interp(x, times, eval_times, method = "const_haz", output = "hazard")
 
 }

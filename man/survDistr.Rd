@@ -18,13 +18,13 @@ Key design features:
 \item The survival matrix is stored internally and can be accessed using the \verb{$data()} method.
 \item The \verb{$times} active field provides the time points corresponding to the matrix columns.
 \item The interpolation method is controlled via the \verb{$method} active field.
-\item Survival-related quantities (e.g., CDF, density, hazard) are interpolated using the
-\code{\link[=interp]{interp()}} function.
+\item Survival-related quantities (e.g., distribution, density, hazard functions) are
+interpolated using the \code{\link[=interp]{interp()}} function.
 \item The \code{\link[=assert_prob]{assert_prob()}} function validates the input data matrix during construction if
 \code{check} is set to \code{TRUE}.
 \item Use the \verb{$filter()} method to subset observations in-place by filtering rows of the
 stored matrix.
-\item Use \code{trim_duplicates = TRUE} in the constructor to remove flat S(t) segments (repeated
+\item Use \code{trim_duplicates = TRUE} in the constructor to remove flat survival segments (repeated
 values across time points) with a pre-specified tolerance (for a more controlled
 pre-processing, see \code{\link[=trim_duplicates]{trim_duplicates()}}).
 }

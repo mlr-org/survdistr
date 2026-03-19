@@ -21,13 +21,13 @@
 #' - The survival matrix is stored internally and can be accessed using the `$data()` method.
 #' - The `$times` active field provides the time points corresponding to the matrix columns.
 #' - The interpolation method is controlled via the `$method` active field.
-#' - Survival-related quantities (e.g., CDF, density, hazard) are interpolated using the
-#' [interp()] function.
+#' - Survival-related quantities (e.g., distribution, density, hazard functions) are
+#' interpolated using the [interp()] function.
 #' - The [assert_prob()] function validates the input data matrix during construction if
 #' `check` is set to `TRUE`.
 #' - Use the `$filter()` method to subset observations in-place by filtering rows of the
 #' stored matrix.
-#' - Use `trim_duplicates = TRUE` in the constructor to remove flat S(t) segments (repeated
+#' - Use `trim_duplicates = TRUE` in the constructor to remove flat survival segments (repeated
 #' values across time points) with a pre-specified tolerance (for a more controlled
 #' pre-processing, see [trim_duplicates()]).
 #'
