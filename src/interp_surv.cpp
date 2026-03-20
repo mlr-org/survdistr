@@ -126,7 +126,7 @@ NumericMatrix c_interp_surv_mat(
         double val = S_left + alpha * (S_right - S_left);
         survival(i, k) = std::max(0.0, std::min(1.0, val));
       } else { // CONST_HAZ
-        // avoid unnessary division by zero
+        // avoid unnecessary division by zero
         if (S_left == 0.0) {
           survival(i, k) = 0.0;
         } else {

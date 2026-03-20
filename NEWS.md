@@ -6,7 +6,7 @@
 - Introduced `trim_duplicates()` to remove repeated S(t) values across the time axis, with tolerance.
 - Added `interp_cif()` for constant interpolation of CIF (uses C++ internally).
 - Added `extract_times()` to consistently obtain and validate time points from vectors or matrices.
-- Unified assertion function to one: `assert_prob()`.
+- Unified assertion functions into one: `assert_prob()`.
 - Unified `mat_interp()` and `vec_interp()` into a single `interp()` function.
 - Enhanced `interp()`:
   - Added aliases for the three interpolation options (e.g., `const_haz` is equivalent to `exp_surv`).

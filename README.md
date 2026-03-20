@@ -6,7 +6,7 @@ interpolation of survival model predictions.
 
 <!-- badges: start -->
 
-[![r-cmd-check](https://github.com/mlr-org/survdistr/actions/workflows/r-cmd-check.yml/badge.svg)](https://github.com/mlr-org/mlr3survival/actions/workflows/r-cmd-check.yml)
+[![r-cmd-check](https://github.com/mlr-org/survdistr/actions/workflows/r-cmd-check.yml/badge.svg)](https://github.com/mlr-org/survdistr/actions/workflows/r-cmd-check.yml)
 [![Codecov test
 coverage](https://codecov.io/gh/mlr-org/survdistr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/mlr-org/survdistr?branch=main)
 [![CRAN

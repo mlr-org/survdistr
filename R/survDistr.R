@@ -75,7 +75,7 @@ survDistr = R6Class(
     #' @param x (`matrix`)\cr
     #'  A numeric matrix of survival probabilities (values between 0 and 1).
     #'  Column names must correspond to time points if `times` is `NULL`.
-    #' @param times (`numeric(1)`)\cr Numeric vector of time points for matrix `x`,
+    #' @param times (`numeric()`)\cr Numeric vector of time points for matrix `x`,
     #'  must match the number of columns.
     #' @template param_method
     #' @template param_check
