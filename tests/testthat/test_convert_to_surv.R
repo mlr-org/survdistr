@@ -5,28 +5,60 @@ test_that("convert_to_surv() works", {
   disc_dens = c(0.1, 0.2, 0.15)
   expect_equal(
     convert_to_surv(disc_dens, times = times, input = "disc_dens"),
-    c(0.9, 0.7, 0.55)
+    c(
+      1 - 0.1,
+      1 - 0.1 - 0.2,
+      1 - 0.1 - 0.2 - 0.15
+    )
   )
 
   # continuous density (Delta = 1, 2, 3)
   cont_dens = c(0.1, 0.05, 0.1)
   expect_equal(
-    convert_to_surv(cont_dens, times = times, input = "cont_dens"),
-    c(0.9, 0.8, 0.5)
+    convert_to_surv(cont_dens, times = times, input = "cont_dens", integration = "riemann"),
+    c(
+      1 - (0.1 * 1),
+      1 - (0.1 * 1 + 0.05 * 2),
+      1 - (0.1 * 1 + 0.05 * 2 + 0.1 * 3)
+    )
+  )
+  expect_equal(
+    convert_to_surv(cont_dens, times = times, input = "cont_dens", integration = "trapezoid"),
+    c(
+      1 - (0.1 * 1),
+      1 - (0.1 * 1 + 0.5 * (0.1 + 0.05) * 2),
+      1 - (0.1 * 1 + 0.5 * (0.1 + 0.05) * 2 + 0.5 * (0.05 + 0.1) * 3)
+    )
   )
 
   # discrete hazard
   disc_haz = c(0.1, 0.2, 0.5)
   expect_equal(
     convert_to_surv(disc_haz, times = times, input = "disc_haz"),
-    c(0.9, 0.72, 0.36)
+    c(
+      1 - 0.1,
+      (1 - 0.1) * (1 - 0.2),
+      (1 - 0.1) * (1 - 0.2) * (1 - 0.5)
+    )
   )
 
   # continuous hazard (delta = 1, 2, 3)
   cont_haz = c(0.1, 0.05, 0.2)
   expect_equal(
-    convert_to_surv(cont_haz, times = times, input = "cont_haz"),
-    exp(-c(0.1, 0.2, 0.8))
+    convert_to_surv(cont_haz, times = times, input = "cont_haz", integration = "riemann"),
+    exp(-c(
+      0.1 * 1,
+      0.1 * 1 + 0.05 * 2,
+      0.1 * 1 + 0.05 * 2 + 0.2 * 3
+    ))
+  )
+  expect_equal(
+    convert_to_surv(cont_haz, times = times, input = "cont_haz", integration = "trapezoid"),
+    exp(-c(
+      0.1 * 1,
+      0.1 + (0.5 * (0.1 + 0.05) * 2),
+      0.1 + (0.5 * (0.1 + 0.05) * 2) + (0.5 * (0.05 + 0.2) * 3)
+    ))
   )
 
   # matrix input works

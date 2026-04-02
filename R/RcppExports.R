@@ -33,11 +33,11 @@ c_disc_haz_to_surv_mat <- function(x) {
     .Call(`_survdistr_c_disc_haz_to_surv_mat`, x)
 }
 
-c_cont_dens_to_surv_mat <- function(x, times) {
-    .Call(`_survdistr_c_cont_dens_to_surv_mat`, x, times)
+c_cont_dens_to_surv_mat <- function(x, times, trapezoid = TRUE) {
+    .Call(`_survdistr_c_cont_dens_to_surv_mat`, x, times, trapezoid)
 }
 
-c_cont_haz_to_surv_mat <- function(x, times) {
-    .Call(`_survdistr_c_cont_haz_to_surv_mat`, x, times)
+c_cont_haz_to_surv_mat <- function(x, times, trapezoid = TRUE) {
+    .Call(`_survdistr_c_cont_haz_to_surv_mat`, x, times, trapezoid)
 }
 
