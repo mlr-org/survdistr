@@ -27,7 +27,7 @@
 #' `check` is set to `TRUE`.
 #' - Use the `$filter()` method to subset observations in-place by filtering rows of the
 #' stored matrix.
-#' - Use `trim_duplicates = TRUE` in the constructor to remove flat survival segments (repeated
+#' - Use `trim_dups = TRUE` in the constructor to remove flat survival segments (repeated
 #' values across time points) with a pre-specified tolerance (for a more controlled
 #' pre-processing, see [trim_duplicates()]).
 #'
@@ -79,16 +79,16 @@ survDistr = R6Class(
     #'  must match the number of columns.
     #' @template param_method
     #' @template param_check
-    #' @template param_trim_duplicates
+    #' @template param_trim_dups
     initialize = function(x, times = NULL, method = "const_surv", check = TRUE,
-                          trim_duplicates = FALSE) {
+                          trim_dups = FALSE) {
       assert_flag(check)
-      assert_flag(trim_duplicates)
+      assert_flag(trim_dups)
       method = map_interp_method(method) # const_* aliases
       private$.method = method
 
       # remove flat S(t) segments
-      if (trim_duplicates) {
+      if (trim_dups) {
         trimmed = trim_duplicates(x, times = times)
         x = trimmed$x
         times = trimmed$times

@@ -33,19 +33,19 @@ test_that("interp() can trim duplicate S(t) values", {
   x = c(1, 1, 1, 0.6, 0, 0)
   t = c(0, 1, 2, 3,   4, 5)
   expect_lt(
-    interp(x, t, eval_times = 1.5, method = "linear_surv", add_times = FALSE, trim_duplicates = TRUE),
+    interp(x, t, eval_times = 1.5, method = "linear_surv", add_times = FALSE, trim_dups = TRUE),
     1L
   )
   expect_lt(
-    interp(x, t, eval_times = 1.5, method = "exp_surv", add_times = FALSE, trim_duplicates = TRUE),
+    interp(x, t, eval_times = 1.5, method = "exp_surv", add_times = FALSE, trim_dups = TRUE),
     1L
   )
   expect_gt(
-    interp(x, t, eval_times = 3.5, method = "linear_surv", add_times = FALSE, trim_duplicates = TRUE),
+    interp(x, t, eval_times = 3.5, method = "linear_surv", add_times = FALSE, trim_dups = TRUE),
     0L
   )
   expect_equal(
-    interp(x, t, eval_times = 4.5, method = "exp_surv", add_times = FALSE, trim_duplicates = TRUE),
+    interp(x, t, eval_times = 4.5, method = "exp_surv", add_times = FALSE, trim_dups = TRUE),
     0L
   )
 })

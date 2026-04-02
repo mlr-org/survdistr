@@ -13,7 +13,7 @@ interp(
   add_times = TRUE,
   check = TRUE,
   eps = 1e-12,
-  trim_duplicates = FALSE
+  trim_dups = FALSE
 )
 }
 \arguments{
@@ -46,7 +46,7 @@ set to \code{FALSE} to skip checks (NOT recommended for external use).}
 Small positive value used to replace extremely low survival probabilities when computing cumulative hazard,
 preventing numerical instability in \eqn{-\log S(t)} calculations.}
 
-\item{trim_duplicates}{(\code{logical(1)})\cr
+\item{trim_dups}{(\code{logical(1)})\cr
 If \code{TRUE}, removes adjacent duplicate values from the input using \code{\link[=trim_duplicates]{trim_duplicates()}}.
 This eliminates flat segments in survival curves and improves interpolation efficiency.
 Default is \code{FALSE}.}

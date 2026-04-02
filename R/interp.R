@@ -35,7 +35,7 @@
 #' @template param_eval_times
 #' @template param_check
 #' @template param_eps
-#' @template param_trim_duplicates
+#' @template param_trim_dups
 #'
 #' @return A numeric vector or matrix of interpolated values.
 #'
@@ -75,13 +75,13 @@ interp = function(x,
                   add_times = TRUE,
                   check = TRUE,
                   eps = 1e-12,
-                  trim_duplicates = FALSE) {
+                  trim_dups = FALSE) {
   # quick assertions
   method = map_interp_method(method) # const_* aliases
   output = assert_choice(output, c("surv", "cdf", "cumhaz", "density", "hazard"))
   assert_flag(add_times)
   assert_flag(check)
-  assert_flag(trim_duplicates)
+  assert_flag(trim_dups)
   eval_times = assert_numeric(
     eval_times, lower = 0, unique = TRUE, sorted = TRUE,
     null.ok = TRUE, any.missing = FALSE, min.len = 1
@@ -89,7 +89,7 @@ interp = function(x,
   is_mat = is.matrix(x)
 
   # remove flat S(t) segments
-  if (trim_duplicates) {
+  if (trim_dups) {
     trimmed = trim_duplicates(x, times = times)
     x = trimmed$x
     times = trimmed$times

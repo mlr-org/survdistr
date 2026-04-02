@@ -14,7 +14,7 @@ as_survDistr(x, ...)
   times = NULL,
   method = "const_surv",
   check = TRUE,
-  trim_duplicates = FALSE,
+  trim_dups = FALSE,
   ...
 )
 
@@ -37,7 +37,7 @@ Interpolation method passed to \link{survDistr} constructor.}
 \item{check}{(\code{logical(1)})\cr
 Whether to validate \code{x} and \code{times}.}
 
-\item{trim_duplicates}{(\code{logical(1)})\cr
+\item{trim_dups}{(\code{logical(1)})\cr
 Whether to remove duplicate S(t) values and corresponding time points.}
 }
 \value{
