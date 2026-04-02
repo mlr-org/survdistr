@@ -1,4 +1,9 @@
-# survdistr (development version)
+# survdistr 0.0.3
+
+- Improved documentation
+- Refactored `interp_cif()`
+- Added trapezoidal integration option for continuous hazard/density to survival conversion in `convert_to_surv()`
+- Renamed argument: `trim_duplicates` to `trim_dups`
 
 # survdistr 0.0.2
 
