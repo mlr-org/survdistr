@@ -43,7 +43,8 @@ NumericMatrix c_disc_haz_to_surv_mat(const NumericMatrix& x) {
 // [[Rcpp::export]]
 NumericMatrix c_cont_dens_to_surv_mat(
   const NumericMatrix& x,
-  const NumericVector& times
+  const NumericVector& times,
+  const bool trapezoid = true
 ) {
   const int n_rows = x.nrow();
   const int n_times = x.ncol();
@@ -56,10 +57,19 @@ NumericMatrix c_cont_dens_to_surv_mat(
   }
 
   for (int i = 0; i < n_rows; i++) {
-    double cum_int = 0.0;
-    for (int j = 0; j < n_times; j++) {
-      cum_int += x(i, j) * delta_t[j];
-      surv(i, j) = 1.0 - cum_int;
+    double cdf = 0.0;
+
+    // For the first anchor there is no previous anchor value available,
+    // so both integration rules use the same formula:
+    cdf += x(i, 0) * delta_t[0];
+    surv(i, 0) = 1.0 - cdf;
+    for (int j = 1; j < n_times; j++) {
+      if (trapezoid) {
+        cdf += 0.5 * (x(i, j - 1) + x(i, j)) * delta_t[j];
+      } else {
+        cdf += x(i, j) * delta_t[j];
+      }
+      surv(i, j) = 1.0 - cdf;
     }
   }
 
@@ -70,7 +80,8 @@ NumericMatrix c_cont_dens_to_surv_mat(
 // [[Rcpp::export]]
 NumericMatrix c_cont_haz_to_surv_mat(
   const NumericMatrix& x,
-  const NumericVector& times
+  const NumericVector& times,
+  const bool trapezoid = true
 ) {
   const int n_rows = x.nrow();
   const int n_times = x.ncol();
@@ -84,8 +95,17 @@ NumericMatrix c_cont_haz_to_surv_mat(
 
   for (int i = 0; i < n_rows; i++) {
     double cum_haz = 0.0;
-    for (int j = 0; j < n_times; j++) {
-      cum_haz += x(i, j) * delta_t[j];
+
+    // For the first anchor there is no previous anchor value available,
+    // so both integration rules use the same formula:
+    cum_haz += x(i, 0) * delta_t[0];
+    surv(i, 0) = std::exp(-cum_haz);
+    for (int j = 1; j < n_times; j++) {
+      if (trapezoid) {
+        cum_haz += 0.5 * (x(i, j - 1) + x(i, j)) * delta_t[j];
+      } else {
+        cum_haz += x(i, j) * delta_t[j];
+      }
       surv(i, j) = std::exp(-cum_haz);
     }
   }

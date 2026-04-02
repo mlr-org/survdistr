@@ -45,7 +45,6 @@ test_that("interp_cif handles single time point", {
   expect_equal(res, expected, ignore_attr = TRUE)
 })
 
-
 test_that("interp_cif returns original matrix when eval_times is NULL", {
   cif = gen_random_mat(3, 4, type = "cif")
   times = c(1, 3, 5, 7)

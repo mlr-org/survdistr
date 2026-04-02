@@ -15,7 +15,8 @@
 #' - `"const_haz"`/`"exp_surv"`: exponential interpolation of S(t) (equivalent to
 #' piecewise constant interpolation of the hazard function).
 #'
-#' For formulas for each method, see respective Tables in arxiv preprint (TODO: add link).
+#' We will provide tables with the interpolation formulas for each method in an
+#' upcoming arXiv preprint and link it here.
 #'
 #' For constant hazard interpolation (`"const_haz"`), any right-anchor S(t) values
 #' equal to 0 are internally floored at `min(1e-12, S_left)` within each interval.
@@ -34,7 +35,7 @@
 #' @template param_eval_times
 #' @template param_check
 #' @template param_eps
-#' @template param_trim_duplicates
+#' @template param_trim_dups
 #'
 #' @return A numeric vector or matrix of interpolated values.
 #'
@@ -74,13 +75,13 @@ interp = function(x,
                   add_times = TRUE,
                   check = TRUE,
                   eps = 1e-12,
-                  trim_duplicates = FALSE) {
+                  trim_dups = FALSE) {
   # quick assertions
   method = map_interp_method(method) # const_* aliases
   output = assert_choice(output, c("surv", "cdf", "cumhaz", "density", "hazard"))
   assert_flag(add_times)
   assert_flag(check)
-  assert_flag(trim_duplicates)
+  assert_flag(trim_dups)
   eval_times = assert_numeric(
     eval_times, lower = 0, unique = TRUE, sorted = TRUE,
     null.ok = TRUE, any.missing = FALSE, min.len = 1
@@ -88,7 +89,7 @@ interp = function(x,
   is_mat = is.matrix(x)
 
   # remove flat S(t) segments
-  if (trim_duplicates) {
+  if (trim_dups) {
     trimmed = trim_duplicates(x, times = times)
     x = trimmed$x
     times = trimmed$times
@@ -126,8 +127,9 @@ interp = function(x,
   process_output(res, eval_times, output, add_times, eps)
 }
 
-#' Interpolate CIF matrix
+#' @title Interpolate CIF matrix
 #'
+#' @description
 #' Interpolates cumulative incidence (CIF) functions (corresponding to one
 #' competing event only) using left-continuous constant interpolation.
 #'
@@ -158,18 +160,16 @@ interp_cif = function(x, times = NULL, eval_times = NULL, add_times = TRUE, chec
     times = extract_times(x, times)
   }
 
-  # Case: no interpolation requested
+  # Case: no interpolation requested => use anchor times
   if (is.null(eval_times)) {
-    if (add_times) {
-      if (is.null(colnames(x))) {
-        colnames(x) = as.character(times)
-      }
-    }
-    return(x)
+    eval_times = times
   }
 
-  # call C++ interpolation
-  res = c_interp_cif_mat(x, times, eval_times)
+  res = if (identical(eval_times, times)) {
+    x # we have CIF(t) at the anchors already
+  } else {
+    c_interp_cif_mat(x, times, eval_times)
+  }
 
   if (add_times) {
     colnames(res) = as.character(eval_times)

@@ -24,7 +24,7 @@ interpolated using the \code{\link[=interp]{interp()}} function.
 \code{check} is set to \code{TRUE}.
 \item Use the \verb{$filter()} method to subset observations in-place by filtering rows of the
 stored matrix.
-\item Use \code{trim_duplicates = TRUE} in the constructor to remove flat survival segments (repeated
+\item Use \code{trim_dups = TRUE} in the constructor to remove flat survival segments (repeated
 values across time points) with a pre-specified tolerance (for a more controlled
 pre-processing, see \code{\link[=trim_duplicates]{trim_duplicates()}}).
 }
@@ -101,7 +101,7 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
   times = NULL,
   method = "const_surv",
   check = TRUE,
-  trim_duplicates = FALSE
+  trim_dups = FALSE
 )}\if{html}{\out{</div>}}
 }
 
@@ -112,7 +112,7 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
 A numeric matrix of survival probabilities (values between 0 and 1).
 Column names must correspond to time points if \code{times} is \code{NULL}.}
 
-\item{\code{times}}{(\code{numeric(1)})\cr Numeric vector of time points for matrix \code{x},
+\item{\code{times}}{(\code{numeric()})\cr Numeric vector of time points for matrix \code{x},
 must match the number of columns.}
 
 \item{\code{method}}{(\code{character(1)})\cr
@@ -123,7 +123,7 @@ and \code{"const_haz"} (alias: \code{"exp_surv"}).}
 If \code{TRUE}, run input matrix validation checks using \code{\link[=assert_prob]{assert_prob()}};
 set to \code{FALSE} to skip checks (NOT recommended for external use).}
 
-\item{\code{trim_duplicates}}{(\code{logical(1)})\cr
+\item{\code{trim_dups}}{(\code{logical(1)})\cr
 If \code{TRUE}, removes adjacent duplicate values from the input using \code{\link[=trim_duplicates]{trim_duplicates()}}.
 This eliminates flat segments in survival curves and improves interpolation efficiency.
 Default is \code{FALSE}.}

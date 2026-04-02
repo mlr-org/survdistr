@@ -9,6 +9,7 @@ convert_to_surv(
   times = NULL,
   input = "cont_haz",
   check = TRUE,
+  integration = "trapezoid",
   clamp_surv = FALSE,
   eps = 1e-12
 )
@@ -26,6 +27,11 @@ Input type. One of \code{"disc_haz"}, \code{"disc_dens"}, \code{"cont_haz"} or \
 \item{check}{(\code{logical(1)})\cr
 If \code{TRUE} (default), run \emph{input} validation checks.
 Disable only if you know the input is valid and want to skip checks for speed.}
+
+\item{integration}{(\code{character(1)})\cr
+Numerical integration rule for continuous inputs:
+\code{"trapezoid"} (default) uses the trapezoidal rule, while \code{"riemann"}
+is the left Riemann sum. Only used for \code{"cont_dens"} and \code{"cont_haz"}.}
 
 \item{clamp_surv}{(\code{logical(1)})\cr
 If \code{TRUE}, clamp survival probabilities to \verb{[eps, 1]} to avoid numerical issues.}
@@ -45,13 +51,37 @@ probabilities at the same anchor time points (no interpolation).
 Let \eqn{t_1,\dots,t_B} denote the anchor time points,
 \eqn{\Delta_j = t_j - t_{j-1}}, and \eqn{S_j = S(t_j)} the survival
 probabilities at the anchors. The conversion depends on the value
-of \code{input}:
+of \strong{input} as follows:
 \itemize{
-\item \code{"disc_dens"}: \eqn{S_j = 1 - \sum_{k=1}^j \tilde f_k}
-\item \code{"disc_haz"}: \eqn{S_j = \prod_{k=1}^j (1 - \tilde h_k)}
-\item \code{"cont_dens"}: \eqn{S_j = 1 - \sum_{k=1}^j f_k \Delta_k}
-\item \code{"cont_haz"}: \eqn{S_j = \exp\!\left(-\sum_{k=1}^j \lambda_k \Delta_k\right)}
+\item Discrete densities \eqn{\tilde f_k} (\code{"disc_dens"}):
+\deqn{S_j = 1 - \sum_{k=1}^j \tilde f_k}
+\item Discrete hazards \eqn{\tilde h_k} (\code{"disc_haz"}):
+\deqn{S_j = \prod_{k=1}^j (1 - \tilde h_k)}
+\item Continuous densities \eqn{f_k} (\code{"cont_dens"}):
+\itemize{
+\item Trapezoidal rule:
+\deqn{S_j = 1 - \sum_{k=1}^j \frac{f_{k-1} + f_k}{2} \Delta_k}
+(with \eqn{f_0 = f_1})
+\item Left Riemann sum:
+\deqn{S_j = 1 - \sum_{k=1}^j f_k \Delta_k}
 }
+\item Continuous hazards \eqn{\lambda_k} (\code{"cont_haz"}):
+\itemize{
+\item Trapezoidal rule:
+\deqn{S_j = \exp\!\left(-\sum_{k=1}^j \frac{\lambda_{k-1} + \lambda_k}{2} \Delta_k\right)}
+(with \eqn{\lambda_0 = \lambda_1})
+\item Left Riemann sum:
+\deqn{S_j = \exp\!\left(-\sum_{k=1}^j \lambda_k \Delta_k\right)}
+}
+}
+
+For continuous inputs (\code{"cont_dens"} / \code{"cont_haz"}), numerical integration
+can be done either with the trapezoidal rule (\code{integration = "trapezoid"}, default)
+or with a left Riemann sum (\code{integration = "riemann"}).
+Trapezoidal rule is more accurate (lower approximation error in the order of \eqn{\Delta^2}
+while the Riemann sum has an approximation error in the order of \eqn{\Delta}).
+At the first anchor both rules are identical, because no previous anchor value
+is available; therefore both use \eqn{x_1 \Delta_1}.
 }
 \section{Validation}{
 
