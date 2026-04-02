@@ -160,18 +160,16 @@ interp_cif = function(x, times = NULL, eval_times = NULL, add_times = TRUE, chec
     times = extract_times(x, times)
   }
 
-  # Case: no interpolation requested
+  # Case: no interpolation requested => use anchor times
   if (is.null(eval_times)) {
-    if (add_times) {
-      if (is.null(colnames(x))) {
-        colnames(x) = as.character(times)
-      }
-    }
-    return(x)
+    eval_times = times
   }
 
-  # call C++ interpolation
-  res = c_interp_cif_mat(x, times, eval_times)
+  res = if (identical(eval_times, times)) {
+    x # we have CIF(t) at the anchors already
+  } else {
+    c_interp_cif_mat(x, times, eval_times)
+  }
 
   if (add_times) {
     colnames(res) = as.character(eval_times)
