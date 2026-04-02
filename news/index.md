@@ -1,6 +1,14 @@
 # Changelog
 
-## survdistr (development version)
+## survdistr 0.0.3
+
+- Improved documentation
+- Refactored
+  [`interp_cif()`](https://survdistr.mlr-org.com/reference/interp_cif.md)
+- Added trapezoidal integration option for continuous hazard/density to
+  survival conversion in
+  [`convert_to_surv()`](https://survdistr.mlr-org.com/reference/convert_to_surv.md)
+- Renamed argument: `trim_duplicates` to `trim_dups`
 
 ## survdistr 0.0.2
 
@@ -18,7 +26,7 @@
   [`extract_times()`](https://survdistr.mlr-org.com/reference/extract_times.md)
   to consistently obtain and validate time points from vectors or
   matrices.
-- Unified assertion function to one:
+- Unified assertion functions into one:
   [`assert_prob()`](https://survdistr.mlr-org.com/reference/assert_prob.md).
 - Unified `mat_interp()` and `vec_interp()` into a single
   [`interp()`](https://survdistr.mlr-org.com/reference/interp.md)

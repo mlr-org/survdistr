@@ -23,7 +23,7 @@ rows represent observations and columns represent time points."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">survdistr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +76,7 @@ interpolated using the <code><a href="interp.html">interp()</a></code> function.
 <code>check</code> is set to <code>TRUE</code>.</p></li>
 <li><p>Use the <code>$filter()</code> method to subset observations in-place by filtering rows of the
 stored matrix.</p></li>
-<li><p>Use <code>trim_duplicates = TRUE</code> in the constructor to remove flat survival segments (repeated
+<li><p>Use <code>trim_dups = TRUE</code> in the constructor to remove flat survival segments (repeated
 values across time points) with a pre-specified tolerance (for a more controlled
 pre-processing, see <code><a href="trim_duplicates.html">trim_duplicates()</a></code>).</p></li>
 </ul></div>
@@ -120,7 +120,7 @@ and <code>"const_haz"</code> (alias: <code>"exp_surv"</code>).</p></dd>
 <span>  times <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"const_surv"</span>,</span>
 <span>  check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  trim_duplicates <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  trim_dups <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -133,7 +133,7 @@ Column names must correspond to time points if <code>times</code> is <code>NULL<
 
 
 <dt><code>times</code></dt>
-<dd><p>(<code>numeric(1)</code>)<br> Numeric vector of time points for matrix <code>x</code>,
+<dd><p>(<code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric()</a></code>)<br> Numeric vector of time points for matrix <code>x</code>,
 must match the number of columns.</p></dd>
 
 
@@ -149,7 +149,7 @@ If <code>TRUE</code>, run input matrix validation checks using <code><a href="as
 set to <code>FALSE</code> to skip checks (NOT recommended for external use).</p></dd>
 
 
-<dt><code>trim_duplicates</code></dt>
+<dt><code>trim_dups</code></dt>
 <dd><p>(<code>logical(1)</code>)<br>
 If <code>TRUE</code>, removes adjacent duplicate values from the input using <code><a href="trim_duplicates.html">trim_duplicates()</a></code>.
 This eliminates flat segments in survival curves and improves interpolation efficiency.

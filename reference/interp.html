@@ -19,7 +19,7 @@ hazard functions."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">survdistr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@ hazard functions.</p>
 <span>  add_times <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  eps <span class="op">=</span> <span class="fl">1e-12</span>,</span>
-<span>  trim_duplicates <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  trim_dups <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -122,7 +122,7 @@ Small positive value used to replace extremely low survival probabilities when c
 preventing numerical instability in \(-\log S(t)\) calculations.</p></dd>
 
 
-<dt id="arg-trim-duplicates">trim_duplicates<a class="anchor" aria-label="anchor" href="#arg-trim-duplicates"></a></dt>
+<dt id="arg-trim-dups">trim_dups<a class="anchor" aria-label="anchor" href="#arg-trim-dups"></a></dt>
 <dd><p>(<code>logical(1)</code>)<br>
 If <code>TRUE</code>, removes adjacent duplicate values from the input using <code><a href="trim_duplicates.html">trim_duplicates()</a></code>.
 This eliminates flat segments in survival curves and improves interpolation efficiency.
@@ -141,7 +141,8 @@ We currently provide three interpolation options:</p><ul><li><p><code>"const_sur
 piecewise constant interpolation of the density function).</p></li>
 <li><p><code>"const_haz"</code>/<code>"exp_surv"</code>: exponential interpolation of S(t) (equivalent to
 piecewise constant interpolation of the hazard function).</p></li>
-</ul><p>For formulas for each method, see respective Tables in arxiv preprint (TODO: add link).</p>
+</ul><p>We will provide tables with the interpolation formulas for each method in an
+upcoming arXiv preprint and link it here.</p>
 <p>For constant hazard interpolation (<code>"const_haz"</code>), any right-anchor S(t) values
 equal to 0 are internally floored at <code>min(1e-12, S_left)</code> within each interval.
 This keeps hazards/densities finite without allowing a local increase in S(t).</p>

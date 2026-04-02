@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">survdistr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,15 +45,22 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="survdistr-development-version">survdistr (development version)<a class="anchor" aria-label="anchor" href="#survdistr-development-version"></a></h2>
-</div>
+<h2 class="pkg-version" data-toc-text="0.0.3" id="survdistr-003">survdistr 0.0.3<a class="anchor" aria-label="anchor" href="#survdistr-003"></a></h2>
+<ul><li>Improved documentation</li>
+<li>Refactored <code><a href="../reference/interp_cif.html">interp_cif()</a></code>
+</li>
+<li>Added trapezoidal integration option for continuous hazard/density to survival conversion in <code><a href="../reference/convert_to_surv.html">convert_to_surv()</a></code>
+</li>
+<li>Renamed argument: <code>trim_duplicates</code> to <code>trim_dups</code>
+</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.2" id="survdistr-002">survdistr 0.0.2<a class="anchor" aria-label="anchor" href="#survdistr-002"></a></h2>
 <ul><li>Added <code><a href="../reference/convert_to_surv.html">convert_to_surv()</a></code> for efficient transformation of hazard/density functions to survival at anchor time points (uses C++ internally).</li>
 <li>Introduced <code><a href="../reference/trim_duplicates.html">trim_duplicates()</a></code> to remove repeated S(t) values across the time axis, with tolerance.</li>
 <li>Added <code><a href="../reference/interp_cif.html">interp_cif()</a></code> for constant interpolation of CIF (uses C++ internally).</li>
 <li>Added <code><a href="../reference/extract_times.html">extract_times()</a></code> to consistently obtain and validate time points from vectors or matrices.</li>
-<li>Unified assertion function to one: <code><a href="../reference/assert_prob.html">assert_prob()</a></code>.</li>
+<li>Unified assertion functions into one: <code><a href="../reference/assert_prob.html">assert_prob()</a></code>.</li>
 <li>Unified <code>mat_interp()</code> and <code>vec_interp()</code> into a single <code><a href="../reference/interp.html">interp()</a></code> function.</li>
 <li>Enhanced <code><a href="../reference/interp.html">interp()</a></code>:
 <ul><li>Added aliases for the three interpolation options (e.g., <code>const_haz</code> is equivalent to <code>exp_surv</code>).</li>

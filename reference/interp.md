@@ -16,7 +16,7 @@ interp(
   add_times = TRUE,
   check = TRUE,
   eps = 1e-12,
-  trim_duplicates = FALSE
+  trim_dups = FALSE
 )
 ```
 
@@ -71,7 +71,7 @@ interp(
   probabilities when computing cumulative hazard, preventing numerical
   instability in \\-\log S(t)\\ calculations.
 
-- trim_duplicates:
+- trim_dups:
 
   (`logical(1)`)  
   If `TRUE`, removes adjacent duplicate values from the input using
@@ -99,8 +99,8 @@ three interpolation options:
   (equivalent to piecewise constant interpolation of the hazard
   function).
 
-For formulas for each method, see respective Tables in arxiv preprint
-(TODO: add link).
+We will provide tables with the interpolation formulas for each method
+in an upcoming arXiv preprint and link it here.
 
 For constant hazard interpolation (`"const_haz"`), any right-anchor S(t)
 values equal to 0 are internally floored at `min(1e-12, S_left)` within

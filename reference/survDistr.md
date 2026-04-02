@@ -34,9 +34,9 @@ Key design features:
 - Use the `$filter()` method to subset observations in-place by
   filtering rows of the stored matrix.
 
-- Use `trim_duplicates = TRUE` in the constructor to remove flat
-  survival segments (repeated values across time points) with a
-  pre-specified tolerance (for a more controlled pre-processing, see
+- Use `trim_dups = TRUE` in the constructor to remove flat survival
+  segments (repeated values across time points) with a pre-specified
+  tolerance (for a more controlled pre-processing, see
   [`trim_duplicates()`](https://survdistr.mlr-org.com/reference/trim_duplicates.md)).
 
 ## Active bindings
@@ -91,7 +91,7 @@ Creates a new instance of this
       times = NULL,
       method = "const_surv",
       check = TRUE,
-      trim_duplicates = FALSE
+      trim_dups = FALSE
     )
 
 #### Arguments
@@ -104,7 +104,7 @@ Creates a new instance of this
 
 - `times`:
 
-  (`numeric(1)`)  
+  ([`numeric()`](https://rdrr.io/r/base/numeric.html))  
   Numeric vector of time points for matrix `x`, must match the number of
   columns.
 
@@ -121,7 +121,7 @@ Creates a new instance of this
   [`assert_prob()`](https://survdistr.mlr-org.com/reference/assert_prob.md);
   set to `FALSE` to skip checks (NOT recommended for external use).
 
-- `trim_duplicates`:
+- `trim_dups`:
 
   (`logical(1)`)  
   If `TRUE`, removes adjacent duplicate values from the input using

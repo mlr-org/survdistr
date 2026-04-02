@@ -12,6 +12,7 @@ convert_to_surv(
   times = NULL,
   input = "cont_haz",
   check = TRUE,
+  integration = "trapezoid",
   clamp_surv = FALSE,
   eps = 1e-12
 )
@@ -42,6 +43,13 @@ convert_to_surv(
   If `TRUE` (default), run *input* validation checks. Disable only if
   you know the input is valid and want to skip checks for speed.
 
+- integration:
+
+  (`character(1)`)  
+  Numerical integration rule for continuous inputs: `"trapezoid"`
+  (default) uses the trapezoidal rule, while `"riemann"` is the left
+  Riemann sum. Only used for `"cont_dens"` and `"cont_haz"`.
+
 - clamp_surv:
 
   (`logical(1)`)  
@@ -63,16 +71,38 @@ dimensions as `x`.
 
 Let \\t_1,\dots,t_B\\ denote the anchor time points, \\\Delta_j = t_j -
 t\_{j-1}\\, and \\S_j = S(t_j)\\ the survival probabilities at the
-anchors. The conversion depends on the value of `input`:
+anchors. The conversion depends on the value of **input** as follows:
 
-- `"disc_dens"`: \\S_j = 1 - \sum\_{k=1}^j \tilde f_k\\
+- Discrete densities \\\tilde f_k\\ (`"disc_dens"`): \$\$S_j = 1 -
+  \sum\_{k=1}^j \tilde f_k\$\$
 
-- `"disc_haz"`: \\S_j = \prod\_{k=1}^j (1 - \tilde h_k)\\
+- Discrete hazards \\\tilde h_k\\ (`"disc_haz"`): \$\$S_j =
+  \prod\_{k=1}^j (1 - \tilde h_k)\$\$
 
-- `"cont_dens"`: \\S_j = 1 - \sum\_{k=1}^j f_k \Delta_k\\
+- Continuous densities \\f_k\\ (`"cont_dens"`):
 
-- `"cont_haz"`: \\S_j = \exp\\\left(-\sum\_{k=1}^j \lambda_k
-  \Delta_k\right)\\
+  - Trapezoidal rule: \$\$S_j = 1 - \sum\_{k=1}^j \frac{f\_{k-1} +
+    f_k}{2} \Delta_k\$\$ (with \\f_0 = f_1\\)
+
+  - Left Riemann sum: \$\$S_j = 1 - \sum\_{k=1}^j f_k \Delta_k\$\$
+
+- Continuous hazards \\\lambda_k\\ (`"cont_haz"`):
+
+  - Trapezoidal rule: \$\$S_j = \exp\\\left(-\sum\_{k=1}^j
+    \frac{\lambda\_{k-1} + \lambda_k}{2} \Delta_k\right)\$\$ (with
+    \\\lambda_0 = \lambda_1\\)
+
+  - Left Riemann sum: \$\$S_j = \exp\\\left(-\sum\_{k=1}^j \lambda_k
+    \Delta_k\right)\$\$
+
+For continuous inputs (`"cont_dens"` / `"cont_haz"`), numerical
+integration can be done either with the trapezoidal rule
+(`integration = "trapezoid"`, default) or with a left Riemann sum
+(`integration = "riemann"`). Trapezoidal rule is more accurate (lower
+approximation error in the order of \\\Delta^2\\ while the Riemann sum
+has an approximation error in the order of \\\Delta\\). At the first
+anchor both rules are identical, because no previous anchor value is
+available; therefore both use \\x_1 \Delta_1\\.
 
 ## Validation
 
@@ -89,7 +119,7 @@ non-negative numeric matrix/vector.
 haz_cont = c(0.02, 0.1, 0.2, 0.15)
 times = c(0, 1, 2, 3)
 convert_to_surv(haz_cont, times = times, input = "cont_haz")
-#> [1] 1.0000000 0.9048374 0.7408182 0.6376282
+#> [1] 1.0000000 0.9417645 0.8105842 0.6804506
 
 # Discrete hazard => survival
 haz_disc = c(0.1, 0.2, 0.15)

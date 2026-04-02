@@ -15,7 +15,7 @@ as_survDistr(
   times = NULL,
   method = "const_surv",
   check = TRUE,
-  trim_duplicates = FALSE,
+  trim_dups = FALSE,
   ...
 )
 
@@ -53,7 +53,7 @@ as_survDistr(x, ...)
   (`logical(1)`)  
   Whether to validate `x` and `times`.
 
-- trim_duplicates:
+- trim_dups:
 
   (`logical(1)`)  
   Whether to remove duplicate S(t) values and corresponding time points.
