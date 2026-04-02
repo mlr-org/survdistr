@@ -45,12 +45,16 @@ probabilities at the same anchor time points (no interpolation).
 Let \eqn{t_1,\dots,t_B} denote the anchor time points,
 \eqn{\Delta_j = t_j - t_{j-1}}, and \eqn{S_j = S(t_j)} the survival
 probabilities at the anchors. The conversion depends on the value
-of \code{input}:
+of \strong{input} as follows:
 \itemize{
-\item \code{"disc_dens"}: \eqn{S_j = 1 - \sum_{k=1}^j \tilde f_k}
-\item \code{"disc_haz"}: \eqn{S_j = \prod_{k=1}^j (1 - \tilde h_k)}
-\item \code{"cont_dens"}: \eqn{S_j = 1 - \sum_{k=1}^j f_k \Delta_k}
-\item \code{"cont_haz"}: \eqn{S_j = \exp\!\left(-\sum_{k=1}^j \lambda_k \Delta_k\right)}
+\item Discrete densities \eqn{\tilde f_k} (\code{"disc_dens"}):
+\deqn{S_j = 1 - \sum_{k=1}^j \tilde f_k}
+\item Discrete hazards \eqn{\tilde h_k} (\code{"disc_haz"}):
+\deqn{S_j = \prod_{k=1}^j (1 - \tilde h_k)}
+\item Continuous densities \eqn{f_k} (\code{"cont_dens"}):
+\deqn{S_j = 1 - \sum_{k=1}^j f_k \Delta_k}
+\item Continuous hazards \eqn{\lambda_k} (\code{"cont_haz"}):
+\deqn{S_j = \exp\!\left(-\sum_{k=1}^j \lambda_k \Delta_k\right)}
 }
 }
 \section{Validation}{

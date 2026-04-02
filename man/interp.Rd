@@ -71,7 +71,8 @@ piecewise constant interpolation of the density function).
 piecewise constant interpolation of the hazard function).
 }
 
-For formulas for each method, see respective Tables in arxiv preprint (TODO: add link).
+We will provide tables with the interpolation formulas for each method in an
+upcoming arXiv preprint and link it here.
 
 For constant hazard interpolation (\code{"const_haz"}), any right-anchor S(t) values
 equal to 0 are internally floored at \code{min(1e-12, S_left)} within each interval.

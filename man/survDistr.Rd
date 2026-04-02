@@ -112,7 +112,7 @@ Creates a new instance of this \link[R6:R6Class]{R6} class.
 A numeric matrix of survival probabilities (values between 0 and 1).
 Column names must correspond to time points if \code{times} is \code{NULL}.}
 
-\item{\code{times}}{(\code{numeric(1)})\cr Numeric vector of time points for matrix \code{x},
+\item{\code{times}}{(\code{numeric()})\cr Numeric vector of time points for matrix \code{x},
 must match the number of columns.}
 
 \item{\code{method}}{(\code{character(1)})\cr

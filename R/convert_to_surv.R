@@ -8,15 +8,19 @@
 #' Let \eqn{t_1,\dots,t_B} denote the anchor time points,
 #' \eqn{\Delta_j = t_j - t_{j-1}}, and \eqn{S_j = S(t_j)} the survival
 #' probabilities at the anchors. The conversion depends on the value
-#' of `input`:
+#' of **input** as follows:
 #'
-#' * `"disc_dens"`: \eqn{S_j = 1 - \sum_{k=1}^j \tilde f_k}
+#' * Discrete densities \eqn{\tilde f_k} (`"disc_dens"`):
+#'  \deqn{S_j = 1 - \sum_{k=1}^j \tilde f_k}
 #'
-#' * `"disc_haz"`: \eqn{S_j = \prod_{k=1}^j (1 - \tilde h_k)}
+#' * Discrete hazards \eqn{\tilde h_k} (`"disc_haz"`):
+#' \deqn{S_j = \prod_{k=1}^j (1 - \tilde h_k)}
 #'
-#' * `"cont_dens"`: \eqn{S_j = 1 - \sum_{k=1}^j f_k \Delta_k}
+#' * Continuous densities \eqn{f_k} (`"cont_dens"`):
+#' \deqn{S_j = 1 - \sum_{k=1}^j f_k \Delta_k}
 #'
-#' * `"cont_haz"`: \eqn{S_j = \exp\!\left(-\sum_{k=1}^j \lambda_k \Delta_k\right)}
+#' * Continuous hazards \eqn{\lambda_k} (`"cont_haz"`):
+#' \deqn{S_j = \exp\!\left(-\sum_{k=1}^j \lambda_k \Delta_k\right)}
 #'
 #' @section Validation:
 #' If `check = TRUE`, we validate that the input is a proper discrete density/hazard matrix

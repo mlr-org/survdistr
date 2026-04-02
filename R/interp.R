@@ -15,7 +15,8 @@
 #' - `"const_haz"`/`"exp_surv"`: exponential interpolation of S(t) (equivalent to
 #' piecewise constant interpolation of the hazard function).
 #'
-#' For formulas for each method, see respective Tables in arxiv preprint (TODO: add link).
+#' We will provide tables with the interpolation formulas for each method in an
+#' upcoming arXiv preprint and link it here.
 #'
 #' For constant hazard interpolation (`"const_haz"`), any right-anchor S(t) values
 #' equal to 0 are internally floored at `min(1e-12, S_left)` within each interval.
@@ -126,8 +127,9 @@ interp = function(x,
   process_output(res, eval_times, output, add_times, eps)
 }
 
-#' Interpolate CIF matrix
+#' @title Interpolate CIF matrix
 #'
+#' @description
 #' Interpolates cumulative incidence (CIF) functions (corresponding to one
 #' competing event only) using left-continuous constant interpolation.
 #'
