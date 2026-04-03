@@ -8,9 +8,9 @@ Authors@R: c(
 Description: Efficient containers for storing and managing prediction
     outputs from survival models, including Cox proportional hazards,
     random survival forests, and modern machine learning estimators.
-    Provides fast methods to evaluate survival probabilities, hazards,
+    Provides fast C++ methods to evaluate survival probabilities, hazards,
     probability densities, and related quantities at arbitrary time
-    points, with support for multiple interpolation methods via Rcpp.
+    points, with support for multiple interpolation methods via 'Rcpp'.
 License: MIT + file LICENSE
 URL: https://survdistr.mlr-org.com
 Imports:
