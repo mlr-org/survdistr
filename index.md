@@ -5,6 +5,12 @@ interpolation of survival model predictions.
 
 ## Installation
 
+Install the release version from CRAN:
+
+``` r
+install.packages("survdistr")
+```
+
 Install the development version from GitHub:
 
 ``` r

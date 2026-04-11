@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">survdistr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,8 +69,11 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Install the development version from GitHub:</p>
+<p>Install the release version from CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"survdistr"</span><span class="op">)</span></span></code></pre></div>
+<p>Install the development version from GitHub:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"mlr-org/survdistr"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -78,7 +81,7 @@
 <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
 <p>Linear interpolation of a survival matrix using the <code>survDistr</code> R6 class:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://survdistr.mlr-org.com">survdistr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># generate survival matrix</span></span>
@@ -86,73 +89,73 @@
 <span>             ncol <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">x</span> <span class="op">=</span> <span class="va"><a href="reference/survDistr.html">survDistr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>x <span class="op">=</span> <span class="va">mat</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">34</span>, <span class="fl">42</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"linear_surv"</span><span class="op">)</span></span>
 <span><span class="va">x</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="do">## A [2 x 3] survival matrix</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="do">## Number of observations: 2</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="do">## Number of time points: 3</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="do">## Interpolation method: Piecewise Constant Density (Linear Survival)</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="do">## A [2 x 3] survival matrix</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="do">## Number of observations: 2</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="do">## Number of time points: 3</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="do">## Interpolation method: Piecewise Constant Density (Linear Survival)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># stored survival matrix</span></span>
 <span><span class="va">x</span><span class="op">$</span><span class="fu">data</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">##       12  34  42</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="do">## [1,] 0.9 0.6 0.4</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="do">## [2,] 0.8 0.8 0.7</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="do">##       12  34  42</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="do">## [1,] 0.9 0.6 0.4</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="do">## [2,] 0.8 0.8 0.7</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># S(t) at requested time points (linear interpolation)</span></span>
 <span><span class="va">x</span><span class="op">$</span><span class="fu">survival</span><span class="op">(</span>times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">30</span>, <span class="fl">42</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="do">##              5        30  42  50</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="do">## [1,] 0.9583333 0.6545455 0.4 0.2</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="do">## [2,] 0.9166667 0.8000000 0.7 0.6</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="do">##              5        30  42  50</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="do">## [1,] 0.9583333 0.6545455 0.4 0.2</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="do">## [2,] 0.9166667 0.8000000 0.7 0.6</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Cumulative hazard H(t)</span></span>
 <span><span class="va">x</span><span class="op">$</span><span class="fu">cumhazard</span><span class="op">(</span>times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">42</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="do">##               5        42</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="do">## [1,] 0.04255961 0.9162907</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="do">## [2,] 0.08701138 0.3566749</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="do">##               5        42</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="do">## [1,] 0.04255961 0.9162907</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="do">## [2,] 0.08701138 0.3566749</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Probability density f(t)</span></span>
 <span><span class="va">x</span><span class="op">$</span><span class="fu">density</span><span class="op">(</span>times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">30</span>, <span class="fl">42</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="do">##                5         30     42</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="do">## [1,] 0.008333333 0.01363636 0.0250</span></span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="do">## [2,] 0.016666667 0.00000000 0.0125</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="do">##                5         30     42</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="do">## [1,] 0.008333333 0.01363636 0.0250</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="do">## [2,] 0.016666667 0.00000000 0.0125</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Hazard h(t)</span></span>
 <span><span class="va">x</span><span class="op">$</span><span class="fu">hazard</span><span class="op">(</span>times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">30</span>, <span class="fl">42</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="do">##                5         30         42</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="do">## [1,] 0.008695652 0.02083333 0.06250000</span></span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="do">## [2,] 0.018181818 0.00000000 0.01785714</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="do">##                5         30         42</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="do">## [1,] 0.008695652 0.02083333 0.06250000</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="do">## [2,] 0.018181818 0.00000000 0.01785714</span></span></code></pre></div>
 <p>Interpolation of a Kaplan-Meier survival curve using exported R function that calls C++ code:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fit</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survfit</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">veteran</span><span class="op">)</span></span>
 <span><span class="va">tab</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>time <span class="op">=</span> <span class="va">fit</span><span class="op">$</span><span class="va">time</span>, surv <span class="op">=</span> <span class="va">fit</span><span class="op">$</span><span class="va">surv</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tab</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="do">##   time      surv</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="do">## 1    1 0.9854015</span></span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="do">## 2    2 0.9781022</span></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="do">## 3    3 0.9708029</span></span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="do">## 4    4 0.9635036</span></span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="do">## 5    7 0.9416058</span></span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="do">## 6    8 0.9124088</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="do">##   time      surv</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="do">## 1    1 0.9854015</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="do">## 2    2 0.9781022</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="do">## 3    3 0.9708029</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="do">## 4    4 0.9635036</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="do">## 5    7 0.9416058</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="do">## 6    8 0.9124088</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">tab</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="do">##     time        surv</span></span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="do">## 96   411 0.045022553</span></span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="do">## 97   467 0.036018043</span></span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="do">## 98   553 0.027013532</span></span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="do">## 99   587 0.018009021</span></span>
-<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="do">## 100  991 0.009004511</span></span>
-<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="do">## 101  999 0.000000000</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="do">##     time        surv</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="do">## 96   411 0.045022553</span></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="do">## 97   467 0.036018043</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="do">## 98   553 0.027013532</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="do">## 99   587 0.018009021</span></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="do">## 100  991 0.009004511</span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="do">## 101  999 0.000000000</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># constant S(t) interpolation</span></span>
 <span><span class="fu"><a href="reference/interp.html">interp</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">tab</span><span class="op">$</span><span class="va">surv</span>,</span>
 <span>  times <span class="op">=</span> <span class="va">tab</span><span class="op">$</span><span class="va">time</span>,</span>
 <span>  eval_times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3.5</span>, <span class="fl">995</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="do">##           0         3.5         995 </span></span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="do">## 1.000000000 0.970802920 0.009004511</span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="do">##           0         3.5         995 </span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="do">## 1.000000000 0.970802920 0.009004511</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># linear S(t) interpolation</span></span>
 <span><span class="fu"><a href="reference/interp.html">interp</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">tab</span><span class="op">$</span><span class="va">surv</span>,</span>
@@ -160,9 +163,9 @@
 <span>  eval_times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3.5</span>, <span class="fl">995</span><span class="op">)</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"linear_surv"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="do">##           0         3.5         995 </span></span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="do">## 1.000000000 0.967153285 0.004502255</span></span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="do">##           0         3.5         995 </span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="do">## 1.000000000 0.967153285 0.004502255</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># exponential S(t) interpolation</span></span>
 <span><span class="fu"><a href="reference/interp.html">interp</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">tab</span><span class="op">$</span><span class="va">surv</span>,</span>
@@ -170,8 +173,8 @@
 <span>  eval_times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3.5</span>, <span class="fl">995</span><span class="op">)</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"exp_surv"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="do">##         0       3.5       995 </span></span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="do">## 1.0000000 0.9671464 0.0000000</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="do">##         0       3.5       995 </span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="do">## 1.0000000 0.9671464 0.0000000</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
@@ -179,7 +182,14 @@
 <p>Please note that the survdistr project is released with a <a href="https://survdistr.mlr-org.com/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
-  </main><aside class="col-md-3"><div class="license">
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=survdistr" class="external-link">View on CRAN</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>

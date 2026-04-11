@@ -1,6 +1,10 @@
 # Changelog
 
+## survdistr (development version)
+
 ## survdistr 0.0.3
+
+CRAN release: 2026-04-09
 
 - Improved documentation
 - Refactored
