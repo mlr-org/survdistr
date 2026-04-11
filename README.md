@@ -15,6 +15,12 @@ Status](https://www.r-pkg.org/badges/version-ago/survdistr)](https://cran.r-proj
 
 ## Installation
 
+Install the release version from CRAN:
+
+``` r
+install.packages("survdistr")
+```
+
 Install the development version from GitHub:
 
 ``` r

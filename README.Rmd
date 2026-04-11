@@ -14,6 +14,12 @@ Survival distribution container for efficient storage, management, and interpola
 
 ## Installation
 
+Install the release version from CRAN:
+
+```{r eval = FALSE}
+install.packages("survdistr")
+```
+
 Install the development version from GitHub:
 
 ```{r eval = FALSE}
