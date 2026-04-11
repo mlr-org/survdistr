@@ -1,6 +1,6 @@
 Package: survdistr
 Title: Survival Distribution Container with Flexible Interpolation Methods
-Version: 0.0.3
+Version: 0.0.3.9000
 Authors@R: c(
     person("John", "Zobolas", , "bblodfon@gmail.com", role = c("aut", "cre")),
     person("Andreas", "Bender", , "andreas.bender@stat.uni-muenchen.de", role = "ctb")
