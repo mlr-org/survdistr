@@ -8,12 +8,14 @@ interpolation of survival model predictions.
 Install the release version from CRAN:
 
 ``` r
+
 install.packages("survdistr")
 ```
 
 Install the development version from GitHub:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("mlr-org/survdistr")
 ```
@@ -24,6 +26,7 @@ Linear interpolation of a survival matrix using the `survDistr` R6
 class:
 
 ``` r
+
 library(survdistr)
 
 # generate survival matrix
@@ -41,6 +44,7 @@ x
 ```
 
 ``` r
+
 # stored survival matrix
 x$data()
 ```
@@ -52,6 +56,7 @@ x$data()
 ```
 
 ``` r
+
 # S(t) at requested time points (linear interpolation)
 x$survival(times = c(5, 30, 42, 50))
 ```
@@ -63,6 +68,7 @@ x$survival(times = c(5, 30, 42, 50))
 ```
 
 ``` r
+
 # Cumulative hazard H(t)
 x$cumhazard(times = c(5, 42))
 ```
@@ -74,6 +80,7 @@ x$cumhazard(times = c(5, 42))
 ```
 
 ``` r
+
 # Probability density f(t)
 x$density(times = c(5, 30, 42))
 ```
@@ -85,6 +92,7 @@ x$density(times = c(5, 30, 42))
 ```
 
 ``` r
+
 # Hazard h(t)
 x$hazard(times = c(5, 30, 42))
 ```
@@ -99,6 +107,7 @@ Interpolation of a Kaplan-Meier survival curve using exported R function
 that calls C++ code:
 
 ``` r
+
 library(survival)
 
 fit = survfit(formula = Surv(time, status) ~ 1, data = veteran)
@@ -117,6 +126,7 @@ head(tab)
 ```
 
 ``` r
+
 tail(tab)
 ```
 
@@ -131,6 +141,7 @@ tail(tab)
 ```
 
 ``` r
+
 # constant S(t) interpolation
 interp(
   x = tab$surv,
@@ -145,6 +156,7 @@ interp(
 ```
 
 ``` r
+
 # linear S(t) interpolation
 interp(
   x = tab$surv,
@@ -160,6 +172,7 @@ interp(
 ```
 
 ``` r
+
 # exponential S(t) interpolation
 interp(
   x = tab$surv,
